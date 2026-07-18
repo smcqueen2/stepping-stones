@@ -1,0 +1,53 @@
+name: Stepping Stones Observation
+description: Report what you observed at the Ogmore stepping stones to improve model calibration.
+title: "[Observation] "
+labels:
+  - observation
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for helping improve this community model. Please submit what you observed on site.
+
+  - type: dropdown
+    id: observed_state
+    attributes:
+      label: Observed crossing condition
+      description: Which state best matched what you saw?
+      options:
+        - Likely Passable
+        - Caution
+        - Likely Unpassable
+    validations:
+      required: true
+
+  - type: input
+    id: observed_at
+    attributes:
+      label: Observation time (local)
+      description: Use local UK time, e.g. 2026-07-19 14:10
+      placeholder: 'YYYY-MM-DD HH:mm'
+    validations:
+      required: true
+
+  - type: textarea
+    id: location_notes
+    attributes:
+      label: Location and crossing notes
+      description: Which side were you on and what did you notice?
+      placeholder: e.g. Castle side, first 4 stones dry, water over stone 5, fast current near left bank.
+    validations:
+      required: true
+
+  - type: input
+    id: photo_url
+    attributes:
+      label: Optional photo/video URL
+      description: Paste a link if you captured conditions.
+      placeholder: https://...
+
+  - type: textarea
+    id: extra_notes
+    attributes:
+      label: Extra context
+      description: Any local weather/tide observations, foot traffic, or accessibility notes.

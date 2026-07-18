@@ -1,0 +1,22 @@
+{
+  "freshness": {
+    "staleAfterMinutes": 120,
+    "severeStaleAfterMinutes": 360
+  },
+  "stateThresholds": {
+    "likelyPassableMax": 0.45,
+    "cautionMax": 0.7
+  },
+  "weights": {
+    "tide": 0.45,
+    "river": 0.35,
+    "rain": 0.2
+  },
+  "rainScaling": {
+    "millimetresForHighRisk": 5
+  },
+  "messaging": {
+    "disclaimer": "This is best-guess community guidance, not a guarantee of safe crossing.",
+    "staleWarning": "Data may be stale, use extra caution."
+  }
+}

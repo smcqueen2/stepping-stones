@@ -1,0 +1,42 @@
+{
+  "generatedAt": "2026-07-18T23:18:32.665Z",
+  "sourceStations": [
+    {
+      "role": "river",
+      "stationId": 4083,
+      "stationTitle": "Ogmore at Bridgend",
+      "parameterId": 110,
+      "source": "NRW"
+    },
+    {
+      "role": "tide",
+      "stationId": 72839,
+      "stationTitle": "Newport tide gauge",
+      "parameterId": 10254,
+      "source": "NRW"
+    }
+  ],
+  "freshness": {
+    "generatedAt": "2026-07-18T23:18:32.665Z",
+    "latestObservationAt": "2026-07-18T23:00:00Z",
+    "ageMinutes": 19,
+    "stale": false,
+    "staleReason": "Primary tide station current"
+  },
+  "current": {
+    "riverLevelM": 0.256,
+    "riverTrendMPerHour": -0.001,
+    "tideLevelMAOD": 6.252,
+    "tideTrendMPerHour": 1.7429,
+    "riskScore": 0.463,
+    "state": "Caution",
+    "reason": "Mixed conditions suggest greater care is needed before attempting to cross."
+  },
+  "shortHorizonPrediction": {
+    "horizonMinutes": 90,
+    "predictedRiverLevelM": 0.234,
+    "projectedTideLevelMAOD": 5.827,
+    "riskScore": 0.416,
+    "state": "Likely Passable"
+  }
+}
