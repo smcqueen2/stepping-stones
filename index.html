@@ -28,11 +28,12 @@
     <main id="top">
       <section id="hero" class="hero section animate-on-scroll in-view" aria-labelledby="hero-title">
         <div class="hero-art" role="img" aria-label="Painted-style scene of Ogmore Castle and stepping stones">
-          <div class="sky"></div>
-          <div class="castle"></div>
-          <div class="stones"></div>
-          <div id="river-current" class="river river-current"></div>
-          <div id="river-predicted" class="river river-predicted"></div>
+          <img class="hero-layer" alt="" aria-hidden="true" src="%BASE_URL%images/hero/01_sky.webp" />
+          <img class="hero-layer" alt="" aria-hidden="true" src="%BASE_URL%images/hero/02_landscape_background.webp" />
+          <img class="hero-layer" alt="" aria-hidden="true" src="%BASE_URL%images/hero/03_castle.webp" />
+          <img class="hero-layer" alt="" aria-hidden="true" src="%BASE_URL%images/hero/04_river_and_stepping_stones.webp" />
+          <div id="river-current" class="river-tint river-tint-current"></div>
+          <div id="river-predicted" class="river-tint river-tint-predicted"></div>
         </div>
         <div class="hero-content">
           <h1 id="hero-title">Local guidance for crossing the Ogmore stepping stones</h1>
@@ -122,17 +123,51 @@
             <p>
               Help improve this model over time by reporting what you observed on site.
             </p>
-            <p>
-              <a
-                id="report-link"
-                class="button-link"
-                href="https://github.com/smcqueen2/stepping-stones/issues/new?template=observation.yml"
-                target="_blank"
-                rel="noopener noreferrer"
-                >Submit an observation</a
-              >
+            <form id="observation-form" class="observation-form" method="post">
+              <input type="hidden" name="_subject" value="Ogmore stepping stones observation" />
+              <input type="hidden" name="_template" value="table" />
+              <input type="hidden" name="_captcha" value="true" />
+              <input type="hidden" name="_next" id="observation-next" value="" />
+              <input type="hidden" name="model_live_state" id="model-live-state" value="" />
+              <input type="hidden" name="model_live_risk_score" id="model-live-risk" value="" />
+              <input type="hidden" name="model_generated_at" id="model-generated-at" value="" />
+
+              <div class="form-grid">
+                <label class="form-field">
+                  <span>Observation time (local)</span>
+                  <input name="observed_at_local" type="datetime-local" required />
+                </label>
+
+                <fieldset class="form-fieldset">
+                  <legend>Observed crossing condition</legend>
+                  <label><input type="radio" name="observed_state" value="Likely Passable" required /> Likely Passable</label>
+                  <label><input type="radio" name="observed_state" value="Caution" required /> Caution</label>
+                  <label><input type="radio" name="observed_state" value="Likely Unpassable" required /> Likely Unpassable</label>
+                </fieldset>
+
+                <fieldset class="form-fieldset">
+                  <legend>What did you see? (tick any)</legend>
+                  <label><input type="checkbox" name="observations[]" value="water-over-first-stones" /> Water over first stones</label>
+                  <label><input type="checkbox" name="observations[]" value="water-over-middle-stones" /> Water over middle stones</label>
+                  <label><input type="checkbox" name="observations[]" value="water-over-most-stones" /> Water over most stones</label>
+                  <label><input type="checkbox" name="observations[]" value="strong-current" /> Strong current</label>
+                  <label><input type="checkbox" name="observations[]" value="slippery-surface" /> Slippery surface</label>
+                  <label><input type="checkbox" name="observations[]" value="debris-present" /> Debris present</label>
+                </fieldset>
+
+                <label class="form-field">
+                  <span>Optional location/notes</span>
+                  <textarea name="notes" rows="3" placeholder="Example: Castle side, first three stones clear, fast flow near bank."></textarea>
+                </label>
+
+                <button id="observation-submit" type="submit" class="button-link">Submit observation</button>
+                <p id="observation-status" class="muted small" role="status" aria-live="polite"></p>
+              </div>
+            </form>
+
+            <p class="muted small">
+              No GitHub account is needed to submit. Your entry helps tune thresholds over time.
             </p>
-            <p class="muted">A GitHub account is required to submit.</p>
           </article>
         </div>
       </section>

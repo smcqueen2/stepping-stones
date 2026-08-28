@@ -18,5 +18,12 @@
   "messaging": {
     "disclaimer": "This is best-guess community guidance, not a guarantee of safe crossing.",
     "staleWarning": "Data may be stale, use extra caution."
+  },
+  "observationSubmission": {
+    "enabled": true,
+    "endpoint": "https://formsubmit.co/REPLACE_WITH_EMAIL",
+    "providerHint": "formsubmit",
+    "successMessage": "Thanks. Your observation was submitted.",
+    "disabledMessage": "Form not configured yet. Set observationSubmission.endpoint in public/data/config.json."
   }
 }

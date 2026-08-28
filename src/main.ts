@@ -101,6 +101,73 @@ function installScrollAnimations(): void {
   sections.forEach((el) => observer.observe(el));
 }
 
+function installHeroLayerReveal(): void {
+  const layers = Array.from(document.querySelectorAll<HTMLElement>('.hero-layer'));
+  const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  if (reducedMotion) {
+    layers.forEach((layer) => layer.classList.add('is-visible'));
+    return;
+  }
+
+  layers.forEach((layer, index) => {
+    window.setTimeout(() => layer.classList.add('is-visible'), 200 + index * 220);
+  });
+}
+
+function normalizeEndpoint(raw: string | undefined): string {
+  if (!raw) {
+    return '';
+  }
+
+  const endpoint = raw.trim();
+  if (!endpoint || endpoint.includes('REPLACE_WITH_EMAIL')) {
+    return '';
+  }
+
+  return endpoint;
+}
+
+function configureObservationForm(config: ConfigPayload, live: LivePayload): void {
+  const form = document.getElementById('observation-form') as HTMLFormElement | null;
+  const submitButton = document.getElementById('observation-submit') as HTMLButtonElement | null;
+  const status = document.getElementById('observation-status');
+  const nextInput = document.getElementById('observation-next') as HTMLInputElement | null;
+  const modelState = document.getElementById('model-live-state') as HTMLInputElement | null;
+  const modelRisk = document.getElementById('model-live-risk') as HTMLInputElement | null;
+  const modelGenerated = document.getElementById('model-generated-at') as HTMLInputElement | null;
+
+  if (!form || !submitButton || !status || !nextInput || !modelState || !modelRisk || !modelGenerated) {
+    return;
+  }
+
+  modelState.value = live.current.state;
+  modelRisk.value = String(live.current.riskScore);
+  modelGenerated.value = live.generatedAt;
+  nextInput.value = `${window.location.origin}${window.location.pathname}?observation=thanks#report`;
+
+  const queryState = new URLSearchParams(window.location.search).get('observation');
+  if (queryState === 'thanks') {
+    status.textContent =
+      config.observationSubmission?.successMessage ??
+      'Thanks. Your observation has been submitted and will help improve the model.';
+  }
+
+  const endpoint = normalizeEndpoint(config.observationSubmission?.endpoint);
+  const enabled = Boolean(config.observationSubmission?.enabled && endpoint);
+
+  if (!enabled) {
+    form.removeAttribute('action');
+    submitButton.disabled = true;
+    status.textContent =
+      config.observationSubmission?.disabledMessage ??
+      'Observation form is temporarily unavailable while the submit endpoint is being configured.';
+    return;
+  }
+
+  form.action = endpoint;
+}
+
 async function loadAndRender(): Promise<void> {
   const dataBase = `${import.meta.env.BASE_URL}data`;
 
@@ -148,9 +215,11 @@ async function loadAndRender(): Promise<void> {
   renderForecastTimeline(forecast);
 
   setRiverVisual(live.current.riskScore, live.shortHorizonPrediction.riskScore);
+  configureObservationForm(config, live);
 }
 
 installScrollAnimations();
+installHeroLayerReveal();
 
 loadAndRender().catch((error) => {
   const liveState = document.getElementById('live-state');

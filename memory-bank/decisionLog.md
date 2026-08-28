@@ -16,3 +16,8 @@
 ## 2026-07-19 — Forecast approach
 - Decision: 24-hour hourly forecast combining tide projection, river trend, and rainfall forecast.
 - Rationale: gives practical short-horizon guidance while remaining transparent about uncertainty.
+
+## 2026-07-19 — Observation submission without GitHub account
+- Decision: switch observation capture to a direct public form and remove dependency on user GitHub login.
+- Implementation: in-page form with radio + checklist fields, endpoint configured via `public/data/config.json`.
+- Rationale: lower submission friction for local residents and visitors.

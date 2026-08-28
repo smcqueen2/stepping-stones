@@ -9,7 +9,6 @@
   --warn: #be7a00;
   --bad: #935257;
   --badge-bg: #e8f0f8;
-  --hero-height: 360px;
 }
 
 * {
@@ -110,57 +109,53 @@ main {
 
 .hero-art {
   position: relative;
-  min-height: var(--hero-height);
+  aspect-ratio: 1672 / 941;
   border-radius: 20px;
   overflow: hidden;
   border: 1px solid var(--card-border);
   box-shadow: 0 18px 40px rgba(11, 29, 49, 0.15);
+  background: #eef2f6;
 }
 
-.sky {
+.hero-layer {
   position: absolute;
   inset: 0;
-  background: linear-gradient(180deg, #89b3d8 0%, #d5e8f5 55%, #ece8db 100%);
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: 0;
+  transform: translateY(14px) scale(1.015);
+  transition: opacity 1100ms ease, transform 1500ms cubic-bezier(0.2, 0.8, 0.2, 1);
+  pointer-events: none;
+  user-select: none;
 }
 
-.castle {
-  position: absolute;
-  left: 14%;
-  top: 22%;
-  width: 24%;
-  height: 28%;
-  border-radius: 6px;
-  background: linear-gradient(180deg, rgba(97, 92, 84, 0.92), rgba(75, 70, 64, 0.95));
-  box-shadow: 48px -10px 0 -12px rgba(98, 93, 87, 0.94), 86px 2px 0 -24px rgba(85, 80, 74, 0.92);
+.hero-layer.is-visible {
+  opacity: 1;
+  transform: none;
 }
 
-.stones {
-  position: absolute;
-  left: 35%;
-  right: 8%;
-  bottom: 14%;
-  height: 16px;
-  background: repeating-radial-gradient(circle at 8px 8px, rgba(126, 121, 113, 0.9), rgba(126, 121, 113, 0.9) 5px, transparent 6px, transparent 20px);
-}
-
-.river {
+.river-tint {
   position: absolute;
   left: 0;
   right: 0;
   bottom: 0;
-  height: 35%;
-  background: linear-gradient(180deg, rgba(106, 170, 208, 0.52), rgba(61, 119, 165, 0.86));
+  height: 30%;
   transform-origin: bottom;
+  pointer-events: none;
+  mix-blend-mode: multiply;
 }
 
-.river-current {
-  opacity: 0.7;
+.river-tint-current {
+  background: linear-gradient(180deg, rgba(43, 92, 138, 0), rgba(43, 92, 138, 0.55));
+  opacity: 0.55;
   transform: scaleY(var(--river-current-level, 0.38));
   transition: transform 800ms ease;
 }
 
-.river-predicted {
-  opacity: 0.45;
+.river-tint-predicted {
+  background: linear-gradient(180deg, rgba(43, 92, 138, 0), rgba(43, 92, 138, 0.4));
+  opacity: 0.35;
   transform: scaleY(var(--river-predicted-level, 0.42));
   animation: pulse 4s ease-in-out infinite;
 }
@@ -263,6 +258,54 @@ main {
   background: #1857a4;
 }
 
+button.button-link {
+  border: 0;
+  cursor: pointer;
+}
+
+button.button-link:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.form-grid {
+  display: grid;
+  gap: 0.9rem;
+}
+
+.form-field {
+  display: grid;
+  gap: 0.35rem;
+}
+
+.form-field input,
+.form-field textarea {
+  border: 1px solid var(--card-border);
+  border-radius: 10px;
+  padding: 0.55rem 0.65rem;
+  font: inherit;
+  background: rgba(255, 255, 255, 0.95);
+}
+
+.form-fieldset {
+  border: 1px solid var(--card-border);
+  border-radius: 10px;
+  padding: 0.65rem 0.7rem;
+  display: grid;
+  gap: 0.35rem;
+}
+
+.form-fieldset legend {
+  font-weight: 700;
+  padding: 0 0.2rem;
+}
+
+.form-fieldset label {
+  display: flex;
+  gap: 0.45rem;
+  align-items: center;
+}
+
 .disclaimer {
   font-weight: 600;
 }
@@ -304,8 +347,14 @@ main {
     transition: none;
   }
 
-  .river-predicted {
+  .river-tint-predicted {
     animation: none;
+  }
+
+  .hero-layer {
+    opacity: 1;
+    transform: none;
+    transition: none;
   }
 }
 
@@ -317,9 +366,5 @@ main {
 
   .status-pill {
     margin-left: 0;
-  }
-
-  .hero-art {
-    min-height: 280px;
   }
 }

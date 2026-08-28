@@ -17,4 +17,11 @@ describe('single-page structure contract', () => {
       expect(html).toContain(`href="${hash}"`);
     }
   });
+
+  it('contains public observation form controls', () => {
+    expect(html).toContain('id="observation-form"');
+    expect(html).toContain('name="observed_state"');
+    expect(html).toContain('name="observations[]"');
+    expect(html).toContain('id="observation-submit"');
+  });
 });

@@ -86,4 +86,11 @@ export interface ConfigPayload {
     disclaimer: string;
     staleWarning: string;
   };
+  observationSubmission?: {
+    enabled: boolean;
+    endpoint: string;
+    providerHint?: 'formsubmit' | 'generic';
+    successMessage?: string;
+    disabledMessage?: string;
+  };
 }

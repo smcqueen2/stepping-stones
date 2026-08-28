@@ -77,9 +77,23 @@ npm test
 
 ## Observation feedback loop
 
-Users submit observations through the GitHub issue form:
+Users can submit observations directly from the page (no GitHub account required).
 
-- `.github/ISSUE_TEMPLATE/observation.yml`
+By default, the form is wired for a FormSubmit-style endpoint and configured in:
+
+- `public/data/config.json` → `observationSubmission.endpoint`
+
+Example endpoint:
+
+```text
+https://formsubmit.co/you@example.com
+```
+
+On first submission, FormSubmit will send a one-time email verification to activate delivery.
+
+If `endpoint` is left as `REPLACE_WITH_EMAIL`, the submit button is disabled and the page shows a setup message.
+
+The previous GitHub issue template is still in the repo as an optional fallback.
 
 Threshold tuning helper:
 
