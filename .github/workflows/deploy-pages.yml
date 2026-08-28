@@ -40,6 +40,8 @@ jobs:
 
       - name: Setup Pages
         uses: actions/configure-pages@v5
+        # Transient GitHub Pages API errors shouldn't fail a 15-minutely job; deploy-pages fails loudly if truly misconfigured.
+        continue-on-error: true
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
