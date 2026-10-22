@@ -26,6 +26,14 @@ States are:
 - **Caution**
 - **Likely Unpassable**
 
+## Hero animation
+
+The water uses a lazy-loaded [OGL](https://github.com/oframe/ogl) renderer and a custom refraction shader over the original watercolour image. Evolving noise moves right through the river mask; the banks, stones and swan remain fixed. This is a decorative approximation of water flow.
+
+The same renderer animates the trees behind the castle. Passing gusts vary across the canopy, with stronger bending at the crowns and small leaf movements. A separate mask anchors the lower foliage and protects the castle's painted edges and tower silhouette.
+
+OGL has no runtime dependencies. The renderer uses one draw pass, caps drawing at 30 fps and 1080 pixels wide, and pauses while off screen or in a hidden tab. Reduced motion or unavailable WebGL leaves the static painting visible. The combined water and tree module is about 10.2 KB gzipped; tree sway adds under 1 KB of compressed JavaScript over the water-only version.
+
 ## Data pipeline
 
 Runtime is frontend-only, but live JSON is generated server-side in GitHub Actions every 15 minutes:

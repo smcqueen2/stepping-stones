@@ -221,6 +221,39 @@ async function loadAndRender(): Promise<void> {
 installScrollAnimations();
 installHeroLayerReveal();
 
+// Keep WebGL out of the initial bundle and skip it entirely for reduced motion.
+const riverCanvas = document.querySelector<HTMLCanvasElement>('#river-flow');
+const riverMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+let disposeRiver: (() => void) | undefined;
+let riverLoading = false;
+let riverDisposed = false;
+
+async function startRiver(): Promise<void> {
+  if (!riverCanvas || riverMotion.matches || riverLoading || disposeRiver || riverDisposed) return;
+  riverLoading = true;
+  try {
+    const { mountRiverFlow } = await import('./lib/river-flow');
+    if (riverDisposed || riverMotion.matches) return;
+    const dispose = await mountRiverFlow(riverCanvas);
+    if (riverDisposed) dispose();
+    else disposeRiver = dispose;
+  } catch (error) {
+    riverCanvas.style.visibility = 'hidden';
+    riverCanvas.dataset.waterState = 'unavailable';
+    console.warn('Using the static hero illustration.', error);
+  } finally {
+    riverLoading = false;
+  }
+}
+
+riverMotion.addEventListener('change', startRiver);
+void startRiver();
+import.meta.hot?.dispose(() => {
+  riverDisposed = true;
+  riverMotion.removeEventListener('change', startRiver);
+  disposeRiver?.();
+});
+
 loadAndRender().catch((error) => {
   const liveState = document.getElementById('live-state');
   if (liveState) {

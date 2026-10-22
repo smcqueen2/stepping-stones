@@ -31,5 +31,8 @@
     "typescript": "^5.6.3",
     "vite": "^8.1.5",
     "vitest": "^4.1.10"
+  },
+  "dependencies": {
+    "ogl": "1.0.11"
   }
 }

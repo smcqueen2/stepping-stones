@@ -356,6 +356,10 @@ button.button-link:disabled {
     transform: none;
     transition: none;
   }
+
+  .river-flow {
+    display: none;
+  }
 }
 
 @media (max-width: 760px) {

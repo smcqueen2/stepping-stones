@@ -21,3 +21,21 @@
 - Decision: switch observation capture to a direct public form and remove dependency on user GitHub login.
 - Implementation: in-page form with radio + checklist fields, endpoint configured via `public/data/config.json`.
 - Rationale: lower submission friction for local residents and visitors.
+
+## 2026-10-22 — River flow animation
+- Decision: animate decorative ripple highlights over the existing painting, using an SVG river mask and two repeating patterns moving right at different speeds.
+- Rationale: the water and stones share one raster layer. A masked overlay conveys flow while keeping the stones and banks stationary, scales with the illustration, and needs no runtime animation loop.
+- Accessibility: stop both ripple animations when reduced motion is requested.
+- Review revision: the initial thin highlights were too subtle. Reuse the original painted river in two crossfading drift layers, with broader irregular strokes moving faster. Expand the texture mask around the stones to avoid moving copies of their edges; keep risk tints on top.
+
+## 2026-10-22 — Lightweight water renderer replaces repeating layers
+- User feedback: the stronger repeating current still looked regular and unnatural; investigate npm options with low application overhead.
+- Decision: OGL 1.0.11, imported lazily, rendering a custom evolving refraction shader over the painted river. OGL provides GPU rendering; this is not a ready-made river physics engine. Keep a static illustration fallback.
+- Alternatives considered: jQuery Ripples requires jQuery and focuses on disturbance rings; simplex-noise is smaller but supplies noise functions without rendering; a full fluid solver would add rendering passes and simulation work unnecessary for this decorative image.
+- Budget verified in the production build: about 10 KB additional gzip JavaScript; one draw pass capped at 30 fps, paused out of view. The earlier SVG patterns and CSS drift animations are superseded.
+
+## 2026-10-22 — Tree sway shares the hero renderer
+- User accepted the OGL water and requested realistic movement in the trees behind the castle.
+- Decision: reuse the existing transparent landscape layer, painted sky and castle alpha in the same draw pass. Vary branch bends by position and crown height, add passing noise-driven gusts and small leaf movement, and anchor the lower foliage.
+- Protect castle paint using its alpha and a fixed tower silhouette mask. This prevents tree movement showing through semi-transparent stone brushwork. Uncovered crown edges sample the nearby painted sky.
+- Keep the existing motion/performance limits and static fallback. The addition needs no package, separate renderer or new bitmap; compressed JS grows by under 1 KB.

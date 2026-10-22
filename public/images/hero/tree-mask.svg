@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1672" height="941" viewBox="0 0 1672 941">
+  <defs>
+    <filter id="feather"><feGaussianBlur stdDeviation="10" /></filter>
+  </defs>
+  <rect width="1672" height="941" fill="black" />
+  <!-- Include a little sky around the crowns so leaves can uncover it as they bend. -->
+  <rect x="-40" y="135" width="1752" height="310" fill="white" filter="url(#feather)" />
+  <!-- Protect the complete tower silhouette, including gaps in its painted alpha. -->
+  <path fill="black" stroke="black" stroke-width="10" stroke-linejoin="round" d="M944 30 L980 38 L988 80 L1004 106 L1019 149 L1022 238 L1037 349 L1055 480 L859 480 L836 364 L843 306 L865 279 L842 236 L858 188 L880 147 L883 123 L908 99 L923 65 Z" />
+</svg>
