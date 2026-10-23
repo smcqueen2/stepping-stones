@@ -31,9 +31,11 @@
           <div class="hero-scene">
             <img class="hero-layer" alt="" aria-hidden="true" src="%BASE_URL%images/hero/01_sky.webp" />
             <img class="hero-layer" alt="" aria-hidden="true" src="%BASE_URL%images/hero/02_landscape_background.webp" />
+            <img id="landscape-snow" class="hero-layer snow-art landscape-snow" alt="" aria-hidden="true" decoding="async" data-snow-art data-src="%BASE_URL%images/hero/02_landscape_snow.webp" />
             <img class="hero-layer" alt="" aria-hidden="true" src="%BASE_URL%images/hero/03_castle.webp" />
             <img class="hero-layer" alt="" aria-hidden="true" src="%BASE_URL%images/hero/04_river_and_stepping_stones.webp" />
             <canvas id="river-flow" class="hero-layer river-flow" width="1672" height="941" aria-hidden="true"></canvas>
+            <img id="castle-snow" class="hero-layer snow-art castle-snow" alt="" aria-hidden="true" decoding="async" data-snow-art data-src="%BASE_URL%images/hero/03_castle_snow.webp" />
             <div id="river-current" class="river-tint river-tint-current"></div>
             <div id="river-predicted" class="river-tint river-tint-predicted"></div>
           </div>
@@ -63,7 +65,13 @@
             <button type="button" class="scene-button" data-weather-mode="cloudy" aria-pressed="false" disabled>Cloudy</button>
             <button type="button" class="scene-button" data-weather-mode="rain" aria-pressed="false" disabled>Rain</button>
             <button type="button" class="scene-button" data-weather-mode="snow" aria-pressed="false" disabled>Snow</button>
-            <button type="button" class="scene-button" data-weather-mode="windy" aria-pressed="false" disabled>Windy</button>
+          </div>
+          <div id="scene-wind" class="scene-control-group" role="group" aria-label="Wind">
+            <span class="scene-controls-label">Wind</span>
+            <button type="button" class="scene-button" data-wind-mode="live" aria-pressed="true" disabled>Live</button>
+            <button type="button" class="scene-button" data-wind-mode="calm" aria-pressed="false" disabled>Calm</button>
+            <button type="button" class="scene-button" data-wind-mode="breezy" aria-pressed="false" disabled>Breezy</button>
+            <button type="button" class="scene-button" data-wind-mode="windy" aria-pressed="false" disabled>Windy</button>
           </div>
         </div>
         <p class="scene-weather-status"><span id="scene-weather-label">Loading Ogmore weather…</span> · <a href="https://open-meteo.com/" target="_blank" rel="noopener noreferrer">Open-Meteo</a></p>

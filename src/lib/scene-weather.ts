@@ -1,4 +1,5 @@
-export type WeatherMode = 'live' | 'clear' | 'cloudy' | 'rain' | 'snow' | 'windy';
+export type WeatherMode = 'live' | 'clear' | 'cloudy' | 'rain' | 'snow';
+export type WindMode = 'live' | 'calm' | 'breezy' | 'windy';
 export type WeatherVisual = {
   rain: number; snow: number; clouds: number; fog: number;
   wind: number; gust: number; drift: number;
@@ -19,15 +20,27 @@ const previews: Record<Exclude<WeatherMode, 'live'>, WeatherVisual> = {
   cloudy: { ...fallback, clouds: 0.9, wind: 0.85, gust: 0.25 },
   rain: { ...fallback, rain: 0.75, clouds: 0.95, wind: 1.35, gust: 0.65, drift: 0.55 },
   snow: { ...fallback, snow: 0.75, clouds: 0.85, wind: 0.85, gust: 0.3, drift: 0.3 },
-  windy: { ...fallback, clouds: 0.35, wind: 2.15, gust: 1, drift: 0.9 },
 };
-const previewLabels = { clear: 'Clear', cloudy: 'Cloudy', rain: 'Rain', snow: 'Snow', windy: 'Windy' };
+const windPreviews = {
+  calm: { wind: 0.35, gust: 0, drift: 0 },
+  breezy: { wind: 0.9, gust: 0.25, drift: 0.3 },
+  windy: { wind: 2.15, gust: 1, drift: 0.9 },
+};
+const previewLabels = { clear: 'Clear', cloudy: 'Cloudy', rain: 'Rain', snow: 'Snow' };
+const windLabels = { calm: 'Calm wind', breezy: 'Breezy wind', windy: 'Strong wind' };
 const clock = new Intl.DateTimeFormat('en-GB', {
   timeZone: 'Europe/London', hour: '2-digit', minute: '2-digit', timeZoneName: 'short',
 });
 let activeVisual = fallback;
 export function getSceneWeatherVisual(): WeatherVisual { return activeVisual; }
 const clamp = (value: number, low = 0, high = 1) => Math.max(low, Math.min(high, value));
+
+/** Precipitation and wind are independent, including when one remains live. */
+export function resolveSceneWeather(mode: WeatherMode, windMode: WindMode, live?: WeatherVisual): WeatherVisual {
+  const base = mode === 'live' ? live ?? fallback : previews[mode];
+  const wind = windMode === 'live' ? live ?? fallback : windPreviews[windMode];
+  return { ...base, wind: wind.wind, gust: wind.gust, drift: wind.drift };
+}
 
 function record(value: unknown): Record<string, unknown> {
   if (!value || typeof value !== 'object' || Array.isArray(value)) throw new Error('Invalid weather data');
@@ -84,7 +97,11 @@ export function installSceneWeather(): () => void {
   const status = document.querySelector<HTMLElement>('#scene-weather-label');
   if (!hero || !controls || !status) return () => {};
   const buttons = Array.from(controls.querySelectorAll<HTMLButtonElement>('button[data-weather-mode]'));
+  const windControls = document.querySelector<HTMLElement>('#scene-wind');
+  const windButtons = Array.from(windControls?.querySelectorAll<HTMLButtonElement>('button[data-wind-mode]') ?? []);
+  const snowArt = Array.from(hero.querySelectorAll<HTMLImageElement>('img[data-snow-art]'));
   let mode: WeatherMode = 'live';
+  let windMode: WindMode = 'live';
   let weather: SceneWeather | undefined;
   let lastAttempt = 0;
   let failed = false;
@@ -104,20 +121,38 @@ export function installSceneWeather(): () => void {
 
   function render(): void {
     const fresh = weather && Date.now() - weather.observedAt <= MAX_AGE_MS;
-    activeVisual = mode === 'live' ? fresh ? weather!.visual : fallback : previews[mode];
+    activeVisual = resolveSceneWeather(mode, windMode, fresh ? weather!.visual : undefined);
     hero!.dataset.weatherMode = mode;
+    hero!.dataset.windMode = windMode;
     hero!.dataset.windStrength = activeVisual.wind.toFixed(2);
+    hero!.dataset.snowCover = String(activeVisual.snow > 0.01);
     hero!.style.setProperty('--weather-clouds', activeVisual.clouds.toFixed(3));
     hero!.style.setProperty('--weather-fog', activeVisual.fog.toFixed(3));
     buttons.forEach(button => button.setAttribute('aria-pressed', String(button.dataset.weatherMode === mode)));
-    if (mode !== 'live') {
-      status!.textContent = `${previewLabels[mode]} preview · choose Live for Ogmore weather`;
-    } else if (fresh) {
-      status!.textContent = `${weather!.description} · wind ${Math.round(weather!.windMph)} mph`
-        + `, gusts ${Math.round(weather!.gustMph)} mph · ${clock.format(weather!.observedAt)}`
-        + ` · modelled weather${failed ? ' · update delayed' : ''}`;
-    } else {
-      status!.textContent = failed || weather ? 'Live weather unavailable · previews still work' : 'Loading Ogmore weather…';
+    windButtons.forEach(button => button.setAttribute('aria-pressed', String(button.dataset.windMode === windMode)));
+    const parts = [mode === 'live'
+      ? fresh ? weather!.description : failed || weather ? 'Live weather unavailable' : 'Loading Ogmore weather…'
+      : `${previewLabels[mode]} preview`];
+    parts.push(windMode === 'live'
+      ? fresh ? `wind ${Math.round(weather!.windMph)} mph, gusts ${Math.round(weather!.gustMph)} mph` : 'Live wind unavailable'
+      : `${windLabels[windMode]} preview`);
+    if (fresh && (mode === 'live' || windMode === 'live')) {
+      parts.push(clock.format(weather!.observedAt), `modelled weather${failed ? ' · update delayed' : ''}`);
+    }
+    status!.textContent = parts.join(' · ');
+
+    // Fetch the extra artwork only when snow is first requested. It remains
+    // available for later previews and for the static/reduced-motion scene.
+    if (activeVisual.snow > 0.01) {
+      for (const image of snowArt) {
+        if (!image.dataset.src || image.hasAttribute('src')) continue;
+        image.src = image.dataset.src;
+        void image.decode().then(() => {
+          if (!disposed) image.classList.add('is-ready');
+        }).catch(() => {
+          if (!disposed) image.removeAttribute('src');
+        });
+      }
     }
   }
 
@@ -161,13 +196,24 @@ export function installSceneWeather(): () => void {
     const button = (event.target as Element).closest<HTMLButtonElement>('button[data-weather-mode]');
     if (!button || !controls!.contains(button)) return;
     const value = button.dataset.weatherMode;
-    mode = value === 'clear' || value === 'cloudy' || value === 'rain' || value === 'snow' || value === 'windy' ? value : 'live';
+    mode = value === 'clear' || value === 'cloudy' || value === 'rain' || value === 'snow' ? value : 'live';
+    render();
+    sync();
+  }
+
+  function changeWind(event: Event): void {
+    const button = (event.target as Element).closest<HTMLButtonElement>('button[data-wind-mode]');
+    if (!button || !windControls!.contains(button)) return;
+    const value = button.dataset.windMode;
+    windMode = value === 'calm' || value === 'breezy' || value === 'windy' ? value : 'live';
     render();
     sync();
   }
 
   buttons.forEach(button => { button.disabled = false; });
+  windButtons.forEach(button => { button.disabled = false; });
   controls.addEventListener('click', changeMode);
+  windControls?.addEventListener('click', changeWind);
   document.addEventListener('visibilitychange', sync);
   render();
   sync();
@@ -177,8 +223,10 @@ export function installSceneWeather(): () => void {
     window.clearTimeout(requestTimeout);
     window.clearTimeout(timer);
     controls.removeEventListener('click', changeMode);
+    windControls?.removeEventListener('click', changeWind);
     document.removeEventListener('visibilitychange', sync);
     buttons.forEach(button => { button.disabled = true; });
+    windButtons.forEach(button => { button.disabled = true; });
     activeVisual = fallback;
   };
 }

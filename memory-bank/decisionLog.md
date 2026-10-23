@@ -60,3 +60,16 @@
 - Use Open-Meteo current modelled weather at the same Ogmore coordinates, requested directly by the browser, with 15-minute polling/cache and attribution. Label modelled data with its timestamp. Validate units/freshness; failed or stale feeds must not falsely claim clear weather. This decorative feed does not change the crossing assessment pipeline.
 - Drive bounded tree strength and gusts from wind data, and precipitation drift from its horizontal component. Widen the castle sampling guard as bend strength grows. Add cloud/fog washes and suppress stars under cloud cover.
 - Provide independent, labelled Light and Weather button groups with pressed states, explicit preview captions and a Live button in each group. Reload starts live; manual choices survive completion of pending weather requests.
+
+## 2026-10-23 — Wind composes with weather; snow reveals castle artwork
+
+- User accepted/pushed weather work and requested combining rain or snow with wind, plus a snowy castle.
+- Separate precipitation and wind selections. Weather changes do not reset wind, and wind changes do not reset precipitation. A Live wind selection uses current feed values even during manual rain/snow previews; each group's Live resets only that group.
+- Use a generated sibling of the original castle raster, rather than altering the original. Preserve the watercolour style, canvas coordinates and alpha. The snowy variant is a fixed foreground layer sharing the lighting group, with no new WebGL texture or draw pass.
+- Load the roughly 160 KB WebP on demand only when snow first appears; reuse it thereafter. Show settled snow whenever scene snow is active, including with reduced motion or unavailable WebGL. Clip the lower transparent-edge remnants to keep the river intact. The full generation prompt is kept with the asset notes.
+
+## 2026-10-23 — Snowy grass and moving tree snow
+
+- User requested snow-covered grass and patchy snow on the trees in the snowy scene. Generate a sibling landscape layer using the original landscape as the edit target and the approved snowy castle as a style reference. Retain the watercolour palette, fence, path, castle cutouts and foliage between irregular snow patches.
+- Load the ~292 KB WebP alongside the castle only when snow is needed. Preserve generated alpha; normalize its one-pixel width difference through DOM sizing and texture coordinates. Clip lower empty edge remnants outside the landscape. No new npm dependency.
+- Use the DOM layer for ground and the static/reduced-motion fallback. Reuse the same decoded image as one additional OGL texture and sample it with the original branch displacement. Match its DOM fade in the shader to avoid stationary snow on moving branches. Keep one rendering pass and the established motion/performance safeguards; release the texture on disposal.

@@ -284,6 +284,26 @@ main {
   transform: none;
 }
 
+.hero-layer.snow-art {
+  opacity: 0;
+}
+
+.hero-layer.landscape-snow {
+  /* Share normalized texture coordinates with the swaying canopy. */
+  object-fit: fill;
+  clip-path: inset(0 0 34% 0);
+}
+
+.hero-layer.castle-snow {
+  /* The castle occupies the upper 60%; keep stray transparent-edge texture
+     from the generated layer outside the river. */
+  clip-path: inset(0 0 40% 0);
+}
+
+.hero-art[data-snow-cover="true"] .snow-art.is-visible.is-ready {
+  opacity: 1;
+}
+
 .river-tint {
   position: absolute;
   left: 0;

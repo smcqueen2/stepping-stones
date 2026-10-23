@@ -1,0 +1,10 @@
+# Snow-covered castle artwork
+
+- Created on 2026-10-23 with the built-in imagegen tool (`lighting-weather` edit).
+- Source: `public/images/hero/03_castle.webp`. A PNG reference retained its original RGBA pixels, with unused RGB in fully transparent pixels cleared for the edit input.
+- Final asset: `public/images/hero/03_castle_snow.webp` (1672 × 941, 159,914 bytes). Converted from the generated PNG to WebP at quality 90; the generated alpha channel is preserved exactly. The original asset remains unchanged.
+- The variant is loaded on demand in snowy conditions and layered over the fixed castle. It shares the scene lighting and remains visible for reduced motion/static rendering. The image is clipped to the upper 60% of the illustration to keep edge remnants outside the river.
+
+## Final prompt
+
+Use case: lighting-weather edit. Asset type: a transparent castle layer for a layered watercolour website illustration. Image 1 is the EDIT TARGET, an existing Ogmore Castle painting on a 1672 x 941 canvas. Make a snowy version of this exact layer: add clearly visible settled powder snow on the upward-facing broken wall tops, the tower crown, stone ledges and a few windward masonry patches, with soft cool blue-grey snow shadows. Keep plenty of the original warm stone texture visible. Match the original loose, mottled, translucent watercolour brushwork. STRICT INVARIANTS: preserve the exact canvas framing and every castle and wall's position, scale, silhouette, openings and perspective; do not recenter, crop, zoom or redesign anything. The tall tower must remain at about x=944, from y=41 to y=490; the low ruins stay across y=300..553; the whole lower region below y=553 stays transparent. The empty/black-looking areas in the supplied image are actual transparency and must remain genuinely transparent, including gaps and windows between ruins. Add no sky, trees, river, background, ground plane, falling snowflakes, text or watermark. Output a genuinely transparent RGBA image, preferably retaining the source 1672 x 941 dimensions. Only change the castle painting's weather treatment by adding settled snow.

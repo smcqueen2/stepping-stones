@@ -1,5 +1,5 @@
 // @vitest-environment jsdom
-import { getSceneWeatherVisual, installSceneWeather, parseSceneWeather } from '../../src/lib/scene-weather';
+import { getSceneWeatherVisual, installSceneWeather, parseSceneWeather, resolveSceneWeather } from '../../src/lib/scene-weather';
 
 const now = Date.parse('2026-10-23T12:00:00Z');
 function payload(overrides: Record<string, unknown> = {}) {
@@ -41,6 +41,17 @@ describe('weather data driving the scene', () => {
     expect(windy.visual.drift).toBeGreaterThan(0);
   });
 
+  it('combines strong or calm wind with either rain or snow without replacing precipitation', () => {
+    for (const mode of ['rain', 'snow'] as const) {
+      const windy = resolveSceneWeather(mode, 'windy');
+      const calm = resolveSceneWeather(mode, 'calm');
+      expect(windy[mode]).toBeGreaterThan(0);
+      expect(windy[mode]).toBe(calm[mode]);
+      expect(windy.wind).toBeGreaterThan(calm.wind * 2);
+      expect(windy.drift).toBeGreaterThan(calm.drift);
+    }
+  });
+
   it('rejects incomplete, stale, future-dated or incorrectly scaled feeds', () => {
     expect(() => parseSceneWeather(payload({ snowfall: null }), now)).toThrow();
     expect(() => parseSceneWeather(payload({ time: now / 1000 - 7200 }), now)).toThrow();
@@ -55,6 +66,7 @@ describe('live weather and manual scene buttons', () => {
   let dispose: (() => void) | undefined;
   let fetchMock: ReturnType<typeof vi.fn>;
   const click = (mode: string) => document.querySelector<HTMLButtonElement>(`button[data-weather-mode="${mode}"]`)!.click();
+  const clickWind = (mode: string) => document.querySelector<HTMLButtonElement>(`button[data-wind-mode="${mode}"]`)!.click();
   const status = () => document.querySelector('#scene-weather-label')!.textContent;
   beforeEach(() => {
     vi.useFakeTimers();
@@ -64,7 +76,9 @@ describe('live weather and manual scene buttons', () => {
     document.body.innerHTML = `<div class="hero-art"></div><div id="scene-weather">
       <button data-weather-mode="live">Live</button><button data-weather-mode="rain">Rain</button>
       <button data-weather-mode="snow">Snow</button><button data-weather-mode="clear">Clear</button>
-      </div><span id="scene-weather-label"></span>`;
+      </div><div id="scene-wind"><button data-wind-mode="live">Live</button>
+      <button data-wind-mode="calm">Calm</button><button data-wind-mode="windy">Windy</button></div>
+      <span id="scene-weather-label"></span>`;
     fetchMock = vi.fn().mockResolvedValue({ ok: true, json: async () => payload() });
     vi.stubGlobal('fetch', fetchMock);
   });
@@ -91,14 +105,85 @@ describe('live weather and manual scene buttons', () => {
 
   it('keeps a manual choice when the live request finishes and restores Live on demand', async () => {
     dispose = installSceneWeather();
+    clickWind('windy');
     click('snow');
     await vi.advanceTimersByTimeAsync(0);
     expect(status()).toContain('Snow preview');
     expect(getSceneWeatherVisual().snow).toBeGreaterThan(0);
+    expect(getSceneWeatherVisual().wind).toBe(2.15);
     click('live');
     expect(status()).toContain('modelled weather');
     expect(getSceneWeatherVisual().snow).toBe(0);
+    expect(getSceneWeatherVisual().wind).toBe(2.15);
     expect(document.querySelector('button[data-weather-mode="live"]')?.getAttribute('aria-pressed')).toBe('true');
+    clickWind('live');
+    expect(getSceneWeatherVisual().wind).toBeLessThan(2.15);
+  });
+
+  it('keeps wind selected while changing rain to snow, and keeps snow when changing wind', async () => {
+    dispose = installSceneWeather();
+    await vi.advanceTimersByTimeAsync(0);
+    click('rain');
+    clickWind('windy');
+    expect(status()).toContain('Rain preview · Strong wind preview');
+    expect(getSceneWeatherVisual().rain).toBeGreaterThan(0);
+    click('snow');
+    expect(status()).toContain('Snow preview · Strong wind preview');
+    expect(getSceneWeatherVisual().rain).toBe(0);
+    expect(getSceneWeatherVisual().snow).toBeGreaterThan(0);
+    expect(getSceneWeatherVisual().wind).toBe(2.15);
+    clickWind('calm');
+    expect(getSceneWeatherVisual().snow).toBeGreaterThan(0);
+    expect(getSceneWeatherVisual().wind).toBeLessThan(0.5);
+    expect(document.querySelector<HTMLElement>('.hero-art')?.dataset.snowCover).toBe('true');
+  });
+
+  it('loads both snow layers only on first snow and hides them when conditions change', async () => {
+    const images = ['02_landscape_snow', '03_castle_snow'].map(name => {
+      const image = document.createElement('img');
+      image.dataset.snowArt = '';
+      image.dataset.src = `/images/hero/${name}.webp`;
+      image.decode = vi.fn().mockResolvedValue(undefined);
+      document.querySelector('.hero-art')!.append(image);
+      return image;
+    });
+    dispose = installSceneWeather();
+    await vi.advanceTimersByTimeAsync(0);
+    images.forEach(image => expect(image.hasAttribute('src')).toBe(false));
+    click('snow');
+    await vi.advanceTimersByTimeAsync(0);
+    images.forEach(image => {
+      expect(image.getAttribute('src')).toBe(image.dataset.src);
+      expect(image.classList.contains('is-ready')).toBe(true);
+    });
+    expect(document.querySelector<HTMLElement>('.hero-art')?.dataset.snowCover).toBe('true');
+    click('rain');
+    expect(document.querySelector<HTMLElement>('.hero-art')?.dataset.snowCover).toBe('false');
+    click('snow');
+    images.forEach(image => expect(image.decode).toHaveBeenCalledTimes(1));
+  });
+
+  it('keeps other snow artwork usable if one image fails, and retries that image later', async () => {
+    const images = [document.createElement('img'), document.createElement('img')];
+    images.forEach((image, i) => {
+      image.dataset.snowArt = '';
+      image.dataset.src = `/snow-${i}.webp`;
+      image.decode = vi.fn().mockResolvedValue(undefined);
+      document.querySelector('.hero-art')!.append(image);
+    });
+    vi.mocked(images[0].decode).mockRejectedValueOnce(new Error('Image unavailable'));
+    dispose = installSceneWeather();
+    await vi.advanceTimersByTimeAsync(0);
+    click('snow');
+    await vi.advanceTimersByTimeAsync(0);
+    expect(images[0].hasAttribute('src')).toBe(false);
+    expect(images[0].classList.contains('is-ready')).toBe(false);
+    expect(images[1].classList.contains('is-ready')).toBe(true);
+    click('clear');
+    click('snow');
+    await vi.advanceTimersByTimeAsync(0);
+    expect(images[0].classList.contains('is-ready')).toBe(true);
+    expect(images[1].decode).toHaveBeenCalledTimes(1);
   });
 
   it('leaves manual weather usable after a failed request', async () => {

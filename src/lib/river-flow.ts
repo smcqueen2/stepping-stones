@@ -17,6 +17,7 @@ const fragment = /* glsl */ `
   uniform sampler2D uMask;
   uniform sampler2D uSky;
   uniform sampler2D uLandscape;
+  uniform sampler2D uSnowLandscape;
   uniform sampler2D uCastle;
   uniform sampler2D uTrees;
   uniform float uTime;
@@ -25,6 +26,7 @@ const fragment = /* glsl */ `
   uniform float uWind;
   uniform float uGust;
   uniform float uDrift;
+  uniform float uSnowCover;
   varying vec2 vUv;
 
   float hash(vec2 p) {
@@ -82,13 +84,20 @@ const fragment = /* glsl */ `
       float nearCastle = max(castle.a, max(texture2D(uCastle, vUv - castleMargin).a,
                                            texture2D(uCastle, vUv + castleMargin).a));
       float flex = height * (1.0 - smoothstep(0.02, 0.3, nearCastle));
-      vec4 landscape = texture2D(uLandscape, clamp(vUv + wind * flex / vec2(1672.0, 941.0), 0.0, 1.0));
+      vec2 foliageUv = clamp(vUv + wind * flex / vec2(1672.0, 941.0), 0.0, 1.0);
+      vec4 landscape = texture2D(uLandscape, foliageUv);
+      vec4 snowyLandscape = texture2D(uSnowLandscape, foliageUv);
+      // Snow rests on the same moving branches. Blend premultiplied samples
+      // so transparent cutout edges do not introduce coloured fringes.
+      float foliageAlpha = mix(landscape.a, snowyLandscape.a, uSnowCover);
+      vec3 foliagePaint = mix(landscape.rgb * landscape.a,
+                             snowyLandscape.rgb * snowyLandscape.a, uSnowCover);
 
       // Fill newly uncovered crown edges with nearby painted sky, not ghost leaves.
       vec4 sky = texture2D(uSky, vUv);
       vec3 skyBehindCrown = texture2D(uSky, clamp(vUv + vec2(0.0, 32.0 / 941.0), 0.0, 1.0)).rgb;
       vec3 backdrop = mix(skyBehindCrown, sky.rgb, sky.a);
-      vec3 scene = mix(backdrop, landscape.rgb, landscape.a);
+      vec3 scene = backdrop * (1.0 - foliageAlpha) + foliagePaint;
       return vec4(scene, foliageCoverage);
     }
 
@@ -197,6 +206,7 @@ export async function mountRiverFlow(canvas: HTMLCanvasElement): Promise<() => v
     uniforms: {
       uPainting: { value: textures[0] }, uMask: { value: textures[1] },
       uSky: { value: textures[2] }, uLandscape: { value: textures[3] },
+      uSnowLandscape: { value: textures[3] }, uSnowCover: { value: 0 },
       uCastle: { value: textures[4] }, uTrees: { value: textures[5] },
       uTime: { value: 0 },
       uRain: { value: 0 }, uSnow: { value: 0 },
@@ -219,6 +229,8 @@ export async function mountRiverFlow(canvas: HTMLCanvasElement): Promise<() => v
   let frame = 0;
   let lastDraw = 0;
   let elapsed = 0;
+  const snowLandscape = document.querySelector<HTMLImageElement>('#landscape-snow');
+  let snowyTexture: Texture | undefined;
 
   function draw(now: number): void {
     frame = requestAnimationFrame(draw);
@@ -228,6 +240,20 @@ export async function mountRiverFlow(canvas: HTMLCanvasElement): Promise<() => v
     lastDraw = now;
     program.uniforms.uTime.value = elapsed;
     const weather = getSceneWeatherVisual();
+    // Reuse the decoded, on-demand DOM image instead of fetching a second copy.
+    // Clear scenes keep the original six textures; snowy scenes use seven.
+    if (!snowyTexture && snowLandscape?.classList.contains('is-ready')) {
+      snowyTexture = new Texture(gl, {
+        image: snowLandscape, generateMipmaps: false, minFilter: gl.LINEAR, magFilter: gl.LINEAR,
+        wrapS: gl.CLAMP_TO_EDGE, wrapT: gl.CLAMP_TO_EDGE,
+      });
+      textures.push(snowyTexture);
+      program.uniforms.uSnowLandscape.value = snowyTexture;
+    }
+    // Match the DOM layer's reveal/fade, including a snow image arriving late.
+    // Reading opacity does not change the layout or add an animation loop.
+    program.uniforms.uSnowCover.value = snowyTexture && snowLandscape
+      ? Number(getComputedStyle(snowLandscape).opacity) : 0;
     const ease = delta ? 1 - Math.exp(-delta * 3) : 1;
     for (const [uniform, value] of [
       ['uRain', weather.rain], ['uSnow', weather.snow], ['uWind', weather.wind],
