@@ -127,11 +127,26 @@ main {
 }
 
 .hero-light,
-.hero-stars {
+.hero-stars,
+.hero-weather-clouds,
+.hero-weather-fog {
   position: absolute;
   inset: 0;
   pointer-events: none;
   transition: opacity 1200ms ease;
+}
+
+.hero-weather-clouds {
+  background: linear-gradient(180deg, #6c788d 0%, rgba(104, 117, 135, 0.6) 47%, transparent 82%);
+  mix-blend-mode: multiply;
+  opacity: calc(var(--weather-clouds, 0) * 0.65);
+}
+
+.hero-weather-fog {
+  background:
+    radial-gradient(ellipse at 25% 54%, rgba(229, 235, 237, 0.9), transparent 75%),
+    linear-gradient(180deg, transparent, rgba(224, 233, 238, 0.8));
+  opacity: var(--weather-fog, 0);
 }
 
 .hero-light-night {
@@ -161,7 +176,7 @@ main {
     radial-gradient(circle at 74% 66%, #ffedce 0 0.6px, transparent 1.5px),
     radial-gradient(circle at 91% 26%, #e1e9fb 0 0.7px, transparent 1.7px),
     radial-gradient(circle at 96% 70%, #ffedce 0 0.6px, transparent 1.5px);
-  opacity: var(--scene-stars, 0);
+  opacity: calc(var(--scene-stars, 0) * (1 - var(--weather-clouds, 0)));
 }
 
 .hero-moon {
@@ -176,7 +191,7 @@ main {
     radial-gradient(circle at 66% 78%, rgba(176, 187, 203, 0.25), transparent 18%),
     #f4ebd8;
   mask-image: radial-gradient(circle at 70% 26%, transparent 0 47%, #000 50%);
-  opacity: var(--scene-stars, 0);
+  opacity: calc(var(--scene-stars, 0) * (1 - var(--weather-clouds, 0)));
   filter: blur(0.35px) drop-shadow(0 0 5px rgba(226, 231, 250, 0.25));
   transition: opacity 1200ms ease;
   pointer-events: none;
@@ -197,19 +212,58 @@ main {
   margin: 0;
 }
 
-.scene-control {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
+.scene-controls {
+  display: grid;
+  gap: 0.45rem;
+  margin-top: 0.65rem;
 }
 
-.scene-control select {
+.scene-control-group {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.3rem;
+  font-size: 0.78rem;
+}
+
+.scene-controls-label {
+  min-width: 3.4rem;
+  color: var(--muted);
+}
+
+.scene-button {
   border: 1px solid var(--card-border);
   border-radius: 999px;
-  padding: 0.35rem 0.55rem;
+  padding: 0.32rem 0.65rem;
   color: var(--ink);
   background: rgba(255, 255, 255, 0.65);
   font: inherit;
+  cursor: pointer;
+}
+
+.scene-button[aria-pressed="true"] {
+  background: #dce8ef;
+  border-color: #829cac;
+  color: #244151;
+}
+
+.scene-button:hover {
+  border-color: #829cac;
+}
+
+.scene-button:focus-visible {
+  outline: 2px solid #527d98;
+  outline-offset: 2px;
+}
+
+.scene-weather-status {
+  margin: 0.65rem 0 0;
+  color: var(--muted);
+  font-size: 0.75rem;
+}
+
+.scene-weather-status a {
+  color: inherit;
 }
 
 .hero-layer {
@@ -459,7 +513,9 @@ button.button-link:disabled {
   .hero-scene,
   .hero-light,
   .hero-stars,
-  .hero-moon {
+  .hero-moon,
+  .hero-weather-clouds,
+  .hero-weather-fog {
     transition: none;
   }
 }

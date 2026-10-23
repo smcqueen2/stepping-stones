@@ -1,4 +1,5 @@
 import { Program, Renderer, Texture, Triangle } from 'ogl';
+import { getSceneWeatherVisual } from './scene-weather';
 
 const vertex = /* glsl */ `
   attribute vec2 position;
@@ -19,6 +20,11 @@ const fragment = /* glsl */ `
   uniform sampler2D uCastle;
   uniform sampler2D uTrees;
   uniform float uTime;
+  uniform float uRain;
+  uniform float uSnow;
+  uniform float uWind;
+  uniform float uGust;
+  uniform float uDrift;
   varying vec2 vUv;
 
   float hash(vec2 p) {
@@ -47,17 +53,17 @@ const fragment = /* glsl */ `
     float compliance = mix(0.65, 1.1, hash(vec2(crown, 47.1)));
     float bend = ((gust - 0.2) * 4.2 + branch * mix(0.8, 5.2, gust)) * compliance;
     float lift = sin(rhythm * 0.79 + phase) * mix(0.18, 0.9, gust) * compliance;
-    return vec2(bend, lift);
+    bend = (bend + uDrift * gust * 1.2) * uWind * (1.0 + 0.35 * uGust * gust);
+    return vec2(bend, lift * sqrt(uWind));
   }
 
-  void main() {
+  vec4 paintedScene() {
     float trees = texture2D(uTrees, vUv).r;
     if (trees > 0.001) {
       vec4 castle = texture2D(uCastle, vUv);
       float foliageCoverage = trees * (1.0 - smoothstep(0.005, 0.06, castle.a));
       if (foliageCoverage < 0.001) {
-        gl_FragColor = vec4(0.0);
-        return;
+        return vec4(0.0);
       }
       // Anchor the lower branches; higher crowns flex more in the breeze.
       float imageY = (1.0 - vUv.y) * 941.0;
@@ -72,7 +78,7 @@ const fragment = /* glsl */ `
       wind += vec2(leaves * 0.9, leaves * 0.4) * (0.3 + smoothstep(0.0, 8.0, abs(wind.x)));
 
       // Avoid sampling the transparent castle cutout into a neighbouring tree.
-      vec2 castleMargin = vec2(12.0 / 1672.0, 0.0);
+      vec2 castleMargin = vec2(12.0 * (uWind * 1.35 + 0.3) / 1672.0, 0.0);
       float nearCastle = max(castle.a, max(texture2D(uCastle, vUv - castleMargin).a,
                                            texture2D(uCastle, vUv + castleMargin).a));
       float flex = height * (1.0 - smoothstep(0.02, 0.3, nearCastle));
@@ -83,14 +89,12 @@ const fragment = /* glsl */ `
       vec3 skyBehindCrown = texture2D(uSky, clamp(vUv + vec2(0.0, 32.0 / 941.0), 0.0, 1.0)).rgb;
       vec3 backdrop = mix(skyBehindCrown, sky.rgb, sky.a);
       vec3 scene = mix(backdrop, landscape.rgb, landscape.a);
-      gl_FragColor = vec4(scene, foliageCoverage);
-      return;
+      return vec4(scene, foliageCoverage);
     }
 
     float mask = texture2D(uMask, vUv).r;
     if (mask < 0.001) {
-      gl_FragColor = vec4(0.0);
-      return;
+      return vec4(0.0);
     }
 
     // Advect several scales of evolving noise rightward. There is no tile reset
@@ -113,7 +117,48 @@ const fragment = /* glsl */ `
     vec3 paint = texture2D(uPainting, sampleUv).rgb;
     float light = (ripple - 0.5) * 0.055 + (detail - 0.5) * 0.025;
     paint += vec3(0.85, 0.91, 0.87) * light * sourceWater;
-    gl_FragColor = vec4(paint, mask);
+    return vec4(paint, mask);
+  }
+
+  float rainLayer(float scale, float speed) {
+    vec2 pixel = vUv * vec2(1672.0, 941.0) * scale;
+    pixel.x += pixel.y * uDrift * 0.55;
+    vec2 p = pixel / vec2(45.0, 120.0) + vec2(0.0, uTime * speed);
+    vec2 cell = floor(p);
+    vec2 q = fract(p);
+    float seed = hash(cell + 5.7);
+    float x = mix(0.15, 0.85, hash(cell));
+    float streak = (1.0 - smoothstep(0.01, 0.045, abs(q.x - x)))
+                 * smoothstep(0.12, 0.2, q.y)
+                 * (1.0 - smoothstep(0.33 + seed * 0.28, 0.42 + seed * 0.28, q.y));
+    return streak * step(seed, uRain * 0.8);
+  }
+
+  float snowLayer(float scale, float speed) {
+    vec2 p = vUv * vec2(1672.0, 941.0) * scale / 80.0;
+    p.x -= uTime * uDrift * 0.65;
+    p.x += sin(p.y * 0.7 + uTime * 0.45) * 0.2;
+    p.y += uTime * speed;
+    vec2 cell = floor(p);
+    vec2 centre = vec2(hash(cell), hash(cell + 13.7)) * 0.6 + 0.2;
+    float radius = mix(0.025, 0.075, hash(cell + 2.4));
+    float flake = 1.0 - smoothstep(radius * 0.35, radius, length(fract(p) - centre));
+    return flake * step(hash(cell + 7.3), uSnow * 0.85);
+  }
+
+  void main() {
+    vec4 scene = paintedScene();
+    float rain = 0.0;
+    float snow = 0.0;
+    if (uRain > 0.001) rain = max(rainLayer(1.0, 5.4) * 0.45, rainLayer(0.71, 4.7) * 0.6);
+    if (uSnow > 0.001) snow = max(snowLayer(1.0, 0.5) * 0.65, snowLayer(0.63, 0.32) * 0.9);
+    float particles = max(rain, snow);
+    float alpha = particles + scene.a * (1.0 - particles);
+    vec3 colour = snow > rain ? vec3(0.96, 0.97, 1.0) : vec3(0.73, 0.84, 0.91);
+    // Straight-alpha compositing also covers parts of the static castle/sky
+    // where the animated painting itself is transparent.
+    gl_FragColor = vec4((colour * particles + scene.rgb * scene.a * (1.0 - particles))
+                       / max(alpha, 0.0001), alpha);
   }
 `;
 
@@ -154,6 +199,8 @@ export async function mountRiverFlow(canvas: HTMLCanvasElement): Promise<() => v
       uSky: { value: textures[2] }, uLandscape: { value: textures[3] },
       uCastle: { value: textures[4] }, uTrees: { value: textures[5] },
       uTime: { value: 0 },
+      uRain: { value: 0 }, uSnow: { value: 0 },
+      uWind: { value: 1 }, uGust: { value: 0 }, uDrift: { value: 0.2 },
     },
   });
   const releaseGpu = () => {
@@ -176,9 +223,18 @@ export async function mountRiverFlow(canvas: HTMLCanvasElement): Promise<() => v
   function draw(now: number): void {
     frame = requestAnimationFrame(draw);
     if (lastDraw && now - lastDraw < 1000 / 30) return;
-    elapsed += lastDraw ? Math.min(0.1, (now - lastDraw) / 1000) : 0;
+    const delta = lastDraw ? Math.min(0.1, (now - lastDraw) / 1000) : 0;
+    elapsed += delta;
     lastDraw = now;
     program.uniforms.uTime.value = elapsed;
+    const weather = getSceneWeatherVisual();
+    const ease = delta ? 1 - Math.exp(-delta * 3) : 1;
+    for (const [uniform, value] of [
+      ['uRain', weather.rain], ['uSnow', weather.snow], ['uWind', weather.wind],
+      ['uGust', weather.gust], ['uDrift', weather.drift],
+    ] as const) {
+      program.uniforms[uniform].value += (value - program.uniforms[uniform].value) * ease;
+    }
     // Draw the full-screen triangle directly; no 3D scene, camera or mesh code.
     program.use();
     geometry.draw({ program });

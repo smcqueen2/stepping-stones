@@ -48,7 +48,7 @@ describe('lighting clock and preview controls', () => {
     vi.spyOn(document, 'hidden', 'get').mockReturnValue(false);
     document.body.innerHTML = `
       <div class="hero-art"></div>
-      <select id="scene-lighting"><option value="live">Live</option><option value="night">Night</option></select>
+      <div id="scene-lighting"><button data-lighting-mode="live">Live</button><button data-lighting-mode="night">Night</button></div>
       <time id="scene-local-time"></time><span id="scene-light-label"></span>`;
   });
   afterEach(() => {
@@ -61,16 +61,14 @@ describe('lighting clock and preview controls', () => {
 
   it('returns from a clearly labelled preview to live lighting', () => {
     dispose = installSceneLighting();
-    const control = document.querySelector<HTMLSelectElement>('#scene-lighting')!;
     const hero = document.querySelector<HTMLElement>('.hero-art')!;
-    control.value = 'night';
-    control.dispatchEvent(new Event('change'));
+    document.querySelector<HTMLButtonElement>('button[data-lighting-mode="night"]')!.click();
     expect(hero.dataset.lighting).toBe('night');
     expect(document.querySelector('#scene-light-label')?.textContent).toBe('Night preview');
-    control.value = 'live';
-    control.dispatchEvent(new Event('change'));
+    document.querySelector<HTMLButtonElement>('button[data-lighting-mode="live"]')!.click();
     expect(hero.dataset.lighting).toBe('day');
     expect(hero.dataset.lightingMode).toBe('live');
+    expect(document.querySelector('button[data-lighting-mode="live"]')?.getAttribute('aria-pressed')).toBe('true');
   });
 
   it('updates each minute, catches up after a hidden tab, and cleans up its timer', () => {

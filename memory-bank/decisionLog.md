@@ -52,3 +52,11 @@
 - Use SunCalc 2.1.1 solar altitude at the existing rainfall coordinates to follow seasonal light rather than fixed clock-hour cutoffs. It is a small dependency with no transitive runtime dependencies; calculations stay in the browser.
 - Apply lighting to the complete illustration with CSS, retaining the original daytime artwork, animated textures and static fallback. Add warm twilight washes and cool night grading with decorative moon/stars. Keep assessment text and colour meanings separate from the decorative scene.
 - Include explicit phase previews so the user can inspect night during daytime, defaulting to live on reload. Pause minute timers while hidden, resume immediately on return, and disable colour transitions for reduced motion.
+
+## 2026-10-23 — Live weather shares the renderer; controls become buttons
+
+- User accepted/pushed lighting and requested real-time weather, rain/snow effects, stronger trees in wind and manual scene buttons.
+- Considered the official tsParticles snow preset. Reuse the existing OGL package to render precipitation in the same draw pass, adding no new engine, canvas or npm dependency. Keep the established caps, reduced-motion handling and static fallback.
+- Use Open-Meteo current modelled weather at the same Ogmore coordinates, requested directly by the browser, with 15-minute polling/cache and attribution. Label modelled data with its timestamp. Validate units/freshness; failed or stale feeds must not falsely claim clear weather. This decorative feed does not change the crossing assessment pipeline.
+- Drive bounded tree strength and gusts from wind data, and precipitation drift from its horizontal component. Widen the castle sampling guard as bend strength grows. Add cloud/fog washes and suppress stars under cloud cover.
+- Provide independent, labelled Light and Weather button groups with pressed states, explicit preview captions and a Live button in each group. Reload starts live; manual choices survive completion of pending weather requests.

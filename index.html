@@ -39,21 +39,34 @@
           </div>
           <div class="hero-light hero-light-night" aria-hidden="true"></div>
           <div class="hero-light hero-light-twilight" aria-hidden="true"></div>
+          <div class="hero-weather-clouds" aria-hidden="true"></div>
+          <div class="hero-weather-fog" aria-hidden="true"></div>
           <div class="hero-stars" aria-hidden="true"></div>
           <div class="hero-moon" aria-hidden="true"></div>
         </div>
         <div class="scene-toolbar">
           <p class="scene-time">Ogmore · <time id="scene-local-time"></time> · <span id="scene-light-label">Live lighting</span></p>
-          <label class="scene-control">Lighting
-            <select id="scene-lighting" disabled>
-              <option value="live">Live local time</option>
-              <option value="dawn">Dawn preview</option>
-              <option value="day">Day preview</option>
-              <option value="dusk">Dusk preview</option>
-              <option value="night">Night preview</option>
-            </select>
-          </label>
         </div>
+        <div class="scene-controls">
+          <div id="scene-lighting" class="scene-control-group" role="group" aria-label="Lighting">
+            <span class="scene-controls-label">Light</span>
+            <button type="button" class="scene-button" data-lighting-mode="live" aria-pressed="true" disabled>Live</button>
+            <button type="button" class="scene-button" data-lighting-mode="dawn" aria-pressed="false" disabled>Dawn</button>
+            <button type="button" class="scene-button" data-lighting-mode="day" aria-pressed="false" disabled>Day</button>
+            <button type="button" class="scene-button" data-lighting-mode="dusk" aria-pressed="false" disabled>Dusk</button>
+            <button type="button" class="scene-button" data-lighting-mode="night" aria-pressed="false" disabled>Night</button>
+          </div>
+          <div id="scene-weather" class="scene-control-group" role="group" aria-label="Weather">
+            <span class="scene-controls-label">Weather</span>
+            <button type="button" class="scene-button" data-weather-mode="live" aria-pressed="true" disabled>Live</button>
+            <button type="button" class="scene-button" data-weather-mode="clear" aria-pressed="false" disabled>Clear</button>
+            <button type="button" class="scene-button" data-weather-mode="cloudy" aria-pressed="false" disabled>Cloudy</button>
+            <button type="button" class="scene-button" data-weather-mode="rain" aria-pressed="false" disabled>Rain</button>
+            <button type="button" class="scene-button" data-weather-mode="snow" aria-pressed="false" disabled>Snow</button>
+            <button type="button" class="scene-button" data-weather-mode="windy" aria-pressed="false" disabled>Windy</button>
+          </div>
+        </div>
+        <p class="scene-weather-status"><span id="scene-weather-label">Loading Ogmore weather…</span> · <a href="https://open-meteo.com/" target="_blank" rel="noopener noreferrer">Open-Meteo</a></p>
         <div class="hero-content">
           <h1 id="hero-title">Local guidance for crossing the Ogmore stepping stones</h1>
           <p>

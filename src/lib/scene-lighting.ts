@@ -42,10 +42,11 @@ export function getSceneLighting(date: Date, mode: LightingMode = 'live') {
 /** Colour the complete painting, including the WebGL water and trees. */
 export function installSceneLighting(): () => void {
   const hero = document.querySelector<HTMLElement>('.hero-art');
-  const control = document.querySelector<HTMLSelectElement>('#scene-lighting');
+  const control = document.querySelector<HTMLElement>('#scene-lighting');
   const time = document.querySelector<HTMLTimeElement>('#scene-local-time');
   const phase = document.querySelector<HTMLElement>('#scene-light-label');
   if (!hero || !control || !time || !phase) return () => {};
+  const buttons = Array.from(control.querySelectorAll<HTMLButtonElement>('button[data-lighting-mode]'));
 
   let mode: LightingMode = 'live';
   let timer: number | undefined;
@@ -64,6 +65,7 @@ export function installSceneLighting(): () => void {
     time!.dateTime = now.toISOString();
     time!.textContent = light.clock;
     phase!.textContent = light.label;
+    buttons.forEach(button => button.setAttribute('aria-pressed', String(button.dataset.lightingMode === mode)));
   }
 
   function sync(): void {
@@ -75,23 +77,24 @@ export function installSceneLighting(): () => void {
     timer = window.setTimeout(sync, 60_000 - Date.now() % 60_000);
   }
 
-  function changeMode(): void {
-    const value = control!.value;
+  function changeMode(event: Event): void {
+    const button = (event.target as Element).closest<HTMLButtonElement>('button[data-lighting-mode]');
+    if (!button || !control!.contains(button)) return;
+    const value = button.dataset.lightingMode;
     mode = value === 'dawn' || value === 'day' || value === 'dusk' || value === 'night' ? value : 'live';
     update();
   }
 
-  control.value = 'live';
-  control.disabled = false;
-  control.addEventListener('change', changeMode);
+  buttons.forEach(button => { button.disabled = false; });
+  control.addEventListener('click', changeMode);
   document.addEventListener('visibilitychange', sync);
   update();
   sync();
 
   return () => {
     window.clearTimeout(timer);
-    control.disabled = true;
-    control.removeEventListener('change', changeMode);
+    buttons.forEach(button => { button.disabled = true; });
+    control.removeEventListener('click', changeMode);
     document.removeEventListener('visibilitychange', sync);
   };
 }
