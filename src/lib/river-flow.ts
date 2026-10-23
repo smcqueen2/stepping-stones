@@ -33,6 +33,23 @@ const fragment = /* glsl */ `
                mix(hash(cell + vec2(0.0, 1.0)), hash(cell + vec2(1.0)), blend.x), blend.y);
   }
 
+  // A crown has its own stiffness, response delay and branch rhythm. Gusts
+  // travel through the trees, while the slower envelope creates quiet spells.
+  vec2 crownWind(float crown) {
+    float seed = hash(vec2(crown, 23.7));
+    float phase = hash(vec2(crown, 81.3)) * 6.283185;
+    float response = uTime - seed * 2.8;
+    float front = noise(vec2(crown * 0.47 - response * 0.16, response * 0.065));
+    float local = noise(vec2(response * 0.19 + phase, crown * 3.17 + 9.2));
+    float gust = smoothstep(0.28, 0.78, front * 0.65 + local * 0.35);
+    float rhythm = response * mix(0.72, 1.17, seed) + phase + local * 1.2;
+    float branch = sin(rhythm) + 0.32 * sin(rhythm * 1.83 + phase);
+    float compliance = mix(0.65, 1.1, hash(vec2(crown, 47.1)));
+    float bend = ((gust - 0.2) * 4.2 + branch * mix(0.8, 5.2, gust)) * compliance;
+    float lift = sin(rhythm * 0.79 + phase) * mix(0.18, 0.9, gust) * compliance;
+    return vec2(bend, lift);
+  }
+
   void main() {
     float trees = texture2D(uTrees, vUv).r;
     if (trees > 0.001) {
@@ -46,18 +63,19 @@ const fragment = /* glsl */ `
       float imageY = (1.0 - vUv.y) * 941.0;
       float crownY = mix(260.0, 177.0, smoothstep(0.51, 0.63, vUv.x));
       float height = pow(clamp((430.0 - imageY) / (430.0 - crownY), 0.0, 1.0), 1.8);
-      float gust = noise(vec2(vUv.x * 2.7 - uTime * 0.12, uTime * 0.045));
-      float branch = sin(uTime * 0.78 - vUv.x * 5.5)
-                   + 0.37 * sin(uTime * 1.17 + vUv.x * 10.2);
-      float leaves = noise(vec2(vUv.x * 55.0 - uTime * 0.24, vUv.y * 31.0 + uTime * 0.19)) - 0.5;
+      // Uneven crown spacing and smooth joins avoid a moving curtain or seams.
+      float crowns = vUv.x * 13.0 + 0.45 * noise(vec2(vUv.x * 5.0, 7.3));
+      float crown = floor(crowns);
+      vec2 wind = mix(crownWind(crown), crownWind(crown + 1.0),
+                      smoothstep(0.2, 0.8, fract(crowns)));
+      float leaves = noise(vec2(vUv.x * 66.0 - uTime * 0.31, vUv.y * 36.0 + uTime * 0.41)) - 0.5;
+      wind += vec2(leaves * 0.9, leaves * 0.4) * (0.3 + smoothstep(0.0, 8.0, abs(wind.x)));
 
       // Avoid sampling the transparent castle cutout into a neighbouring tree.
       vec2 castleMargin = vec2(12.0 / 1672.0, 0.0);
       float nearCastle = max(castle.a, max(texture2D(uCastle, vUv - castleMargin).a,
                                            texture2D(uCastle, vUv + castleMargin).a));
       float flex = height * (1.0 - smoothstep(0.02, 0.3, nearCastle));
-      vec2 wind = vec2(branch * (3.5 + 4.5 * gust) + leaves * 1.3,
-                       sin(uTime * 0.93 + vUv.x * 9.1) * 0.7 + leaves * 0.5);
       vec4 landscape = texture2D(uLandscape, clamp(vUv + wind * flex / vec2(1672.0, 941.0), 0.0, 1.0));
 
       // Fill newly uncovered crown edges with nearby painted sky, not ghost leaves.

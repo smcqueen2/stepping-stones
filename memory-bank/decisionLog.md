@@ -39,3 +39,9 @@
 - Decision: reuse the existing transparent landscape layer, painted sky and castle alpha in the same draw pass. Vary branch bends by position and crown height, add passing noise-driven gusts and small leaf movement, and anchor the lower foliage.
 - Protect castle paint using its alpha and a fixed tower silhouette mask. This prevents tree movement showing through semi-transparent stone brushwork. Uncovered crown edges sample the nearby painted sky.
 - Keep the existing motion/performance limits and static fallback. The addition needs no package, separate renderer or new bitmap; compressed JS grows by under 1 KB.
+
+## 2026-10-23 — Independent canopy groups
+
+- User feedback: tree sway still looked too uniform.
+- Decision: replace the two broad waves with smoothly blended, unevenly spaced canopy groups. Give each group seeded flexibility, phase, branch frequency and response delay; use travelling noise-driven gusts and a changing strength envelope to introduce quieter spells.
+- Keep the refinement in the existing shader and retain the masks, water behaviour, anchored lower foliage and lifecycle safeguards. Build cost increases by about 0.4 KB gzip, with no new runtime dependency or rendering pass.
