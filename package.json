@@ -33,6 +33,7 @@
     "vitest": "^4.1.10"
   },
   "dependencies": {
-    "ogl": "1.0.11"
+    "ogl": "1.0.11",
+    "suncalc": "2.1.1"
   }
 }

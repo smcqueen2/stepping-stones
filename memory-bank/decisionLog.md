@@ -45,3 +45,10 @@
 - User feedback: tree sway still looked too uniform.
 - Decision: replace the two broad waves with smoothly blended, unevenly spaced canopy groups. Give each group seeded flexibility, phase, branch frequency and response delay; use travelling noise-driven gusts and a changing strength envelope to introduce quieter spells.
 - Keep the refinement in the existing shader and retain the masks, water behaviour, anchored lower foliage and lifecycle safeguards. Build cost increases by about 0.4 KB gzip, with no new runtime dependency or rendering pass.
+
+## 2026-10-23 — Scene lighting follows time at Ogmore
+
+- User requested proceeding to the day/night task after pushing the accepted sway refinement. Interpret local time as the scene's location, Ogmore, using Europe/London with daylight saving changes.
+- Use SunCalc 2.1.1 solar altitude at the existing rainfall coordinates to follow seasonal light rather than fixed clock-hour cutoffs. It is a small dependency with no transitive runtime dependencies; calculations stay in the browser.
+- Apply lighting to the complete illustration with CSS, retaining the original daytime artwork, animated textures and static fallback. Add warm twilight washes and cool night grading with decorative moon/stars. Keep assessment text and colour meanings separate from the decorative scene.
+- Include explicit phase previews so the user can inspect night during daytime, defaulting to live on reload. Pause minute timers while hidden, resume immediately on return, and disable colour transitions for reduced motion.

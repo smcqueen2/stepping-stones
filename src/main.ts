@@ -1,4 +1,5 @@
 import './style.css';
+import { installSceneLighting } from './lib/scene-lighting';
 import type { ConfigPayload, ForecastPayload, LivePayload, StateLabel } from './lib/types';
 
 const stateClass: Record<StateLabel, string> = {
@@ -220,6 +221,7 @@ async function loadAndRender(): Promise<void> {
 
 installScrollAnimations();
 installHeroLayerReveal();
+const disposeLighting = installSceneLighting();
 
 // Keep WebGL out of the initial bundle and skip it entirely for reduced motion.
 const riverCanvas = document.querySelector<HTMLCanvasElement>('#river-flow');
@@ -249,6 +251,7 @@ async function startRiver(): Promise<void> {
 riverMotion.addEventListener('change', startRiver);
 void startRiver();
 import.meta.hot?.dispose(() => {
+  disposeLighting();
   riverDisposed = true;
   riverMotion.removeEventListener('change', startRiver);
   disposeRiver?.();

@@ -54,3 +54,13 @@
 - Production build and TypeScript checks pass. Combined animation chunk is 10.56 KB gzip, about 0.4 KB more than the previous tree implementation. No dependency, texture, draw pass or lifecycle changes.
 - Restarted the local Vite preview at 127.0.0.1:5173. After reloading, the shader renders with `data-water-state="running"` and no new shader warnings. Two-frame comparison shows varied movement in left, centre and right crowns; sky, grass and the foreground wall are unchanged. Tower interior difference is negligible (0.06 on a 0–255 channel scale).
 - User accepted the sway refinement and requested committing/pushing it, then implementing lighting matched to local time. Home-page styling remains future work.
+- Committed and pushed the accepted sway refinement and to-do notes as `ca2916e82d03aa616998a4ff5b155499e0d5f357`. All 16 existing tests passed; verified remote main matched. Generated local JSON snapshots were excluded.
+
+### Day/night cycle
+
+- Added SunCalc 2.1.1 as one dependency with no transitive runtime dependencies. Solar altitude at Ogmore drives gradual colour washes; the scene clock uses Europe/London with GMT/BST. The cycle follows the seasons without additional network requests or device location access.
+- Wrapped the original hero layers and animation canvas in one lighting group, preserving the water/tree renderer. Added warm dawn/dusk washes and cool night grading with decorative moon and stars. The text and assessment colours remain independent of scene lighting.
+- Added a Lighting selector for labelled previews and Live local time. Reload resets to live. Clock updates align to the minute, stop in hidden tabs and catch up on return; HMR disposal clears the timer and listeners. Reduced motion disables colour transitions while retaining the correct lighting.
+- Production build and TypeScript checks pass; all 22 tests pass, including season changes, the repeated UK clock-change hour, preview/live reset, clock updates, hidden-tab recovery and disposal. Lighting increases JavaScript by about 2.6 KB gzip and CSS by 0.6 KB; the water/tree chunk remains 10.56 KB gzip.
+- Browser checked daylight, dawn, dusk and night previews; water/tree animation remains running under the grading. Night screenshot saved outside the repo as `lighting-night-preview.png`. Returned the control to Live local time and verified mode=live, phase=day and the Europe/London clock.
+- User accepted the lighting and requested committing/pushing it, then adding live weather effects, wind-responsive trees and manual scene buttons. Home-page styling remains future work.

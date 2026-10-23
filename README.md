@@ -34,6 +34,14 @@ The same renderer animates the trees behind the castle. Smaller canopy groups ha
 
 OGL has no runtime dependencies. The renderer uses one draw pass, caps drawing at 30 fps and 1080 pixels wide, and pauses while off screen or in a hidden tab. Reduced motion or unavailable WebGL leaves the static painting visible. The combined water and tree module is about 10.6 KB gzipped; tree sway adds about 1.2 KB of compressed JavaScript over the water-only version.
 
+### Day and night lighting
+
+The illustration follows the light at Ogmore using [SunCalc](https://github.com/mourner/suncalc) 2.1.1 and the same location as the rainfall feed (51.4759, -3.6206). Solar altitude drives gradual dawn, daylight, dusk and night colour washes, so transitions follow the seasons. The clock uses `Europe/London`, including GMT/BST changes. There is no location permission or extra data request.
+
+Use **Lighting** below the painting to preview each phase; choose **Live local time** to resume the actual scene. Previews are labelled and reloads always return to live mode. The moon and stars are decorative. The complete painting, including moving water and trees, receives the lighting; page text and condition indicators retain their existing colours.
+
+Lighting refreshes each minute, pauses its timer in hidden tabs and catches up when returning. Reduced motion disables colour transitions while keeping the correct time-of-day appearance, including without WebGL. SunCalc has no runtime dependencies; lighting adds about 2.6 KB of compressed JavaScript and 0.6 KB of CSS to the previous build.
+
 ## Data pipeline
 
 Runtime is frontend-only, but live JSON is generated server-side in GitHub Actions every 15 minutes:

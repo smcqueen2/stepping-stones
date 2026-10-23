@@ -28,13 +28,31 @@
     <main id="top">
       <section id="hero" class="hero section animate-on-scroll in-view" aria-labelledby="hero-title">
         <div class="hero-art" role="img" aria-label="Painted-style scene of Ogmore Castle and stepping stones">
-          <img class="hero-layer" alt="" aria-hidden="true" src="%BASE_URL%images/hero/01_sky.webp" />
-          <img class="hero-layer" alt="" aria-hidden="true" src="%BASE_URL%images/hero/02_landscape_background.webp" />
-          <img class="hero-layer" alt="" aria-hidden="true" src="%BASE_URL%images/hero/03_castle.webp" />
-          <img class="hero-layer" alt="" aria-hidden="true" src="%BASE_URL%images/hero/04_river_and_stepping_stones.webp" />
-          <canvas id="river-flow" class="hero-layer river-flow" width="1672" height="941" aria-hidden="true"></canvas>
-          <div id="river-current" class="river-tint river-tint-current"></div>
-          <div id="river-predicted" class="river-tint river-tint-predicted"></div>
+          <div class="hero-scene">
+            <img class="hero-layer" alt="" aria-hidden="true" src="%BASE_URL%images/hero/01_sky.webp" />
+            <img class="hero-layer" alt="" aria-hidden="true" src="%BASE_URL%images/hero/02_landscape_background.webp" />
+            <img class="hero-layer" alt="" aria-hidden="true" src="%BASE_URL%images/hero/03_castle.webp" />
+            <img class="hero-layer" alt="" aria-hidden="true" src="%BASE_URL%images/hero/04_river_and_stepping_stones.webp" />
+            <canvas id="river-flow" class="hero-layer river-flow" width="1672" height="941" aria-hidden="true"></canvas>
+            <div id="river-current" class="river-tint river-tint-current"></div>
+            <div id="river-predicted" class="river-tint river-tint-predicted"></div>
+          </div>
+          <div class="hero-light hero-light-night" aria-hidden="true"></div>
+          <div class="hero-light hero-light-twilight" aria-hidden="true"></div>
+          <div class="hero-stars" aria-hidden="true"></div>
+          <div class="hero-moon" aria-hidden="true"></div>
+        </div>
+        <div class="scene-toolbar">
+          <p class="scene-time">Ogmore · <time id="scene-local-time"></time> · <span id="scene-light-label">Live lighting</span></p>
+          <label class="scene-control">Lighting
+            <select id="scene-lighting" disabled>
+              <option value="live">Live local time</option>
+              <option value="dawn">Dawn preview</option>
+              <option value="day">Day preview</option>
+              <option value="dusk">Dusk preview</option>
+              <option value="night">Night preview</option>
+            </select>
+          </label>
         </div>
         <div class="hero-content">
           <h1 id="hero-title">Local guidance for crossing the Ogmore stepping stones</h1>
