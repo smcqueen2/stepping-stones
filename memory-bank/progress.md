@@ -1,5 +1,10 @@
 # Progress
 
+### About-page project and profile icons - 2026-11-06
+
+- Added labelled GitHub and LinkedIn links to About, pointing to `https://github.com/smcqueen2/stepping-stones` and the owner's supplied `https://www.linkedin.com/in/stephenmcqueen/`. Inline SVGs use Bootstrap Icons; source/provenance is in `docs/assets/social-icons.md` and the MIT notice ships in `public/licenses/bootstrap-icons.txt`. No icon package/font or external image request.
+- Visible text, descriptive accessible labels announcing the new tab, decorative SVGs, `noopener noreferrer`, 44px targets and existing focus styling. Browser checked both keyboard stops, exact href/target/rel, icons rendering and no overflow at 320px; viewport reset. Screenshot parent `about-social-links-2026-11-06.png`. Three existing UI contract checks and production build pass. Owner authorised committing and pushing this update on 6 November; generated river-data snapshots and private active context remain excluded.
+
 ### Standalone About and History views - 2026-11-06
 
 - Converted both modal containers into main-content page sections. Shared header/current navigation, page titles, heading focus, Back to crossing and browser Back/Forward; original hash links reload correctly on static hosting. Timeline selection and scene state survive switching views. Removed obsolete History dialog/Close styling and used h2 chapter headings below the page h1.
