@@ -16,7 +16,8 @@
         <a class="brand" href="#top">Ogmore<span>Stepping stones</span></a>
         <nav class="section-nav" aria-label="Crossing information">
           <span class="location-label">Ogmore-by-Sea · Wales</span>
-          <a href="#about" data-open-dialog>About the crossing</a>
+          <a href="#history" data-open-dialog>History</a>
+          <a href="#about" data-open-dialog>About</a>
           <a href="#report" data-open-dialog>Report</a>
         </nav>
       </div>
@@ -126,25 +127,15 @@
         <div id="forecast-timeline" class="timeline" aria-label="Hourly forecast timeline"></div>
       </dialog>
 
-      <dialog id="history" class="app-dialog" aria-labelledby="history-title">
-        <div class="dialog-heading"><h2 id="history-title">The stones and the castle</h2><button type="button" data-close-dialog aria-label="Close history">Close</button></div>
-        <div class="cards">
-          <article class="card prose">
-            <p>
-              The stepping stones beside Ogmore Castle have long been used as a practical river
-              crossing, linking routes between Ogmore-by-Sea, Merthyr Mawr, and surrounding paths.
-              Their uneven, historic structure means crossing difficulty can vary stone-by-stone.
-            </p>
-            <p>
-              Ogmore Castle itself dates to the Norman period and sits beside the river where tide
-              influence and upstream rainfall can combine to alter river conditions quickly.
-            </p>
-            <p class="muted small">
-              Note: historic details should be reviewed against local records and heritage sources
-              before publication updates.
-            </p>
-          </article>
+      <dialog id="history" class="app-dialog history-dialog" aria-labelledby="history-title">
+        <div class="dialog-heading history-heading">
+          <div><p class="history-eyebrow">Castle, crossing &amp; coast</p><h2 id="history-title">Ogmore, through time.</h2></div>
+          <button type="button" data-close-dialog aria-label="Close history">Close</button>
         </div>
+        <p class="history-intro">Follow the places and people that shaped this valley.</p>
+        <p id="history-loading" role="status">Loading the illustrated timeline…</p>
+        <button id="history-retry" type="button" hidden>Try again</button>
+        <div id="history-content" hidden></div>
       </dialog>
 
       <dialog id="about" class="app-dialog" aria-labelledby="about-title">

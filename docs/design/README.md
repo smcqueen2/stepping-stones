@@ -10,10 +10,10 @@ Prepared on 24 October; documentation checkpoint completed when work resumed on 
 | --- | --- | --- |
 | Landing page | [Fixed single-scene preview](landing-page-concepts/index.html), [design notes](landing-page-concepts/design-notes.md) | User accepted one stable castle/river scene with immediate prediction overlays. The implementation and initial mobile pass are included in the 6 November application commit; the preview preserves the earlier design study. |
 | Data | [Two interactive designs](data-page/index.html), [scope and sources](data-page/design-notes.md) | River journal and Conditions compared await feedback. Design exploration only. |
-| History | [Two interactive designs](historical-timeline/index.html), [historical research](historical-timeline/research-brief.md) | Living landscape and Painted chapters await feedback. Twelve researched milestones and four new watercolours; design exploration only. |
+| History | [Two archived designs](historical-timeline/index.html), [historical research](historical-timeline/research-brief.md) | Living landscape is integrated into the [published History view](https://smcqueen2.github.io/stepping-stones/#history) for review. Twelve milestones and the saved paintings are included; Painted chapters remains an archived alternative. |
 | Earlier landing ideas | [Original three concepts](landing-page-concepts/earlier-concepts.html) | Archived for reference. Their scroll/pan interaction was explicitly rejected and superseded by the fixed scene. |
 
-The suggested starting designs are **River journal** for Data and **Living landscape** for History. These recommendations are not recorded as user approval.
+The suggested starting design for Data is **River journal**, pending selection. The user requested publishing the historical work on 6 November; **Living landscape** is used as the first integrated version for feedback, rather than claiming a separate explicit choice between the archived alternatives.
 
 ## Inspect the previews
 

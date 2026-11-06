@@ -87,3 +87,9 @@
 - User requested completing the landing release, phone access and an initial mobile-friendly pass. Keep the accepted castle-led painting and immediate outlook, with no scroll-driven camera.
 - Use the flowing artwork/card layout for short landscape windows as well as narrow portrait screens. The previous height-limited desktop canvas caused the card to escape above the screen at 844×390. Keep 44px mobile controls, readable supporting text, a compact Scene toggle, safe-area spacing and scrollable panels with visible Close controls.
 - Provide a repeatable LAN command and document optional Android USB forwarding for an already-authorised device. Test the actual phone-to-PC HTTP path independently from the Chrome UI. Direct Pixel checks succeeded on both paths; browser confirmation is still pending. Preserve unrelated USB forwards and the existing firewall/network protections.
+
+## 2026-11-06 — Integrate the researched History work
+
+- User requested publishing the historical research and generated paintings in the website before addressing hosted data freshness. Use the existing Living landscape design as the first integrated version for inspection. Preserve Painted chapters as an archived alternative; do not claim the user explicitly chose a layout earlier.
+- Keep History in the existing SPA through the shareable native `#history` view, with a visible navigation link. Reuse canonical researched JSON and saved WebP paintings from `docs/design`, with per-chapter source/context/date notes and separately labelled undated folklore.
+- Import the content, styles and image references lazily on opening. Use native controls, bounded navigation, inert inactive slides and reduced-motion horizontal transitions. No new runtime dependency or historical API request; the timeline stays usable when crossing data is stale or unavailable.

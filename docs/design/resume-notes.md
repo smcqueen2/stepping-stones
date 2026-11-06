@@ -35,6 +35,8 @@ Read the research brief before editing the copy. In particular: the stones cross
 
 No History page implementation is approved or present yet.
 
+**Subsequent update, 6 November:** the owner requested making this research/artwork inspectable in the deployed website before addressing the data-refresh issue. Living landscape is now integrated into the existing `#history` view, with a main navigation link, twelve chapters, manual horizontal transitions, sources/date notes and separately labelled folklore. It reuses this archive's canonical JSON and paintings, with lazy loading and mobile controls. All 51 tests, TypeScript and production build pass; desktop and 320/412px phone layouts were reviewed. The earlier paragraph records the original design checkpoint.
+
 ## Phone access: paused and unresolved
 
 The local app served HTTP 200 from both loopback and the laptop's Wi-Fi address, but the phone continued to report `ERR_TOO_MANY_RETRIES`. A narrowly filtered packet capture ended early on a counter-log file lock; the helper was repaired and cleanup left Packet Monitor stopped. The available recording does not reliably cover the latest retry and establishes no definitive cause.

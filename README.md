@@ -20,7 +20,7 @@ Supporting information opens in native, keyboard-accessible dialogs. Their hashe
 
 - `#live` – current best-guess state and live inputs.
 - `#forecast` – next 24 hours of likely conditions.
-- `#history` – local context.
+- `#history` – illustrated castle/valley timeline, research sources and local folklore.
 - `#about` – project intent.
 - `#report` – observation feedback form.
 
@@ -37,6 +37,14 @@ The selected prediction drives both the condition label and an illustrated water
 The approved high-water artwork (~158 KB) loads only when needed. Its river area is masked over the original painting, retaining the bank, swan, castle, snow and sky. The shader reuses that decoded image and blends it with the original at the same opacity. A packed mask keeps exposed stones still at low water and lets water flow over them when covered. Static/reduced-motion rendering uses the matching DOM layer. All effects share one draw pass, using at most eight textures with both snowy trees and high water. Provenance and the original prompts are in [the water asset notes](docs/assets/river-high.md).
 
 Future presets select a nearby future forecast timestamp and show its actual local time; missing or expired hours are unavailable. Freshness is recomputed every minute, including time elapsed since generation and the older of the river/tide readings. Stale data removes the classified outlook, disables future selections and shows a neutral illustration. Data refreshes every 15 minutes while visible; pending requests time out after 10 seconds. Fresh cached data can survive an update failure, with a delayed-update caption. Reload resets forecast selection and scene overrides.
+
+## Castle and valley history
+
+Open **History** in the main navigation, or use the [published History link](https://smcqueen2.github.io/stepping-stones/#history). The one-page view follows twelve milestones through the castle, Ewenni Priory, Merthyr Mawr and the stepping-stone crossing, using the archived Living landscape design as its starting point.
+
+Previous/Next and desktop date buttons slide between chapters; phones use a native milestone picker. Each chapter has source links and expandable context/date notes. The Hawise/common-land story is separately labelled undated folklore. Generated reconstructions carry artists' impression labels, while landscape/priory studies are distinguished from exact period reconstructions. Navigation is manual, with reduced-motion support and native dialog Close/Escape/back navigation.
+
+The canonical researched copy remains [timeline-content.json](docs/design/historical-timeline/timeline-content.json), with the [research brief](docs/design/historical-timeline/research-brief.md), exact prompts and compressed paintings alongside it. The application imports these existing assets directly. The History module/styles load only when the view is first opened, with retry if loading fails; no new package was added. History adds a lazy module of about 6.6 KB gzip and 1.3 KB CSS, plus five compressed paintings totalling about 503 KB on use.
 
 ## Hero animation
 
@@ -68,11 +76,11 @@ The grass also gains a blanket of settled snow, with irregular patches resting o
 
 The weather feature reuses OGL and adds no npm package. Compared with lighting alone, it adds about 2.6 KB compressed JavaScript and 0.25 KB CSS. tsParticles' [snow preset](https://particles.js.org/demos/recipes/snow) was considered; the existing renderer lets this illustration keep its single draw pass and existing pause/resume lifecycle.
 
-The single-scene implementation adds no npm package. Main JavaScript is about 9.7 KB gzip, lazy animation 11.9 KB and CSS 3.1 KB. Snow and high-water images are decoded on demand and reused as renderer textures.
+The single-scene implementation adds no npm package. With the lazy History entry point, main JavaScript is about 10.1 KB gzip, lazy animation 11.9 KB and initial CSS 3.4 KB. Snow and high-water images are decoded on demand and reused as renderer textures.
 
 ## Data pipeline
 
-Runtime is frontend-only, but live JSON is generated server-side in GitHub Actions every 15 minutes:
+Runtime is frontend-only, with live JSON generated server-side in GitHub Actions. The workflow requests a 15-minute schedule; actual scheduled starts can be delayed:
 
 - NRW river station: `4083` (`Ogmore at Bridgend`, parameter `110`)
 - NRW tide station primary: `72839` (`Newport`, parameter `10254`)

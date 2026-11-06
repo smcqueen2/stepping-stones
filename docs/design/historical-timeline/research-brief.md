@@ -1,6 +1,6 @@
 # Ogmore, its crossing and its landscape: historical research
 
-Research date: 24 October 2026. Prepared for a single-page, click-through historical timeline. This is design and editorial preparation; the history page has not been implemented in the app.
+Research date: 24 October 2026. Prepared for a single-page, click-through historical timeline. On 6 November the owner requested publishing this work; the researched content and paintings are now integrated into the app's History view. The original design alternatives remain archived alongside this brief.
 
 ## Approach
 
@@ -101,4 +101,4 @@ The two proposed layouts are **Living landscape** (closest to the existing immer
 
 The final self-contained preview was checked in the in-app browser at desktop width and at 360/320px. Date selection, Previous/Next, the native mobile milestone picker, chapter/source expansion, separately labelled folklore and design switching work. The last milestone disables Next; inactive chapters are inert and hidden from assistive technology. Slide transitions honour reduced motion. Caption layout grows with copy and the design text-size/width controls, rather than clipping longer text into a fixed-height box. Browser logs contained no warnings or errors.
 
-The preview embeds five compressed WebP paintings and the full sourced content, totalling about 703 KB. There is no external library or data request. `build-preview.mjs` rebuilds it from `timeline-template.html`, `timeline-content.json` and the saved assets. These are design proposals; the application code has not received a history page yet.
+The archived preview embeds five compressed WebP paintings and the full sourced content, totalling about 703 KB. There is no external library or data request. `build-preview.mjs` rebuilds that review from `timeline-template.html`, `timeline-content.json` and the saved assets. The application now imports the same canonical content and paintings in a separate lazy History module; it uses Living landscape with desktop date buttons, a mobile milestone picker, source notes and the folklore companion. The archived previews preserve the earlier two-layout comparison.

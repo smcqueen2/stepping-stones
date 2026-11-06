@@ -6,6 +6,8 @@ On 6 November 2026, resumption checks found the prepared archive was still untra
 
 Subsequently on 6 November: archive `a7f08fc` was verified on origin/main. The user then requested the landing implementation/release and phone access. That application commit now includes the previously local source and first mobile improvements, with all 46 tests/TypeScript/build passing. The local/uncommitted descriptions below retain the original checkpoint history. Data and History design choices remain open.
 
+Later on 6 November: landing/mobile work was released as `2865afe`, and the owner then requested publishing the researched History work for inspection. Living landscape is now integrated in `#history`, reusing the canonical content and five paintings, with lazy loading, sources, date qualifications, labelled folklore and mobile navigation. All 51 tests/TypeScript/build pass. Data remains a design proposal; archived status descriptions below are historical.
+
 - Landing: fixed single scene and immediate prediction overlays accepted; original scroll/pan alternatives superseded. The implementation is local and remains uncommitted separately from this documentation checkpoint.
 - Data: River journal / Conditions compared awaiting feedback; dated real seven-day study, source distinctions, templates and scope saved.
 - History: Living landscape / Painted chapters awaiting feedback; twelve milestones, primary-source research, date qualifications, separately labelled folklore, matching watercolours and exact prompts saved.

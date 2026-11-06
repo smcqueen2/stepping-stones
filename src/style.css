@@ -129,7 +129,12 @@ button:focus-visible, a:focus-visible, summary:focus-visible, input:focus-visibl
   .dialog-heading button { min-height: 44px; flex-shrink: 0; }
   .form-field input, .form-field textarea { font-size: 16px; }
 }
-@media (max-width: 370px) { .section-nav { max-width: 100px; flex-wrap: wrap; gap: 4px 12px; } }
+@media (max-width: 370px) {
+  .header-inner { padding-inline: max(16px, env(safe-area-inset-left)) max(16px, env(safe-area-inset-right)); gap: 8px; }
+  .brand { font-size: 24px; }
+  .brand span { letter-spacing: 1.8px; }
+  .section-nav { flex-wrap: nowrap; gap: 6px; font-size: 11px; }
+}
 @media (pointer: coarse) { button, .section-nav a, summary { min-height: 44px; } .section-nav a { display: inline-flex; align-items: center; } }
 @media (prefers-reduced-motion: reduce) {
   .river-flow { display: none; }
