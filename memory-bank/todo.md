@@ -2,6 +2,8 @@
 
 Recorded from user feedback on 2026-10-22. Updated 2026-11-06.
 
+- [x] Add visible dots at all five observation-slider positions. CSS-only track markers retain native drag/keyboard/44px input behaviour; five existing reporting/UI checks, production build and desktop/320px browser review pass. Owner explicitly authorised commit/push.
+
 - [x] Show all twelve History dates beside their dots on the compact timeline and remove the single bottom date. Preserve active tracking/picker/desktop navigation; portrait and short landscape fit checked, with 9 History tests, TypeScript/build passing. Owner explicitly authorised commit/push on 6 November.
 
 - [x] Add a watercolour moon and softly twinkling stars to the night sky: transparent on-demand crescent, varied slow CSS stars behind silhouettes, weather/daylight fade, phone placement and visibility/reduced-motion handling. 81-test full suite plus final focused lighting checks, TypeScript/build and browser previews pass. Owner authorised commit/push together with the water metrics.

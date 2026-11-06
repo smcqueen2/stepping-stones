@@ -132,9 +132,19 @@ button:focus-visible, a:focus-visible, summary:focus-visible, input:focus-visibl
 #report-intro { font-size: 14px; color: var(--muted); margin: 0 0 24px; }
 .condition-choice { padding: 20px 18px; background: var(--card); border: 1px solid var(--card-border); border-radius: 7px; }
 .condition-choice label { display: block; font-size: 13px; font-weight: 500; }
-#report-condition { display: block; appearance: none; width: 100%; height: 44px; margin: 12px 0 0; background: transparent; cursor: pointer; }
-#report-condition::-webkit-slider-runnable-track { height: 8px; border-radius: 8px; background: linear-gradient(90deg, #486f82, #91afb2 48%, #659077); }
-#report-condition::-moz-range-track { height: 8px; border-radius: 8px; background: linear-gradient(90deg, #486f82, #91afb2 48%, #659077); }
+#report-condition {
+  /* Five stop centres follow the 30px thumb's travel, including its 15px end insets. */
+  --condition-track:
+    radial-gradient(circle at 15px 50%, var(--ink) 0 2px, var(--card) 2.5px 3.5px, transparent 4px),
+    radial-gradient(circle at calc(25% + 7.5px) 50%, var(--ink) 0 2px, var(--card) 2.5px 3.5px, transparent 4px),
+    radial-gradient(circle at 50% 50%, var(--ink) 0 2px, var(--card) 2.5px 3.5px, transparent 4px),
+    radial-gradient(circle at calc(75% - 7.5px) 50%, var(--ink) 0 2px, var(--card) 2.5px 3.5px, transparent 4px),
+    radial-gradient(circle at calc(100% - 15px) 50%, var(--ink) 0 2px, var(--card) 2.5px 3.5px, transparent 4px),
+    linear-gradient(90deg, #486f82, #91afb2 48%, #659077);
+  display: block; appearance: none; width: 100%; height: 44px; margin: 12px 0 0; background: transparent; cursor: pointer;
+}
+#report-condition::-webkit-slider-runnable-track { height: 8px; border-radius: 8px; background: var(--condition-track); }
+#report-condition::-moz-range-track { height: 8px; border-radius: 8px; background: var(--condition-track); }
 #report-condition::-webkit-slider-thumb { appearance: none; width: 30px; height: 30px; margin-top: -11px; border-radius: 50%; border: 3px solid var(--card); background: var(--ink); box-shadow: 0 0 0 1px var(--ink), 0 2px 6px #243a3522; }
 #report-condition::-moz-range-thumb { width: 24px; height: 24px; border-radius: 50%; border: 3px solid var(--card); background: var(--ink); box-shadow: 0 0 0 1px var(--ink); }
 .condition-endpoints { display: flex; justify-content: space-between; gap: 16px; font-size: 11px; color: var(--muted); }

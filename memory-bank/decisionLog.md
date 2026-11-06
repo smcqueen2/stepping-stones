@@ -1,5 +1,9 @@
 # Decision Log
 
+## 2026-11-06 - Mark the five condition-slider positions
+- Owner requested visible dots for each option on the observation slider and commit/push when ready. Paint five contrasting dots into the existing track background, aligned to the native 30px thumb's travel and 15px end insets, for both WebKit and Firefox track styles.
+- Keep the native range input, 44px input height, focus/drag/keyboard behaviour and preview-only reporting unchanged. No extra elements, event handlers, assets, package or backend work.
+
 ## 2026-11-06 - Label every compact History timeline marker
 - Owner prefers every date beside its dot rather than one current date below the timeline, and explicitly requested commit/push. Render all twelve short dates alongside the compact markers, retaining current/past styling and the larger native jump picker. Desktop date buttons remain unchanged.
 - Widen the compact rail and reserve story space for it; reduce caption padding on the narrowest screens to retain readable text. Keep all dates within portrait/short-landscape viewport height. The standalone bottom date label is removed; historical copy, art and scroll tracking are unchanged.

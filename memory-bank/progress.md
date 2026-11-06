@@ -1,5 +1,11 @@
 # Progress
 
+### Condition-slider option dots - 2026-11-06
+
+- Owner requested visible dots for all five slider options and commit/push. Added CSS track markers at the exact native thumb positions, sharing the painted track background across WebKit/Firefox styles; the selected thumb covers its marker. Native input, semantics, 44px height, touch/drag/keyboard and frontend-only preview behaviour remain unchanged.
+- Five existing reporting/UI contract tests and production build pass. Browser checked aligned desktop dots, actual drag to the second position, Home/End/arrow controls and 320x568 layout with no overflow. No console warnings/errors; viewport reset and report modal retained for review. No new test, JavaScript, asset or dependency.
+- Proof parent `condition-slider-dots-desktop-2026-11-06.png` and `condition-slider-dots-mobile-2026-11-06.png`. Initial CSS 4.79 KB gzip; application behaviour unchanged. Owner authorised commit/push; remote/deployment proof belongs to the release record. Private active context/generated live/forecast JSON stay separate. Reporting backend hold remains in force.
+
 ### Dates beside every History timeline dot - 2026-11-06
 
 - Owner requested dates beside all vertical timeline dots instead of the compact view's single date at the bottom, with commit/push when ready. Compact markers now each display the milestone's existing short date, with active/past styling; removed the separate rotated bottom label. Desktop clickable dates, native picker and scroll tracking remain.

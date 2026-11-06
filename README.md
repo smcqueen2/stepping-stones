@@ -102,7 +102,7 @@ The grass also gains a blanket of settled snow, with irregular patches resting o
 
 The weather feature reuses OGL and adds no npm package. Compared with lighting alone, it adds about 2.6 KB compressed JavaScript and 0.25 KB CSS. tsParticles' [snow preset](https://particles.js.org/demos/recipes/snow) was considered; the existing renderer lets this illustration keep its single draw pass and existing pause/resume lifecycle.
 
-The single-scene implementation, page navigation, condition-report preview, water-reading overlay and night-sky decoration add no npm package. Main JavaScript is about 11.3 KB gzip, lazy animation 12.0 KB and initial CSS 4.7 KB. Snow and high-water images are decoded on demand and reused as renderer textures; the moon uses its own small on-demand image element.
+The single-scene implementation, page navigation, condition-report preview, water-reading overlay and night-sky decoration add no npm package. Main JavaScript is about 11.3 KB gzip, lazy animation 12.0 KB and initial CSS 4.8 KB. Snow and high-water images are decoded on demand and reused as renderer textures; the moon uses its own small on-demand image element.
 
 ## Data pipeline
 
@@ -177,7 +177,7 @@ npm test
 
 **Interface preview only.** On 6 November the owner requested quick anonymous reporting, then explicitly asked not to prepare any backend yet. No backend, database, account setup or production submission endpoint is included in this change.
 
-Use **Seen the stones? Share conditions** on the main crossing overlay to open a small native modal. A touch/keyboard slider has five positions from completely submerged/unpassable to clear and passable, each with a short description. Moving the slider or tapping its current position makes a deliberate choice. **Preview report** confirms that selection locally and explicitly says nothing has been sent. There are no sign-in, date/time, checkbox or notes fields. Close/Escape and existing `#report` links remain supported; the header's separate Report link is removed.
+Use **Seen the stones? Share conditions** on the main crossing overlay to open a small native modal. A touch/keyboard slider has five visibly marked positions from completely submerged/unpassable to clear and passable, each with a short description. The track dots align with the thumb's five stopping positions. Moving the slider or tapping its current position makes a deliberate choice. **Preview report** confirms that selection locally and explicitly says nothing has been sent. There are no sign-in, date/time, checkbox or notes fields. Close/Escape and existing `#report` links remain supported; the header's separate Report link is removed.
 
 The landing overlay reserves a line for **reports in the last hour**, marked coming soon. There are no simulated counts, requests, cookies or browser-storage writes for reporting. Slider choices do not change the model's prediction or scene. The old inactive FormSubmit placeholder and its form/configuration code were removed.
 
