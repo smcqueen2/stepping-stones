@@ -1,0 +1,30 @@
+[
+  {
+    "key": "early-fort",
+    "originalFile": "exec-89b27813-85a8-4687-951b-26c53d3ad64f.png",
+    "preview": "assets/early-fort.webp",
+    "tool": "built-in image_gen",
+    "originalStorage": "Local generated-image master; compressed preview archived here."
+  },
+  {
+    "key": "stone-castle",
+    "originalFile": "exec-720b9472-c261-4836-b84a-fd5b187dab1d.png",
+    "preview": "assets/stone-castle.webp",
+    "tool": "built-in image_gen",
+    "originalStorage": "Local generated-image master; compressed preview archived here."
+  },
+  {
+    "key": "priory",
+    "originalFile": "exec-ca922ed5-3f18-47ab-bb40-2a07d22293db.png",
+    "preview": "assets/priory.webp",
+    "tool": "built-in image_gen",
+    "originalStorage": "Local generated-image master; compressed preview archived here."
+  },
+  {
+    "key": "dunes",
+    "originalFile": "exec-a011aed4-6d2a-4798-b772-0f2dedbb211c.png",
+    "preview": "assets/dunes.webp",
+    "tool": "built-in image_gen",
+    "originalStorage": "Local generated-image master; compressed preview archived here."
+  }
+]

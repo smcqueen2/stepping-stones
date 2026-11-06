@@ -1,0 +1,234 @@
+<div id="ogmore-data-concepts">
+  <div class="viz-carousel" aria-label="Ogmore data page designs">
+    <section class="og-stage" data-variant="River journal" data-layout="journal" aria-label="River journal design">
+      <header class="og-masthead"><span class="og-brand">Ogmore<br><small>STEPPING STONES</small></span><nav aria-label="Site navigation"><span>The crossing</span><span aria-current="page">Data</span></nav></header>
+      <main class="og-content">
+        <div class="og-intro"><p class="og-eyebrow">THE RIVER RECORD</p><h2>Following the Ogmore.</h2><p>Water levels, the tide and recent rainfall.</p></div>
+        <div class="og-toolbar"><div class="og-periods" role="group" aria-label="History period"><button type="button" data-hours="24" aria-pressed="false">24 hours</button><button type="button" data-hours="48" aria-pressed="false">48 hours</button><button type="button" data-hours="168" aria-pressed="true">7 days</button></div><span class="og-snapshot"></span></div>
+        <div class="og-summary" aria-label="River summary"></div>
+        <section class="og-chart og-lead-chart" data-series="river" aria-label="Historical river levels"><div class="og-chart-heading"><div><h3>River level</h3><p>Observed · Ogmore at Bridgend · metres at the gauge</p></div><span class="og-latest"></span></div><div class="og-canvas"></div></section>
+        <div class="og-context-charts">
+          <section class="og-chart" data-series="tide" aria-label="Historical tide levels"><div class="og-chart-heading"><div><h3>The tide</h3><p>Observed · Newport regional reference · mAOD</p></div><span class="og-latest"></span></div><div class="og-canvas"></div></section>
+          <section class="og-chart" data-series="rain" aria-label="Recent modelled precipitation"><div class="og-chart-heading"><div><h3>Precipitation</h3><p>Modelled · Ogmore area · mm in the preceding hour</p></div><span class="og-latest"></span></div><div class="og-canvas"></div></section>
+        </div>
+        <section class="og-inspector" aria-label="Inspect historical readings"><label>Inspect the record <strong class="og-selected-time"></strong><input class="og-time-input" type="range" min="0" max="1" value="1" aria-label="Choose a historical reading"></label><div class="og-selected-values" aria-live="polite"></div></section>
+        <details class="og-readings" open><summary>Readings in this view</summary><div class="og-table-wrap"><table><caption>Nearest source readings; a dash means no reading within 20 minutes. Rain uses the hour containing the selected time.</caption><thead><tr><th scope="col">Time (BST)</th><th scope="col">River<br>m</th><th scope="col">Tide<br>mAOD</th><th scope="col">Precipitation<br>mm/h</th></tr></thead><tbody></tbody></table></div></details>
+        <details class="og-sources"><summary>Sources and what the readings mean</summary><p>River and tide: Natural Resources Wales, unverified telemetry. The Bridgend gauge is upstream; Newport is a regional tide reference. Their metres use different reference levels and do not give water depth at the stones. Gaps in the record are left visible.</p><p>Precipitation: Open-Meteo archived weather-model output, not a local rain-gauge measurement. Recent values can be revised.</p><p><a href="https://naturalresourceswales.gov.uk/evidence-and-data/maps/river-levels-online-help/?lang=en" target="_blank" rel="noopener">NRW data guide</a> · <a href="https://open-meteo.com/en/docs" target="_blank" rel="noopener">Open-Meteo</a></p></details>
+      </main>
+      <footer class="og-foot">Design preview · dated data snapshot · crossing conditions remain on the main scene.</footer>
+    </section>
+    <section class="og-stage" data-variant="Conditions compared" data-layout="compare" aria-label="Conditions compared design" hidden>
+      <header class="og-masthead"><span class="og-brand">Ogmore<br><small>STEPPING STONES</small></span><nav aria-label="Site navigation"><span>The crossing</span><span aria-current="page">Data</span></nav></header>
+      <main class="og-content">
+        <div class="og-intro"><p class="og-eyebrow">THE DATA EXPLORER</p><h2>One river. Three influences.</h2><p>Follow river, tide and rainfall together through time.</p></div>
+        <div class="og-toolbar"><div class="og-periods" role="group" aria-label="History period"><button type="button" data-hours="24" aria-pressed="false">24 hours</button><button type="button" data-hours="48" aria-pressed="false">48 hours</button><button type="button" data-hours="168" aria-pressed="true">7 days</button></div><span class="og-snapshot"></span></div>
+        <section class="og-inspector" aria-label="Inspect the same time across all charts"><label>Inspect a moment <strong class="og-selected-time"></strong><input class="og-time-input" type="range" min="0" max="1" value="1" aria-label="Choose a historical reading"></label><div class="og-selected-values" aria-live="polite"></div></section>
+        <section class="og-chart" data-series="river" aria-label="River level comparison"><div class="og-chart-heading"><div><h3>River level</h3><p>Observed · Ogmore at Bridgend · metres at the gauge</p></div><span class="og-latest"></span></div><div class="og-canvas"></div></section>
+        <section class="og-chart" data-series="tide" aria-label="Tide comparison"><div class="og-chart-heading"><div><h3>Tide level</h3><p>Observed · Newport regional reference · mAOD</p></div><span class="og-latest"></span></div><div class="og-canvas"></div></section>
+        <section class="og-chart" data-series="rain" aria-label="Modelled precipitation comparison"><div class="og-chart-heading"><div><h3>Precipitation</h3><p>Modelled · Ogmore area · mm in the preceding hour</p></div><span class="og-latest"></span></div><div class="og-canvas"></div></section>
+        <details class="og-readings" open><summary>Readings in this view</summary><div class="og-table-wrap"><table><caption>Nearest source readings; a dash means no reading within 20 minutes. Rain uses the hour containing the selected time.</caption><thead><tr><th scope="col">Time (BST)</th><th scope="col">River<br>m</th><th scope="col">Tide<br>mAOD</th><th scope="col">Precipitation<br>mm/h</th></tr></thead><tbody></tbody></table></div></details>
+        <details class="og-sources"><summary>Sources and what the readings mean</summary><p>River and tide: Natural Resources Wales, unverified telemetry. The Bridgend gauge is upstream; Newport is a regional tide reference. Their metres use different reference levels and do not give water depth at the stones. Gaps in the record are left visible.</p><p>Precipitation: Open-Meteo archived weather-model output, not a local rain-gauge measurement. Recent values can be revised.</p><p><a href="https://naturalresourceswales.gov.uk/evidence-and-data/maps/river-levels-online-help/?lang=en" target="_blank" rel="noopener">NRW data guide</a> · <a href="https://open-meteo.com/en/docs" target="_blank" rel="noopener">Open-Meteo</a></p></details>
+      </main>
+      <footer class="og-foot">Design preview · dated data snapshot · separate scales, shared time axis.</footer>
+    </section>
+  </div>
+</div>
+<style>
+  #ogmore-data-concepts { color-scheme: light dark; --og-paper:light-dark(#f5f1e7,#202822); --og-ink:light-dark(#253c32,#e5eade); --og-muted:light-dark(#5b695f,#b3bfb2); --og-rule:light-dark(#cfd4c6,#465648); --og-river:light-dark(#266450,#91c8a7); --og-tide:light-dark(#677da0,#9fb5d9); --og-rain:light-dark(#a16c38,#d1ad70); --og-selected:light-dark(#e1e8db,#364b39); --og-guide:light-dark(#9aa99a,#788f79); font-family:Arial,sans-serif; color:var(--og-ink); }
+  #ogmore-data-concepts * { box-sizing:border-box; }
+  #ogmore-data-concepts [hidden] { display:none !important; }
+  #ogmore-data-concepts .og-stage { background:var(--og-paper); min-height:1340px; padding:0 0 20px; }
+  #ogmore-data-concepts .og-masthead { padding:26px 36px 22px; display:flex; gap:24px; align-items:center; justify-content:space-between; border-bottom:1px solid var(--og-rule); }
+  #ogmore-data-concepts .og-brand { font:26px/1 Georgia,serif; letter-spacing:-.5px; }
+  #ogmore-data-concepts .og-brand small { font:11px/1.5 Arial,sans-serif; letter-spacing:2px; }
+  #ogmore-data-concepts nav { display:flex; flex-wrap:wrap; gap:22px; font-size:13px; color:var(--og-muted); padding-right:72px; }
+  #ogmore-data-concepts nav [aria-current] { color:var(--og-ink); text-decoration:underline; text-underline-offset:8px; }
+  #ogmore-data-concepts .og-content { padding:32px 36px 0; }
+  #ogmore-data-concepts .og-eyebrow { font-size:11px; letter-spacing:2px; margin:0 0 9px; color:var(--og-muted); }
+  #ogmore-data-concepts h2 { font:400 clamp(27px,4.1vw,39px)/1.15 Georgia,serif; margin:0 0 10px; letter-spacing:-.7px; }
+  #ogmore-data-concepts .og-intro > p:last-child { margin:0; color:var(--og-muted); font-size:14px; line-height:1.5; }
+  #ogmore-data-concepts .og-toolbar { display:flex; align-items:center; gap:12px; justify-content:space-between; flex-wrap:wrap; padding:24px 0; }
+  #ogmore-data-concepts .og-periods { display:flex; gap:4px; flex-wrap:wrap; }
+  #ogmore-data-concepts button { font:13px Arial,sans-serif; color:var(--og-ink); background:transparent; border:1px solid var(--og-rule); padding:9px 13px; border-radius:3px; min-height:38px; }
+  #ogmore-data-concepts button[aria-pressed="true"] { background:var(--og-ink); color:var(--og-paper); border-color:var(--og-ink); }
+  #ogmore-data-concepts .og-snapshot { color:var(--og-muted); font-size:11px; max-width:190px; line-height:1.6; }
+  #ogmore-data-concepts .og-summary { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:20px; border-top:1px solid var(--og-rule); padding:20px 0; }
+  #ogmore-data-concepts .og-summary p { margin:0 0 6px; font-size:12px; color:var(--og-muted); }
+  #ogmore-data-concepts .og-summary strong { font:28px/1.1 Georgia,serif; font-variant-numeric:tabular-nums; }
+  #ogmore-data-concepts .og-summary small { display:block; margin-top:5px; font-size:11px; color:var(--og-muted); }
+  #ogmore-data-concepts .og-chart { padding:18px 0 10px; border-top:1px solid var(--og-rule); min-width:0; }
+  #ogmore-data-concepts .og-chart-heading { display:flex; justify-content:space-between; align-items:flex-start; gap:12px; margin-bottom:12px; }
+  #ogmore-data-concepts h3 { font:20px/1.2 Georgia,serif; margin:0 0 5px; }
+  #ogmore-data-concepts .og-chart-heading p { margin:0; font-size:11px; line-height:1.5; color:var(--og-muted); }
+  #ogmore-data-concepts .og-latest { flex-shrink:0; color:var(--og-muted); font-size:11px; text-align:right; line-height:1.6; }
+  #ogmore-data-concepts .og-latest b { color:var(--og-ink); font-size:14px; font-weight:500; display:block; font-variant-numeric:tabular-nums; }
+  #ogmore-data-concepts .og-context-charts { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:24px; }
+  #ogmore-data-concepts .og-canvas { width:100%; min-height:160px; }
+  #ogmore-data-concepts .og-canvas svg { display:block; width:100%; overflow:visible; }
+  #ogmore-data-concepts .og-canvas text { font:11px Arial,sans-serif; fill:var(--og-ink); }
+  #ogmore-data-concepts .og-canvas .domain { stroke:var(--og-rule); }
+  #ogmore-data-concepts .og-canvas .tick line { stroke:var(--og-rule); }
+  #ogmore-data-concepts .og-inspector { padding:20px 0; border-top:1px solid var(--og-rule); }
+  #ogmore-data-concepts .og-inspector label { display:block; font-size:12px; line-height:1.6; }
+  #ogmore-data-concepts .og-selected-time { font-weight:500; float:right; font-variant-numeric:tabular-nums; }
+  #ogmore-data-concepts .og-time-input { width:100%; accent-color:var(--og-river); margin:14px 0 8px; min-height:28px; }
+  #ogmore-data-concepts .og-selected-values { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:16px; font-size:12px; line-height:1.7; }
+  #ogmore-data-concepts .og-selected-values span { color:var(--og-muted); }
+  #ogmore-data-concepts .og-selected-values b { display:block; font-size:16px; font-weight:500; font-variant-numeric:tabular-nums; }
+  #ogmore-data-concepts .og-selected-values small { display:block; color:var(--og-muted); font-size:11px; }
+  #ogmore-data-concepts .og-readings, #ogmore-data-concepts .og-sources { padding:17px 0; border-top:1px solid var(--og-rule); }
+  #ogmore-data-concepts summary { font-size:13px; }
+  #ogmore-data-concepts .og-table-wrap { overflow-x:auto; }
+  #ogmore-data-concepts table { width:100%; border-collapse:collapse; font-size:12px; font-variant-numeric:tabular-nums; }
+  #ogmore-data-concepts caption { text-align:left; color:var(--og-muted); font-size:11px; line-height:1.6; padding:10px 0; }
+  #ogmore-data-concepts th, #ogmore-data-concepts td { padding:9px 4px; border-bottom:1px solid var(--og-rule); text-align:right; font-weight:400; }
+  #ogmore-data-concepts th { color:var(--og-muted); font-size:11px; line-height:1.5; }
+  #ogmore-data-concepts th:first-child, #ogmore-data-concepts td:first-child { text-align:left; }
+  #ogmore-data-concepts .og-sources p { font-size:12px; line-height:1.65; color:var(--og-muted); max-width:74ch; }
+  #ogmore-data-concepts a { color:var(--og-ink); text-underline-offset:3px; }
+  #ogmore-data-concepts .og-foot { margin:10px 36px 0; padding-top:16px; border-top:1px solid var(--og-rule); font-size:11px; line-height:1.6; color:var(--og-muted); }
+  #ogmore-data-concepts .og-tight .og-content { padding-top:20px; }
+  #ogmore-data-concepts .og-tight .og-chart { padding-top:12px; }
+  @media (max-width:600px) {
+    #ogmore-data-concepts .og-stage { min-height:1730px; }
+    #ogmore-data-concepts .og-masthead { padding:24px 18px 18px; align-items:flex-start; }
+    #ogmore-data-concepts nav { padding-right:0; gap:14px; padding-top:5px; font-size:12px; }
+    #ogmore-data-concepts .og-content { padding:26px 18px 0; }
+    #ogmore-data-concepts .og-context-charts { grid-template-columns:1fr; gap:0; }
+    #ogmore-data-concepts .og-summary { gap:12px; }
+    #ogmore-data-concepts .og-summary p { min-height:36px; }
+    #ogmore-data-concepts .og-summary strong { font-size:clamp(20px,6vw,24px); white-space:nowrap; }
+    #ogmore-data-concepts .og-snapshot { max-width:none; }
+    #ogmore-data-concepts .og-chart-heading { gap:8px; }
+    #ogmore-data-concepts .og-latest { max-width:90px; }
+    #ogmore-data-concepts .og-inspector label { display:flex; flex-wrap:wrap; justify-content:space-between; gap:5px; }
+    #ogmore-data-concepts .og-selected-time { float:none; }
+    #ogmore-data-concepts .og-time-input { margin:8px 0; }
+    #ogmore-data-concepts .og-selected-values { gap:8px; }
+    #ogmore-data-concepts .og-selected-values b { font-size:14px; }
+    #ogmore-data-concepts .og-foot { margin-left:18px; margin-right:18px; }
+  }
+  @media (pointer:coarse) { #ogmore-data-concepts button, #ogmore-data-concepts summary, #ogmore-data-concepts .og-time-input { min-height:44px; } }
+</style>
+<script type="application/json" id="ogmore-history-study">HISTORY_STUDY_JSON</script>
+<script src="https://cdn.jsdelivr.net/npm/d3@7.9.0/dist/d3.min.js"></script>
+<script>
+(() => {
+  const root = document.getElementById('ogmore-data-concepts');
+  const snapshot = JSON.parse(document.getElementById('ogmore-history-study').textContent);
+  const end = new Date(snapshot.fetchedAt);
+  const clock = new Intl.DateTimeFormat('en-GB', { timeZone:'Europe/London', day:'numeric', month:'short', hour:'2-digit', minute:'2-digit' });
+  const shortClock = new Intl.DateTimeFormat('en-GB', { timeZone:'Europe/London', hour:'2-digit', minute:'2-digit' });
+  const dayClock = new Intl.DateTimeFormat('en-GB', { timeZone:'Europe/London', day:'numeric', month:'short' });
+  const source = Object.fromEntries(snapshot.sources.map(s => [s.role, s.points.map(p => ({ time:new Date(p.time), value:p.value }))]));
+  source.rain = snapshot.rain.map(p => ({ time:new Date(p.time), value:p.value }));
+  const meta = { river:{label:'River',unit:'m',color:'var(--og-river)'}, tide:{label:'Tide',unit:'mAOD',color:'var(--og-tide)'}, rain:{label:'Precipitation',unit:'mm/h',color:'var(--og-rain)'} };
+  const states = [];
+  const fmt = (p, kind) => p ? p.value.toFixed(kind === 'rain' ? 1 : 3) : '—';
+  const nearest = (values, time, gap=20*60000) => {
+    if (!values.length) return null;
+    let best = values[0];
+    for (const p of values) if (Math.abs(p.time-time) < Math.abs(best.time-time)) best=p;
+    return Math.abs(best.time-time) <= gap ? best : null;
+  };
+  const rainHour = (time) => source.rain.find(p => p.time >= time && p.time-time < 3600000) || null;
+  const sourcesAt = (time) => ({ river:nearest(source.river,time), tide:nearest(source.tide,time), rain:rainHour(time) });
+  const slice = (kind, hours) => source[kind].filter(p => p.time >= end-hours*3600000 && p.time <= end);
+  const commonEnd = new Date(Math.min(...Object.values(source).map(values=>+values.at(-1).time)));
+  const saved = () => window.openai?.widgetState?.modelContent?.dataPage || {};
+  const remember = () => window.openai?.setWidgetState?.({ modelContent:{dataPage:Object.fromEntries(states.map(s => [s.layout,{hours:s.hours,selectedTime:s.values[s.index]?.time.toISOString()}]))}, privateContent:null })?.catch(() => {});
+  if (!globalThis.d3) {
+    root.querySelectorAll('.og-canvas').forEach(el => el.textContent='Charts could not load. The design uses a dated snapshot, not live data.');
+    return;
+  }
+  function draw(state, panel) {
+    const kind=panel.dataset.series, el=panel.querySelector('.og-canvas'), width=el.clientWidth;
+    if (width<120) return;
+    const height=state.layout==='journal' && kind==='river' ? 250 : 180;
+    const m={left:49,right:17,top:18,bottom:state.hours===48?56:44};
+    const values=slice(kind,state.hours), selected=state.values[state.index]?.time;
+    const svg=d3.select(el).selectAll('svg').data([null]).join('svg').attr('viewBox',`0 0 ${width} ${height}`).attr('height',height).attr('role','img').attr('aria-label',`${meta[kind].label} over ${state.hours===168?'seven days':state.hours+' hours'}. Use the reading slider to inspect values.`);
+    const oldPath=svg.select('path[data-series-path]').node();
+    const animate=oldPath && el.dataset.lastHours!==String(state.hours) && oldPath.dataset.hasGaps!=='true' && !matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const samplePath=node=>{ const length=node.getTotalLength(); return Array.from({length:240},(_,i)=>{ const p=node.getPointAtLength(length*i/239); return [p.x,p.y]; }); };
+    const oldSamples=animate?samplePath(oldPath):null;
+    svg.selectAll('*').remove();
+    svg.append('title').text(`${meta[kind].label}: ${values.length} source readings`);
+    const x=d3.scaleUtc().domain([new Date(end-state.hours*3600000),end]).range([m.left,width-m.right]);
+    const ext=d3.extent(values,p=>p.value), padding=((ext[1]-ext[0]) || .2)*.12;
+    const y=d3.scaleLinear().domain(kind==='rain'?[0,(ext[1]||1)*1.15]:[ext[0]-padding,ext[1]+padding]).nice(4).range([height-m.bottom,m.top]);
+    const ticks=width<400?3:5;
+    const xAxis=svg.append('g').attr('transform',`translate(0,${height-m.bottom})`).call(d3.axisBottom(x).ticks(ticks).tickSize(4).tickFormat(t=>state.hours>=168?dayClock.format(t):shortClock.format(t)));
+    xAxis.selectAll('text').attr('text-anchor',t=>x(t)>width-m.right-40?'end':'middle');
+    if(state.hours===48) xAxis.selectAll('.tick text').text(null).each(function(t){ d3.select(this).append('tspan').attr('x',0).text(dayClock.format(t)); d3.select(this).append('tspan').attr('x',0).attr('dy','1.15em').text(shortClock.format(t)); });
+    let lastLabelRight=-Infinity;
+    xAxis.selectAll('.tick text').each(function(){ const box=this.getBoundingClientRect(); if(box.left<lastLabelRight+4) this.setAttribute('visibility','hidden'); else lastLabelRight=box.right; });
+    svg.append('g').attr('transform',`translate(${m.left},0)`).call(d3.axisLeft(y).ticks(4).tickSize(4));
+    svg.append('text').attr('class','axis-title').attr('data-axis','y').attr('x',2).attr('y',11).text(meta[kind].unit);
+    svg.append('text').attr('class','axis-title').attr('data-axis','x').attr('x',(m.left+width-m.right)/2).attr('y',height-3).attr('text-anchor','middle').text('Time · Europe/London (BST)');
+    svg.append('g').selectAll('line').data(y.ticks(4)).join('line').attr('x1',m.left).attr('x2',width-m.right).attr('y1',p=>y(p)).attr('y2',p=>y(p)).attr('stroke','var(--og-rule)').attr('stroke-opacity',.5);
+    if (kind==='rain') {
+      const barWidth=Math.max(1,Math.min(14,(width-m.left-m.right)/state.hours*.7));
+      svg.append('g').selectAll('rect').data(values).join('rect').attr('x',p=>Math.max(m.left,x(p.time)-barWidth)).attr('y',p=>y(p.value)).attr('width',barWidth).attr('height',p=>y(0)-y(p.value)).attr('fill',meta[kind].color).attr('opacity',.75);
+    } else {
+      const continuous=[];
+      values.forEach((p,i)=>{ if(i && p.time-values[i-1].time>45*60000) continuous.push({time:new Date((+p.time + +values[i-1].time)/2),value:NaN}); continuous.push(p); });
+      const line=d3.line().defined(p=>Number.isFinite(p.value)).x(p=>x(p.time)).y(p=>y(p.value));
+      const hasGaps=continuous.some(p=>!Number.isFinite(p.value));
+      const seriesPath=svg.append('path').datum(continuous).attr('data-series-path','').attr('data-has-gaps',String(hasGaps)).attr('d',line).attr('fill','none').attr('stroke',meta[kind].color).attr('stroke-width',2).attr('stroke-dasharray',kind==='tide'?'5 3':null);
+      if(oldSamples && !hasGaps) {
+        const target=line(continuous), interpolate=d3.interpolateArray(oldSamples,samplePath(seriesPath.node())), pointsLine=d3.line();
+        seriesPath.transition().duration(220).attrTween('d',()=>t=>pointsLine(interpolate(t))).on('end',()=>seriesPath.attr('d',target));
+      }
+    }
+    el.dataset.lastHours=String(state.hours);
+    if (selected) {
+      svg.append('line').attr('x1',x(selected)).attr('x2',x(selected)).attr('y1',m.top).attr('y2',height-m.bottom).attr('stroke','var(--og-guide)').attr('stroke-dasharray','2 3');
+      const point=kind==='rain'?rainHour(selected):nearest(values,selected);
+      if (point && point.time>=x.domain()[0] && point.time<=end) svg.append('circle').attr('cx',x(point.time)).attr('cy',y(point.value)).attr('r',4).attr('fill',meta[kind].color).attr('data-tooltip',`${meta[kind].label} · ${clock.format(point.time)} BST · ${fmt(point,kind)} ${meta[kind].unit}`);
+    }
+    const newest=source[kind].at(-1);
+    panel.querySelector('.og-latest').innerHTML=`<b>${fmt(newest,kind)} ${meta[kind].unit}</b>${shortClock.format(newest.time)} BST`;
+  }
+  function render(state) {
+    state.values=slice('river',state.hours);
+    state.index=Math.max(0,Math.min(state.index,state.values.length-1));
+    const selected=state.values[state.index], points=sourcesAt(selected.time);
+    state.element.querySelectorAll('[data-hours]').forEach(b=>b.setAttribute('aria-pressed',String(+b.dataset.hours===state.hours)));
+    state.element.querySelector('.og-snapshot').textContent=`Snapshot · ${clock.format(end)} BST`;
+    const slider=state.element.querySelector('.og-time-input'); slider.max=state.values.length-1; slider.value=state.index; slider.setAttribute('aria-valuetext',clock.format(selected.time)+' BST');
+    state.element.querySelector('.og-selected-time').textContent=clock.format(selected.time)+' BST';
+    state.element.querySelector('.og-selected-values').innerHTML=Object.entries(meta).map(([kind,m])=>`<div><span>${m.label}</span><b>${fmt(points[kind],kind)} ${m.unit}</b><small>${points[kind]?shortClock.format(points[kind].time)+' BST'+(kind==='rain'?' · hour ending':''):'No nearby reading'}</small></div>`).join('');
+    const summary=state.element.querySelector('.og-summary');
+    if (summary) {
+      const low=state.values.reduce((a,b)=>a.value<b.value?a:b), high=state.values.reduce((a,b)=>a.value>b.value?a:b), latest=state.values.at(-1);
+      summary.innerHTML=[['Latest river reading',latest],['Lowest in this view',low],['Highest in this view',high]].map(([label,p])=>`<div><p>${label}</p><strong>${fmt(p,'river')} m</strong><small>${clock.format(p.time)} BST</small></div>`).join('');
+    }
+    const samples=[0,.2,.4,.6,.8,1].map(f=>state.values[Math.round(f*(state.values.length-1))]).reverse();
+    state.element.querySelector('tbody').innerHTML=samples.map(p=>{ const a=sourcesAt(p.time); return `<tr><th scope="row">${clock.format(p.time)}</th><td>${fmt(a.river,'river')}</td><td>${fmt(a.tide,'tide')}</td><td>${fmt(a.rain,'rain')}</td></tr>`; }).join('');
+    state.element.querySelectorAll('.og-chart').forEach(panel=>draw(state,panel));
+  }
+  root.querySelectorAll('.og-stage').forEach(element=>{
+    const layout=element.dataset.layout, restored=saved()[layout], hours=[24,48,168].includes(restored?.hours)?restored.hours:168;
+    const values=slice('river',hours);
+    const selected=nearest(values,restored?.selectedTime?new Date(restored.selectedTime):commonEnd,Infinity);
+    const state={element,layout,hours,values,index:values.indexOf(selected)}; states.push(state);
+    element.querySelectorAll('[data-hours]').forEach(button=>button.addEventListener('click',()=>{ const chosen=state.values[state.index].time; state.hours=+button.dataset.hours; state.values=slice('river',state.hours); const found=nearest(state.values,chosen,Infinity); state.index=state.values.indexOf(found); render(state); remember(); }));
+    element.querySelector('.og-time-input').addEventListener('input',event=>{ state.index=+event.target.value; render(state); });
+    element.querySelector('.og-time-input').addEventListener('change',remember);
+    const observer=new ResizeObserver(()=>element.querySelectorAll('.og-chart').forEach(panel=>draw(state,panel))); element.querySelectorAll('.og-canvas').forEach(canvas=>observer.observe(canvas));
+    render(state);
+    if(globalThis.Tweak) {
+      const design={spacing:'Comfortable',readings:true};
+      const tweak=new Tweak({container:element,onChange:()=>{ element.classList.toggle('og-tight',design.spacing==='Compact'); element.querySelector('.og-readings').hidden=!design.readings; }});
+      tweak.addSelect(design,'spacing',{label:'Page spacing',options:['Comfortable','Compact']});
+      tweak.addToggle(design,'readings',{label:'Show readings table'});
+    }
+  });
+  window.addEventListener('openai:set_globals',event=>{
+    const next=event.detail?.globals?.widgetState?.modelContent?.dataPage;
+    if(!next) return;
+    states.forEach(state=>{ const s=next[state.layout]; if(!s || ![24,48,168].includes(s.hours)) return; state.hours=s.hours; state.values=slice('river',s.hours); const found=s.selectedTime?nearest(state.values,new Date(s.selectedTime),Infinity):state.values.at(-1); state.index=state.values.indexOf(found); render(state); });
+  });
+})();
+</script>

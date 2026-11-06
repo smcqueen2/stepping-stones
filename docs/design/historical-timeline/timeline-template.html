@@ -1,0 +1,167 @@
+<div id="ogmore-history-concepts" lang="en-GB">
+  <div class="viz-carousel" aria-label="Historical timeline designs">
+    <section class="ot-page ot-living" data-variant="Living landscape" data-layout="living" aria-label="Living landscape timeline design">
+      <header class="ot-masthead"><span class="ot-brand">Ogmore<small>STEPPING STONES</small></span><nav aria-label="Site navigation"><span>The crossing</span><span>Data</span><span aria-current="page">History</span></nav></header>
+      <div class="ot-intro"><p class="ot-kicker">CASTELL OGWR · CASTLE, CROSSING &amp; COAST</p><h2>Ogmore, through time.</h2><p>Follow the places and people that shaped this valley.</p></div>
+      <main class="ot-main">
+        <div class="ot-window" role="region" aria-label="Illustrated historical milestones"><div class="ot-track"></div></div>
+        <div class="ot-navigation"><button type="button" data-direction="-1">← Previous</button><span class="ot-count"></span><button type="button" data-direction="1">Next →</button></div>
+        <ol class="ot-timeline" aria-label="Choose a historical milestone"></ol>
+        <label class="ot-jump">Jump to a milestone<select aria-label="Choose a historical milestone"></select></label>
+        <p class="ot-announcement" aria-live="polite"></p>
+        <details class="ot-context"><summary>Read this chapter &amp; its sources</summary><div class="ot-context-copy"></div></details>
+        <details class="ot-legend"><summary>Beside the history: a local legend</summary><div class="ot-legend-copy"></div></details>
+      </main>
+      <footer class="ot-foot">Design preview · 12 researched milestones · illustrations include artists’ impressions.</footer>
+    </section>
+    <section class="ot-page ot-chapters" data-variant="Painted chapters" data-layout="chapters" aria-label="Painted chapters timeline design" hidden>
+      <header class="ot-masthead"><span class="ot-brand">Ogmore<small>STEPPING STONES</small></span><nav aria-label="Site navigation"><span>The crossing</span><span>Data</span><span aria-current="page">History</span></nav></header>
+      <div class="ot-intro"><p class="ot-kicker">AN ILLUSTRATED JOURNAL · CASTELL OGWR &amp; ITS VALLEY</p><h2>Castle, coast and crossing.</h2><p>Explore the valley one chapter at a time.</p></div>
+      <main class="ot-main">
+        <div class="ot-window" role="region" aria-label="Painted historical chapters"><div class="ot-track"></div></div>
+        <div class="ot-navigation"><button type="button" data-direction="-1">← Previous</button><span class="ot-count"></span><button type="button" data-direction="1">Next →</button></div>
+        <ol class="ot-timeline" aria-label="Choose a historical milestone"></ol>
+        <label class="ot-jump">Jump to a milestone<select aria-label="Choose a historical milestone"></select></label>
+        <p class="ot-announcement" aria-live="polite"></p>
+        <details class="ot-context"><summary>Read this chapter &amp; its sources</summary><div class="ot-context-copy"></div></details>
+        <details class="ot-legend"><summary>Beside the history: a local legend</summary><div class="ot-legend-copy"></div></details>
+      </main>
+      <footer class="ot-foot">Design preview · 12 researched milestones · illustrations include artists’ impressions.</footer>
+    </section>
+  </div>
+</div>
+<style>
+  #ogmore-history-concepts { color-scheme:light dark; --ot-paper:light-dark(#f5f0e4,#202a23); --ot-panel:light-dark(#fbf8ef,#233229); --ot-ink:light-dark(#293d32,#e9ecdf); --ot-muted:light-dark(#59695d,#bbc7b8); --ot-line:light-dark(#cad1c1,#4a604c); --ot-soft:light-dark(#e4e9db,#3b4e3c); --ot-panel-alpha:light-dark(rgb(251 248 239 / .96),rgb(35 50 41 / .97)); color:var(--ot-ink); font-family:Arial,sans-serif; }
+  #ogmore-history-concepts * { box-sizing:border-box; }
+  #ogmore-history-concepts [hidden] { display:none !important; }
+  #ogmore-history-concepts .ot-page { --ot-caption-width:390px; --ot-copy-size:14px; min-height:1040px; background:var(--ot-paper); padding-bottom:22px; }
+  #ogmore-history-concepts .ot-masthead { display:flex; align-items:center; justify-content:space-between; gap:20px; padding:25px 30px 20px; border-bottom:1px solid var(--ot-line); }
+  #ogmore-history-concepts .ot-brand { font:28px/1 Georgia,serif; letter-spacing:-.4px; }
+  #ogmore-history-concepts .ot-brand small { display:block; font:11px/1.8 Arial,sans-serif; letter-spacing:2px; }
+  #ogmore-history-concepts nav { display:flex; flex-wrap:wrap; gap:20px; padding-right:65px; font-size:12px; color:var(--ot-muted); }
+  #ogmore-history-concepts nav [aria-current] { color:var(--ot-ink); text-decoration:underline; text-underline-offset:8px; }
+  #ogmore-history-concepts .ot-intro { padding:26px 30px 24px; }
+  #ogmore-history-concepts .ot-kicker { font-size:11px; letter-spacing:1.5px; line-height:1.6; color:var(--ot-muted); margin:0 0 8px; }
+  #ogmore-history-concepts h2 { font:400 clamp(29px,4.6vw,43px)/1.15 Georgia,serif; letter-spacing:-.8px; margin:0 0 9px; }
+  #ogmore-history-concepts .ot-intro > p:last-child { margin:0; font-size:14px; line-height:1.5; color:var(--ot-muted); }
+  #ogmore-history-concepts .ot-main { padding:0 24px; }
+  #ogmore-history-concepts .ot-window { overflow:hidden; background:var(--ot-paper); isolation:isolate; }
+  #ogmore-history-concepts .ot-track { display:flex; align-items:stretch; transform:translateX(0); transition:transform 600ms cubic-bezier(.22,.68,.18,1); }
+  #ogmore-history-concepts .ot-slide { flex:0 0 100%; min-width:0; min-height:550px; position:relative; display:flex; flex-direction:column; justify-content:flex-end; }
+  #ogmore-history-concepts .ot-slide img { display:block; position:absolute; inset:0; width:100%; height:100%; object-fit:cover; object-position:56% center; }
+  #ogmore-history-concepts .ot-caption { position:relative; margin:60px 24px 22px; padding:22px; width:min(var(--ot-caption-width),calc(100% - 48px)); background:var(--ot-panel-alpha); color:var(--ot-ink); box-shadow:0 7px 24px rgb(0 0 0 / .09); }
+  #ogmore-history-concepts .ot-category { color:var(--ot-muted); font-size:11px; letter-spacing:1px; line-height:1.5; margin:0 0 10px; }
+  #ogmore-history-concepts .ot-period { margin:0 0 8px; color:var(--ot-muted); font-size:13px; font-variant-numeric:tabular-nums; }
+  #ogmore-history-concepts h3 { font:400 clamp(25px,3.4vw,34px)/1.12 Georgia,serif; letter-spacing:-.5px; margin:0 0 13px; }
+  #ogmore-history-concepts .ot-summary { font-size:var(--ot-copy-size); line-height:1.65; margin:0; }
+  #ogmore-history-concepts .ot-citations { display:flex; flex-wrap:wrap; gap:6px 12px; margin-top:16px; padding-top:12px; border-top:1px solid var(--ot-line); font-size:11px; line-height:1.5; }
+  #ogmore-history-concepts a { color:var(--ot-ink); text-underline-offset:3px; }
+  #ogmore-history-concepts .ot-art-label { position:absolute; top:14px; right:14px; max-width:calc(100% - 28px); padding:5px 8px; color:var(--ot-ink); background:var(--ot-panel-alpha); font-size:11px; line-height:1.5; }
+  #ogmore-history-concepts .ot-date-stamp { display:none; }
+  #ogmore-history-concepts .ot-navigation { display:flex; justify-content:space-between; align-items:center; gap:12px; padding:18px 0; }
+  #ogmore-history-concepts button { background:transparent; color:var(--ot-ink); border:1px solid var(--ot-line); padding:10px 14px; font:13px/1.4 Arial,sans-serif; min-height:42px; border-radius:3px; }
+  #ogmore-history-concepts button:disabled { opacity:.45; }
+  #ogmore-history-concepts .ot-count { font:13px/1.5 Georgia,serif; color:var(--ot-muted); font-variant-numeric:tabular-nums; text-align:center; }
+  #ogmore-history-concepts .ot-timeline { display:grid; grid-template-columns:repeat(6,minmax(0,1fr)); gap:6px; list-style:none; padding:0; margin:0 0 18px; }
+  #ogmore-history-concepts .ot-timeline li { min-width:0; }
+  #ogmore-history-concepts .ot-timeline button { width:100%; min-height:48px; font-size:12px; padding:8px 4px; }
+  #ogmore-history-concepts .ot-timeline button[aria-current="step"] { color:var(--ot-paper); background:var(--ot-ink); border-color:var(--ot-ink); }
+  #ogmore-history-concepts .ot-jump { display:none; font-size:12px; line-height:1.5; color:var(--ot-muted); }
+  #ogmore-history-concepts select { display:block; width:100%; margin:7px 0 18px; padding:11px 10px; min-height:44px; border:1px solid var(--ot-line); border-radius:3px; color:var(--ot-ink); background:var(--ot-panel); font:16px Arial,sans-serif; }
+  #ogmore-history-concepts .ot-context, #ogmore-history-concepts .ot-legend { border-top:1px solid var(--ot-line); padding:16px 0; }
+  #ogmore-history-concepts summary { font-size:13px; line-height:1.6; }
+  #ogmore-history-concepts .ot-context-copy, #ogmore-history-concepts .ot-legend-copy { max-width:76ch; font-size:14px; line-height:1.75; }
+  #ogmore-history-concepts .ot-context-copy p, #ogmore-history-concepts .ot-legend-copy p { margin:14px 0; }
+  #ogmore-history-concepts .ot-date-note { color:var(--ot-muted); font-size:12px; }
+  #ogmore-history-concepts .ot-source-list { display:flex; flex-wrap:wrap; gap:6px 18px; padding-left:18px; font-size:12px; }
+  #ogmore-history-concepts .ot-legend-label { display:inline-block; margin-top:16px; color:var(--ot-muted); font-size:12px; letter-spacing:.5px; }
+  #ogmore-history-concepts .ot-foot { font-size:11px; line-height:1.6; color:var(--ot-muted); padding:16px 24px 0; border-top:1px solid var(--ot-line); margin-top:2px; }
+  #ogmore-history-concepts .ot-announcement { position:absolute; width:1px; height:1px; overflow:hidden; clip-path:inset(50%); }
+  #ogmore-history-concepts .ot-chapters .ot-window { border-top:1px solid var(--ot-line); }
+  #ogmore-history-concepts .ot-chapters .ot-slide { min-height:550px; }
+  #ogmore-history-concepts .ot-chapters .ot-slide img { top:82px; left:0; right:auto; width:83%; height:405px; object-fit:cover; }
+  #ogmore-history-concepts .ot-chapters .ot-date-stamp { display:block; position:absolute; top:20px; left:18px; right:18px; font:clamp(28px,4vw,42px)/1.15 Georgia,serif; letter-spacing:-.6px; }
+  #ogmore-history-concepts .ot-chapters .ot-caption { margin:100px 6px 22px auto; width:min(var(--ot-caption-width),46%); background:var(--ot-panel); box-shadow:0 9px 30px rgb(0 0 0 / .08); }
+  #ogmore-history-concepts .ot-chapters .ot-art-label { top:auto; bottom:6px; right:6px; max-width:55%; background:var(--ot-paper); }
+  #ogmore-history-concepts .ot-chapters .ot-period { display:none; }
+  @media (max-width:650px) {
+    #ogmore-history-concepts .ot-page { min-height:1090px; }
+    #ogmore-history-concepts .ot-masthead { padding:22px 16px 17px; gap:14px; align-items:flex-start; }
+    #ogmore-history-concepts .ot-brand { font-size:26px; }
+    #ogmore-history-concepts .ot-brand small { font-size:11px; letter-spacing:1.5px; }
+    #ogmore-history-concepts nav { padding:5px 0 0; gap:10px; max-width:150px; justify-content:flex-end; font-size:11px; }
+    #ogmore-history-concepts .ot-intro { padding:24px 16px 20px; }
+    #ogmore-history-concepts h2 { font-size:30px; }
+    #ogmore-history-concepts .ot-kicker { letter-spacing:1px; }
+    #ogmore-history-concepts .ot-main { padding:0 10px; }
+    #ogmore-history-concepts .ot-slide, #ogmore-history-concepts .ot-chapters .ot-slide { height:auto; min-height:575px; display:flex; flex-direction:column; align-items:stretch; justify-content:flex-start; }
+    #ogmore-history-concepts .ot-slide img, #ogmore-history-concepts .ot-chapters .ot-slide img { position:relative; inset:auto; width:100%; height:245px; object-fit:cover; object-position:56% center; }
+    #ogmore-history-concepts .ot-caption, #ogmore-history-concepts .ot-chapters .ot-caption { position:relative; inset:auto; width:auto; margin:-26px 12px 16px; padding:20px; }
+    #ogmore-history-concepts h3 { font-size:27px; }
+    #ogmore-history-concepts .ot-art-label, #ogmore-history-concepts .ot-chapters .ot-art-label { position:relative; inset:auto; display:block; order:5; max-width:none; margin:0 12px 12px; padding:0; background:var(--ot-paper); color:var(--ot-muted); }
+    #ogmore-history-concepts .ot-timeline { display:none; }
+    #ogmore-history-concepts .ot-jump { display:block; }
+    #ogmore-history-concepts .ot-navigation { padding:15px 3px; }
+    #ogmore-history-concepts .ot-context, #ogmore-history-concepts .ot-legend { margin:0 5px; }
+    #ogmore-history-concepts .ot-foot { padding:16px 16px 0; }
+    #ogmore-history-concepts .ot-chapters .ot-date-stamp { position:relative; inset:auto; padding:18px 12px; font-size:31px; }
+    #ogmore-history-concepts .ot-chapters .ot-caption { margin:-35px 12px 16px; border-top:3px solid var(--ot-line); }
+    #ogmore-history-concepts .ot-chapters .ot-slide { min-height:640px; }
+  }
+  @media (pointer:coarse) { #ogmore-history-concepts button, #ogmore-history-concepts summary { min-height:44px; } #ogmore-history-concepts .ot-citations a { display:inline-flex; align-items:center; min-height:44px; } }
+  @media (prefers-reduced-motion:reduce) { #ogmore-history-concepts .ot-track { transition:none; } }
+</style>
+<script type="application/json" id="ogmore-timeline-data">TIMELINE_CONTENT_JSON</script>
+<script type="application/json" id="ogmore-timeline-art">TIMELINE_ART_JSON</script>
+<script>
+(() => {
+  const root=document.getElementById('ogmore-history-concepts');
+  const content=JSON.parse(document.getElementById('ogmore-timeline-data').textContent);
+  const art=JSON.parse(document.getElementById('ogmore-timeline-art').textContent);
+  const milestones=content.milestones;
+  const states=[];
+  const escape=text=>String(text).replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;').replaceAll('"','&quot;');
+  const sourceLinks=keys=>keys.map(key=>`<a href="${escape(content.sources[key].url)}" target="_blank" rel="noopener">${escape(content.sources[key].name)}</a>`).join('');
+  const save=()=>window.openai?.setWidgetState?.({modelContent:{historyTimeline:Object.fromEntries(states.map(s=>[s.layout,{milestone:milestones[s.index].id}]))},privateContent:null})?.catch(()=>{});
+  function render(state,announce=false) {
+    const current=milestones[state.index];
+    state.track.style.transform=`translateX(${-100*state.index}%)`;
+    state.slides.forEach((slide,index)=>{ slide.inert=index!==state.index; slide.setAttribute('aria-hidden',String(index!==state.index)); });
+    state.element.querySelectorAll('[data-milestone]').forEach(button=>{ if(+button.dataset.milestone===state.index) button.setAttribute('aria-current','step'); else button.removeAttribute('aria-current'); });
+    state.element.querySelector('select').value=String(state.index);
+    state.element.querySelector('[data-direction="-1"]').disabled=state.index===0;
+    state.element.querySelector('[data-direction="1"]').disabled=state.index===milestones.length-1;
+    state.element.querySelector('.ot-count').textContent=`${String(state.index+1).padStart(2,'0')} / ${milestones.length}`;
+    state.element.querySelector('.ot-context-copy').innerHTML=`<p>${escape(current.context)}</p><p class="ot-date-note">${escape(current.dateNote)}</p><ul class="ot-source-list">${current.sources.map(key=>`<li><a href="${escape(content.sources[key].url)}" target="_blank" rel="noopener">${escape(content.sources[key].name)}</a></li>`).join('')}</ul>`;
+    if(announce) state.element.querySelector('.ot-announcement').textContent=`Milestone ${state.index+1} of ${milestones.length}. ${current.date}. ${current.title}`;
+  }
+  function select(state,index) { state.index=Math.max(0,Math.min(milestones.length-1,index)); render(state,true); save(); }
+  root.querySelectorAll('.ot-page').forEach(element=>{
+    const layout=element.dataset.layout;
+    const restored=window.openai?.widgetState?.modelContent?.historyTimeline?.[layout]?.milestone;
+    const found=milestones.findIndex(m=>m.id===restored);
+    const state={element,layout,index:found>=0?found:1,track:element.querySelector('.ot-track'),slides:[]};
+    state.track.innerHTML=milestones.map((m,index)=>`<article class="ot-slide" aria-label="${escape(m.date+': '+m.title)}"><span class="ot-date-stamp">${escape(m.date)}</span><img src="${art[m.image]}" alt="${escape(m.artLabel)}" decoding="async"><div class="ot-caption"><p class="ot-category">${escape(m.category)}</p><p class="ot-period">${escape(m.date)}</p><h3>${escape(m.title)}</h3><p class="ot-summary">${escape(m.summary)}</p><div class="ot-citations">${sourceLinks(m.sources.slice(0,2))}</div></div><span class="ot-art-label">${escape(m.artLabel)}</span></article>`).join('');
+    state.slides=[...state.track.querySelectorAll('.ot-slide')];
+    element.querySelector('.ot-timeline').innerHTML=milestones.map((m,index)=>`<li><button type="button" data-milestone="${index}" aria-label="${escape(m.date+': '+m.title)}">${escape(m.shortDate)}</button></li>`).join('');
+    element.querySelector('select').innerHTML=milestones.map((m,index)=>`<option value="${index}">${escape(m.shortDate+' · '+m.title)}</option>`).join('');
+    element.querySelectorAll('[data-direction]').forEach(button=>button.addEventListener('click',()=>select(state,state.index+Number(button.dataset.direction))));
+    element.querySelectorAll('[data-milestone]').forEach(button=>button.addEventListener('click',()=>select(state,Number(button.dataset.milestone))));
+    element.querySelector('select').addEventListener('change',event=>select(state,Number(event.target.value)));
+    const legend=content.legend;
+    element.querySelector('.ot-legend-copy').innerHTML=`<span class="ot-legend-label">${escape(legend.label)}</span><h3>${escape(legend.title)}</h3><p>${escape(legend.text)}</p><p class="ot-date-note">${escape(legend.note)}</p><ul class="ot-source-list">${legend.sources.map(key=>`<li><a href="${escape(content.sources[key].url)}" target="_blank" rel="noopener">${escape(content.sources[key].name)}</a></li>`).join('')}</ul>`;
+    states.push(state); render(state);
+    if(globalThis.Tweak) {
+      const design={captionWidth:390,textSize:14};
+      const tweak=new Tweak({container:element,onChange:()=>{element.style.setProperty('--ot-caption-width',`${design.captionWidth}px`);element.style.setProperty('--ot-copy-size',`${design.textSize}px`);}});
+      tweak.addSlider(design,'captionWidth',{label:'Overlay width',min:310,max:440,step:10,unit:'px'});
+      tweak.addSlider(design,'textSize',{label:'Story text size',min:14,max:17,step:1,unit:'px'});
+    }
+  });
+  window.addEventListener('openai:set_globals',event=>{
+    const incoming=event.detail?.globals?.widgetState?.modelContent?.historyTimeline;
+    if(!incoming) return;
+    states.forEach(state=>{const index=milestones.findIndex(m=>m.id===incoming[state.layout]?.milestone); if(index>=0){state.index=index;render(state);}});
+  });
+})();
+</script>
