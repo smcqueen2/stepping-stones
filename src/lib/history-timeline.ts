@@ -4,7 +4,7 @@ import '../history.css';
 const paintings: Record<string, string> = {
   dunes: new URL('../../docs/design/historical-timeline/assets/dunes.webp', import.meta.url).href,
   'early-fort': new URL('../../docs/design/historical-timeline/assets/early-fort.webp', import.meta.url).href,
-  'stone-castle': new URL('../../docs/design/historical-timeline/assets/stone-castle.webp', import.meta.url).href,
+  'stone-castle': new URL('../../docs/design/historical-timeline/reconstruction/ogmore-castle-stepping-stones-view-v2.webp', import.meta.url).href,
   priory: new URL('../../docs/design/historical-timeline/assets/priory.webp', import.meta.url).href,
   'present-castle': new URL('../../docs/design/historical-timeline/assets/present-castle.webp', import.meta.url).href,
 };
@@ -48,8 +48,8 @@ export function mountHistoryTimeline(host: HTMLElement) {
     const painting = element('img', 'history-painting');
     painting.src = paintings[milestone.image];
     painting.alt = milestone.artLabel;
-    painting.width = 1024;
-    painting.height = 576;
+    painting.width = milestone.image === 'stone-castle' ? 1672 : 1024;
+    painting.height = milestone.image === 'stone-castle' ? 941 : 576;
     painting.decoding = 'async';
     painting.loading = index === 0 ? 'eager' : 'lazy';
     const caption = element('div', 'history-caption');

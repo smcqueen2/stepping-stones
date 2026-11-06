@@ -83,6 +83,8 @@ The White Lady tradition is an additional candidate for later editorial work. Ma
 
 ## Art and design provenance
 
+A focused, photograph-and-plan-led study of the developed medieval castle was produced on 6 November at the owner's request. See the [new reconstruction and evidence notes](reconstruction/research-notes.md) for the image, chosen 1250-1300 period, evidence/uncertainty table, sources and exact generation prompts. After correcting the entrance orientation using the owner's photographs, V2 is integrated into the History view at their request. Every History illustration is explicitly labelled AI generated in its caption and alt description. The owner authorised committing and pushing the update on 6 November.
+
 Four companion paintings were generated using the **built-in image_gen tool**, with the existing `scene-low.webp` as a style reference. Exact prompts are in [image-prompts.json](image-prompts.json), with original generated paths in [generated-assets.json](generated-assets.json).
 
 The selected preview assets are saved in this workspace:

@@ -21,84 +21,84 @@
   },
   "milestones": [
     {
-      "id":"landscape","date":"Before the castle","shortDate":"Before 1100","category":"The wider landscape","image":"dunes","artLabel":"Present-day-inspired landscape study",
+      "id":"landscape","date":"Before the castle","shortDate":"Before 1100","category":"The wider landscape","image":"dunes","artLabel":"AI generated · present-day-inspired landscape study",
       "title":"A landscape with a long memory.",
       "summary":"Merthyr Mawr's sands preserve traces of people long before the Normans: Stone Age flints, Bronze Age burials, Iron Age hearths and Roman material. The castle belongs to one chapter of a much older landscape.",
       "context":"Heneb describes a landscape where shifting sand repeatedly conceals and reveals remains from different periods. The Warren's buried archaeology includes settlement, cultivated land, burials and later industry. These traces belong to the wider landscape surrounding the castle.",
       "dateNote":"This chapter brings together evidence from several archaeological periods.","sources":["reserve","warren"]
     },
     {
-      "id":"foundation","date":"Early 1100s","shortDate":"Early 1100s","category":"Castle beginnings","image":"early-fort","artLabel":"Artist's impression · earth-and-timber phase",
+      "id":"foundation","date":"Early 1100s","shortDate":"Early 1100s","category":"Castle beginnings","image":"early-fort","artLabel":"AI generated · estimated earth-and-timber phase",
       "title":"A stronghold beside the ford.",
       "summary":"William de Londres establishes a Norman castle beside a crossing of the Ewenny. Earth banks and timber defences come first; an early stone keep follows. William is recorded here by 1116.",
       "context":"The surviving earthworks explain the first castle's shape. The keep is among the region's earliest Norman stone buildings, although its precise building sequence and attribution need care. Ogmore formed part of a wider landscape of castles that also included Coity and Newcastle.",
       "dateNote":"Cadw places the beginnings in the early 12th century. William is recorded at Ogmore by 1116.","sources":["castle","coflein","valley"]
     },
     {
-      "id":"priory","date":"1141","shortDate":"1141","category":"Faith and lordship","image":"priory","artLabel":"Present-day-inspired study · Ewenni Priory",
+      "id":"priory","date":"1141","shortDate":"1141","category":"Faith and lordship","image":"priory","artLabel":"AI generated · present-day-inspired Ewenni Priory study",
       "title":"A priory takes root nearby.",
       "summary":"Maurice de Londres founds Ewenni Priory as a Benedictine offshoot of Gloucester Abbey. The church and its later defensive enclosure become another lasting expression of Norman power in the valley.",
       "context":"A church existed before the establishment of the monastic community. Cadw dates the priory foundation to 1141, while the historic environment record describes an earlier cell. The substantial enclosing walls belong to later development; they should not all be assigned to the foundation year.",
       "dateNote":"1141 dates the monastic foundation. The surviving church and enclosure also contain later work.","sources":["priory","prioryHer"]
     },
     {
-      "id":"stone","date":"Early 1200s","shortDate":"Early 1200s","category":"A changing stronghold","image":"stone-castle","artLabel":"Artist's impression · medieval stone castle",
+      "id":"stone","date":"Early 1200s","shortDate":"Early 1200s","category":"A changing stronghold","image":"stone-castle","artLabel":"AI generated · estimated castle, c.1250–1300",
       "title":"The castle grows around its keep.",
       "summary":"A stone curtain wall, gateway, bridge and further buildings strengthen the enclosure. The older keep remains at its heart. The inner ditch is designed to take in sea water at high tide.",
       "context":"Cadw's architectural record places this major building phase in the early 13th century. The internal ground was raised and additional steps were needed down to the older cellar. The small castle's surviving banks and ditches still help explain how successive phases fitted together.",
       "dateNote":"The early 13th century is an architectural phase; the precise construction years remain uncertain.","sources":["listing","castle"]
     },
     {
-      "id":"lancaster","date":"Late 1200s","shortDate":"Late 1200s","category":"Inheritance and influence","image":"stone-castle","artLabel":"Interpretive medieval castle study",
+      "id":"lancaster","date":"Late 1200s","shortDate":"Late 1200s","category":"Inheritance and influence","image":"stone-castle","artLabel":"AI generated · estimated castle, c.1250–1300",
       "title":"An inheritance reaches Lancaster.",
       "summary":"Maud de Chaworth's marriage to Henry of Lancaster links Ogmore to a powerful new family. The castle's role increasingly centres on the administration of its lordship, as well as its defences.",
       "context":"The official Radford guide gives 1297 for the marriage; Cadw and Coflein give 1298. The inheritance joins Ogmore to the Lancaster family's estates. Coflein records the castle's later connection with the Crown in 1399, extending that story beyond the family marriage.",
       "dateNote":"The sources differ between 1297 and 1298; the timeline uses the broader period.","sources":["radford","listing","coflein"]
     },
     {
-      "id":"revolt","date":"1402–05","shortDate":"1402–05","category":"Conflict in the valley","image":"stone-castle","artLabel":"Interpretive medieval castle study",
+      "id":"revolt","date":"1402–05","shortDate":"1402–05","category":"Conflict in the valley","image":"stone-castle","artLabel":"AI generated · estimated castle, c.1250–1300",
       "title":"The valley is caught in revolt.",
       "summary":"Ogmore Castle suffers serious damage during the years of Owain Glyndŵr's revolt. The surrounding settlement also contracts. This was a working valley of tenants, meadows and mills, as well as a place of military power.",
       "context":"Coflein's fulling-mill record dates damage at the castle to 1402–05. It cites medieval accounts for a mill near the castle in the 1300s, whose exact position is unknown. Heneb records a sharp fall in the settlement's tenants after the rebellion: a glimpse of the upheaval beyond the walls.",
       "dateNote":"The dated evidence describes a period of castle damage during the revolt.","sources":["mill","valley"]
     },
     {
-      "id":"change","date":"1500s–1600s","shortDate":"1500s–1600s","category":"Two changing landscapes","image":"present-castle","artLabel":"Present-day-inspired castle study",
+      "id":"change","date":"1500s–1600s","shortDate":"1500s–1600s","category":"Two changing landscapes","image":"present-castle","artLabel":"AI generated · present-day-inspired castle study",
       "title":"A stronghold becomes a ruin.",
       "summary":"The castle's main buildings fall out of use between the 1530s and 1631. Across the wider landscape, advancing sand also changes life around Candleston. Its fortified manor survives longer than much of the settlement nearby.",
       "context":"Coflein gives a broad abandonment interval for the main castle, while the courthouse continues in use. Heneb places much of Candleston's settlement abandonment by the early post-medieval period. The nearby fortified residence survives longer, leaving another distinctive ruin on the edge of the dunes.",
       "dateNote":"The main castle's abandonment is placed between the 1530s and 1631. Sand movement in the wider area unfolded over a longer period.","sources":["coflein","warren","candleston"]
     },
     {
-      "id":"court","date":"1803","shortDate":"1803","category":"Life after the fortress","image":"present-castle","artLabel":"Present-day castle painting",
+      "id":"court","date":"1803","shortDate":"1803","category":"Life after the fortress","image":"present-castle","artLabel":"AI generated · present-day castle painting",
       "title":"Justice among the ruins.",
       "summary":"Long after the castle's military life has faded, its courthouse remains in use. Coflein records court activity continuing into 1803: a reminder that a ruined fortress could still be part of everyday administration.",
       "context":"The courthouse stood in the outer bailey. Its long administrative life keeps the castle site connected to local affairs even as other buildings decay. The record of continued use into 1803 provides a late glimpse of that enduring role.",
       "dateNote":"1803 anchors continued use; the date of a final hearing is uncertain.","sources":["coflein"]
     },
     {
-      "id":"estate","date":"1806–09","shortDate":"1806–09","category":"Merthyr Mawr","image":"dunes","artLabel":"Merthyr Mawr landscape study",
+      "id":"estate","date":"1806–09","shortDate":"1806–09","category":"Merthyr Mawr","image":"dunes","artLabel":"AI generated · Merthyr Mawr landscape study",
       "title":"A new estate shapes the valley.",
       "summary":"Merthyr Mawr House is built for Sir John Nicholl. The landscape park develops around it through the early 19th century, adding another layer to the valley's paths, gardens, woodland and agricultural setting.",
       "context":"Cadw dates the house to 1806–09 and describes the park's design and planting between 1806 and 1838, much of it after completion of the house. The registered landscape also preserves evidence of an earlier estate, bringing several centuries of land use together in the wider valley.",
       "dateNote":"House-building dates are distinguished from the longer creation of the park.","sources":["park"]
     },
     {
-      "id":"care","date":"1 August 1928","shortDate":"1928","category":"Conservation begins","image":"present-castle","artLabel":"Present-day-inspired castle study",
+      "id":"care","date":"1 August 1928","shortDate":"1928","category":"Conservation begins","image":"present-castle","artLabel":"AI generated · present-day-inspired castle study",
       "title":"A future for the ruins.",
       "summary":"The castle enters guardianship, securing public access and responsibility for its care. A Welsh Government record confirms the exact date. Today management and maintenance responsibilities rest with Welsh Ministers through Cadw.",
       "context":"The 2023 government response identifies a guardianship agreement beginning on 1 August 1928. The arrangement secures management, maintenance and public access. It continues in perpetuity, with care responsibilities exercised today through Cadw.",
       "dateNote":"An exact date confirmed by the Welsh Government's guardianship record.","sources":["guardianship","castle"]
     },
     {
-      "id":"nature","date":"2020–23","shortDate":"2020–23","category":"The wider landscape today","image":"dunes","artLabel":"Present-day-inspired dune landscape study",
+      "id":"nature","date":"2020–23","shortDate":"2020–23","category":"The wider landscape today","image":"dunes","artLabel":"AI generated · present-day-inspired dune landscape study",
       "title":"Care reaches beyond the castle.",
       "summary":"NRW's reserve-management lease ends in 2020, returning responsibility to Merthyr Mawr Estate. A new conservation agreement is reported in 2023, bringing the Estate and NRW together in caring for the Warren's habitats.",
       "context":"NRW announced the lease's end on 31 December 2020 and plans for a nature reserve agreement. The Estate's land agent reported the new agreement in July 2023, with direct Estate management and NRW advice and monitoring. Conservation grazing, habitat work and invasive-species control are part of this landscape's recent story.",
       "dateNote":"The lease ended on 31 December 2020; the new agreement was reported on 19 July 2023.","sources":["nrw","agreement"]
     },
     {
-      "id":"crossing","date":"Still with us","shortDate":"Today","category":"The stepping stones","image":"present-castle","artLabel":"The existing watercolour scene",
+      "id":"crossing","date":"Still with us","shortDate":"Today","category":"The stepping stones","image":"present-castle","artLabel":"AI generated · present-day-inspired crossing scene",
       "title":"A crossing through the centuries.",
       "summary":"The stones cross the Ewenny beside the castle, linking its southern bank with the floodplain beyond. Cadw describes their origin as probably medieval, with later revisions. Their exact founding year and builder remain uncertain.",
       "context":"The scheduled record describes a deliberate alignment at a wider, shallower part of the river, spanning about 35 metres. The stones connect the castle bank with the floodplain between the Ewenny and Ogmore. Later revisions form part of the recorded structure's long history.",

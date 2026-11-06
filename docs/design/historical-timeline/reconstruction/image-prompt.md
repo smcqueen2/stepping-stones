@@ -1,0 +1,29 @@
+# Ogmore Castle reconstruction - exact generation prompt
+
+Generated 6 November 2026 with the built-in image_gen tool. Opaque background. Four local reference images, in the order listed in research-notes.md. No CLI fallback or new npm dependency. The WebP is a format/compression conversion of the full PNG, with no painted-content alteration.
+
+```text
+Use case: historical-scene.
+Asset: a carefully researched, polished watercolour reconstruction of Ogmore Castle, Wales, in its developed thirteenth-century form, approximately 1250–1300. Single wide landscape image, approximately 16:9, no text. This is an evidence-informed artist's impression, not a fantasy castle.
+
+INPUT ROLES:
+Image 1, the official 1974 guide ground plan: PRIMARY authority for footprint, relative locations and earthworks. It contains multiple periods: do NOT reconstruct the later courthouse, lime kiln, modern stepping-stone alignment or every later room marked on it.
+Image 2, Visit the Vale overhead photograph: PRIMARY surviving-footprint and terrain reference. It is rotated relative to the plan; reconcile the same keep, gate, river and enclosure, do not combine two different layouts. Modern cars, fence, bridge handrails and visitor landscaping are NOT medieval features.
+Image 3, present-day keep photograph: archaeological reference for local limestone, rectangular keep proportions and surviving three-storey wall. This photograph looks at the INTERIOR face: the large fireplace hood and flues must NOT be put onto the exterior.
+Image 4, earlier project watercolour: STYLE ONLY. Use its luminous translucent greens, pale blue-grey water, warm limestone and textured ivory paper. Do not inherit its speculative building shape, tower roof, wall arrangement or camera position.
+
+PERIOD AND EVIDENCE:
+A small Marcher lordship castle on low tidal riverside ground. The inner ward is a compact faceted/sub-oval circuit about 50 by 35 metres, not a regular circular or rectangular fortress. Restore the ONE rectangular keep to three storeys, about 14 by 10 metres in footprint, only about twice the height of the curtain; it straddles the western/outer-bailey-facing side of the inner enclosure. Its long wall has the surviving band marking the later upper storey, sparse arched openings in the lower inhabited storey, smaller upper openings and a slight battered base. Attach a small rounded stair/garderobe annexe at the riverward end of the keep. This is an attached service projection, NOT a second big tower.
+Restore modest stone curtains with a narrow internal wall-walk and simple restrained crenellations. Their circuit abuts the keep. There are NO large round corner towers.
+Immediately beside the keep on its landward side, put the SMALL rectangular gate passage, with a simple timber gate, linked by a short timber bridge across the defensive ditch to the outer bailey. Do not invent a twin-towered gatehouse or portcullis. Keep the lost gate superstructure low and unobtrusive.
+A long low hall, about 21 by 7 metres, sits against the riverward wall, in the position shown on the plan. Give it a plain, modest pitched roof. A small service/kitchen roof close to the riverward side of the keep is tentative and should be subordinate.
+Opposite the keep is the smaller late-twelfth-century cellar building, about 9.5 by 7.5 metres. Show a low, modest timber upper structure above a stone base and a plain roof; its precise upper form is conjectural. Retain open working courtyard space. Do NOT fill the courtyard with speculative palaces. Leave the uncertain later southern offices range unbuilt; no later courthouse or lime kiln in the outer bailey.
+Outer bailey is an earth bank with a simple timber palisade and timber entry, NOT a second stone curtain. Show its distinct yard outside the inner castle and the ditch separating the two.
+Ditches cut around the landward sides and between wards. They are deep grassy/muddy cuts with a little shallow brackish water toward their river connections; not a wide ornamental lake. The river is a separate channel beside the castle. The timber bridge crosses ONLY the ditch, not the river.
+
+COMPOSITION:
+An elevated oblique architectural landscape view, looking from above the outer bailey/landward side toward the inner castle and river. Arrange like the ground plan: river across the rear/upper edge; outer bailey in left foreground; keep at left edge of the inner ward; inner courtyard extending right of keep, with hall along the far riverward side and cellar building toward the right. Show enough elevation to read the layout, bridge and enclosure, while preserving believable building heights and attractive depth. Castle and earthworks occupy most of the middle of the picture. Keep the actual compact scale; no mountain cliff. The river follows the back of the site, meadows and subdued wooded valley beyond. Do not mirror the site.
+Hide a restrained low-pitched keep roof behind a simple parapet rather than add a tall pointed roof. Roof coverings, wall tops and the timber upper building are conservative visual estimates. Keep these understated.
+Natural soft Welsh daylight, quiet blue-grey sky, warm grey limestone rubble with subtly lighter dressings, subdued earth browns, sage/olive meadows. Beautiful hand-painted watercolour on cold-pressed ivory paper, granular pigments, soft atmospheric edges in landscape, finer confident architectural detail. Newly maintained medieval buildings, not ruins, with mild everyday weathering. At most two tiny unobtrusive period figures for scale, no staged narrative.
+NO modern houses/roads/cars/fences/signs, no later outer courthouse, no lime kiln, no exact formal stepping-stone row, no round corner towers, no fantasy turrets, no conical roofs, no gothic palace, no invented heraldic banners, no battle, no labels, no captions, no watermark.
+```

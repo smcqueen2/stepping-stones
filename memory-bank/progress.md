@@ -1,5 +1,12 @@
 # Progress
 
+### Revised castle artwork and AI disclosure - 2026-11-06
+
+- At the owner's request, the three medieval-castle chapters now use the latest stepping-stones-view V2 reconstruction. The original draft is retained for provenance and explicitly marked as having a rejected entrance orientation.
+- All twelve History image captions and alt descriptions now explicitly begin AI generated, retaining present-day-study/estimated-period qualifications. The castle image is labelled c.1250-1300 even when used as a companion to a different chapter date.
+- All 51 tests, TypeScript and production build pass. Browser verified loaded 1672x941 V2, all twelve caption/alt disclosures, three V2 uses and no horizontal overflow at 320px. Temporary viewport override reset. Proof: parent `history-artwork-updated-2026-11-06.png`.
+- No package or initial landing payload change. Lazy History JS 6.60 KB gzip; five paintings total about 990 KB including V2 at 594 KB. Owner subsequently authorised commit/push on 6 November; release scope includes the artwork masters, compressed versions, prompts and evidence notes. Third-party research photographs/scans, private active context and generated river/forecast snapshots remain separate.
+
 ## 2026-07-19
 
 - Scaffolded Vite + TypeScript single-page site structure.
