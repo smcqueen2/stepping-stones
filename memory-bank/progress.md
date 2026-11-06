@@ -1,5 +1,13 @@
 # Progress
 
+### Standalone About and History views - 2026-11-06
+
+- Converted both modal containers into main-content page sections. Shared header/current navigation, page titles, heading focus, Back to crossing and browser Back/Forward; original hash links reload correctly on static hosting. Timeline selection and scene state survive switching views. Removed obsolete History dialog/Close styling and used h2 chapter headings below the page h1.
+- Replaced the dialog-only controller with `src/lib/navigation.ts`; Readings, Forecast and Report remain native dialogs. Closing Report from About returns to About; no report-form redesign or submission change. History content remains lazy and observes hidden/visible page state with retry/disposal safeguards.
+- All 57 tests across 11 files pass, TypeScript/build pass. Navigation tests cover direct page links, title/focus/aria state, history events, modal return routes, direct Report entry, skip navigation and modified clicks; loader tests include leaving during a pending download and returning.
+- Browser verified desktop 1280x900, phone 320x568 and short landscape 844x390; no horizontal overflow, correct page titles/focus, actual Back/Forward, retained milestone, direct History/About reloads, original Readings overlay and Report opening/closing from About. No console warnings/errors; viewport override reset. Proof screenshots are parent `history-page-view-2026-11-06.png` and `about-page-view-2026-11-06.png`. Used viewport screenshots because full-page capture distorted layout despite correct live geometry.
+- No dependency added. Main JS 10.48 KB gzip, initial CSS 3.64 KB; lazy History 6.60 KB plus 1.16 KB CSS; artwork unchanged. Owner authorised committing and pushing this implementation on 6 November. Generated live/forecast snapshots remain separate.
+
 ### Revised castle artwork and AI disclosure - 2026-11-06
 
 - At the owner's request, the three medieval-castle chapters now use the latest stepping-stones-view V2 reconstruction. The original draft is retained for provenance and explicitly marked as having a rejected entrance orientation.

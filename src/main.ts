@@ -2,7 +2,7 @@ import './style.css';
 import { installSceneLighting } from './lib/scene-lighting';
 import { installSceneWeather } from './lib/scene-weather';
 import { installCrossingOutlook, type OutlookData } from './lib/crossing-outlook';
-import { installDialogs } from './lib/dialogs';
+import { installNavigation } from './lib/navigation';
 import { installHistoryLoader } from './lib/history-loader';
 import type { ConfigPayload, ForecastPayload, LivePayload } from './lib/types';
 
@@ -114,7 +114,7 @@ function configureObservationForm(config: ConfigPayload, live: LivePayload): voi
 }
 
 
-const disposeDialogs = installDialogs();
+const disposeNavigation = installNavigation();
 const disposeHistory = installHistoryLoader();
 const disposeLighting = installSceneLighting();
 const disposeWeather = installSceneWeather();
@@ -204,7 +204,7 @@ import.meta.hot?.dispose(() => {
   window.clearTimeout(dataTimer);
   window.clearTimeout(requestTimeout);
   document.removeEventListener('visibilitychange', syncData);
-  disposeDialogs();
+  disposeNavigation();
   disposeHistory();
   outlook.dispose();
   disposeLighting();

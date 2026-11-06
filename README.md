@@ -16,12 +16,14 @@ The landing page is one fixed watercolour scene, with the castle and stepping st
 
 Phone portrait and short landscape windows use a flowing layout so the outlook cannot escape above the header. Main forecast/scene controls have 44-pixel touch targets, supporting copy is larger, and the compact Scene toggle leaves more of the castle visible. The Scene panel scrolls within the available height; dialog headings keep their Close button visible. Safe-area padding supports phone cutouts, and native input text remains at least 16 pixels on narrow screens.
 
-Supporting information opens in native, keyboard-accessible dialogs. Their hashes support links and browser navigation:
+About and History are separate full page views within the app, using the shared header and a Back to crossing link. Changing views updates the document title, current navigation and heading focus, and supports browser Back/Forward. Their existing hash links still work on direct visits and reloads, including GitHub Pages without server rewrites. The crossing scene remains mounted while hidden, so scene settings and the selected History milestone survive navigation.
+
+Readings, forecast and reporting continue to use native dialogs. Closing a dialog returns to the page it was opened from; the reporting form itself is unchanged. Routes are:
 
 - `#live` – current best-guess state and live inputs.
 - `#forecast` – next 24 hours of likely conditions.
-- `#history` – illustrated castle/valley timeline, research sources and local folklore.
-- `#about` – project intent.
+- `#history` – full page illustrated castle/valley timeline, research sources and local folklore.
+- `#about` – full page project introduction.
 - `#report` – observation feedback form.
 
 States are:
@@ -42,9 +44,9 @@ Future presets select a nearby future forecast timestamp and show its actual loc
 
 Open **History** in the main navigation, or use the [published History link](https://smcqueen2.github.io/stepping-stones/#history). The one-page view follows twelve milestones through the castle, Ewenni Priory, Merthyr Mawr and the stepping-stone crossing, using the archived Living landscape design as its starting point.
 
-Previous/Next and desktop date buttons slide between chapters; phones use a native milestone picker. Each chapter has source links and expandable context/date notes. The Hawise/common-land story is separately labelled undated folklore. Every image caption and alt description explicitly says **AI generated**, while distinguishing estimated reconstructions from present-day-inspired studies. The medieval chapters use the revised stepping-stones-view reconstruction, labelled as an estimate of the castle around 1250-1300. Navigation is manual, with reduced-motion support and native dialog Close/Escape/back navigation.
+Previous/Next and desktop date buttons slide between chapters; phones use a native milestone picker. Each chapter has source links and expandable context/date notes. The Hawise/common-land story is separately labelled undated folklore. Every image caption and alt description explicitly says **AI generated**, while distinguishing estimated reconstructions from present-day-inspired studies. The medieval chapters use the revised stepping-stones-view reconstruction, labelled as an estimate of the castle around 1250-1300. Navigation is manual, with reduced-motion support, normal page scrolling, shared site links, browser Back/Forward and Back to crossing. The selected milestone is retained when visiting another view and returning.
 
-The canonical researched copy remains [timeline-content.json](docs/design/historical-timeline/timeline-content.json), with the [research brief](docs/design/historical-timeline/research-brief.md), exact prompts and compressed paintings alongside it. The [castle reconstruction notes](docs/design/historical-timeline/reconstruction/research-notes.md) preserve the photographic references, orientation correction and uncertainty. The application imports these assets directly. The History module/styles load only when the view is first opened, with retry if loading fails; no new package was added. History adds a lazy module of about 6.6 KB gzip and 1.3 KB CSS, plus five compressed paintings totalling about 990 KB on use, including the 594 KB revised castle image.
+The canonical researched copy remains [timeline-content.json](docs/design/historical-timeline/timeline-content.json), with the [research brief](docs/design/historical-timeline/research-brief.md), exact prompts and compressed paintings alongside it. The [castle reconstruction notes](docs/design/historical-timeline/reconstruction/research-notes.md) preserve the photographic references, orientation correction and uncertainty. The application imports these assets directly. The History module/styles load only when the page is first visited, with retry if loading fails; no new package was added. History adds a lazy module of about 6.6 KB gzip and 1.2 KB CSS, plus five compressed paintings totalling about 990 KB on use, including the 594 KB revised castle image.
 
 ## Hero animation
 
@@ -76,7 +78,7 @@ The grass also gains a blanket of settled snow, with irregular patches resting o
 
 The weather feature reuses OGL and adds no npm package. Compared with lighting alone, it adds about 2.6 KB compressed JavaScript and 0.25 KB CSS. tsParticles' [snow preset](https://particles.js.org/demos/recipes/snow) was considered; the existing renderer lets this illustration keep its single draw pass and existing pause/resume lifecycle.
 
-The single-scene implementation adds no npm package. With the lazy History entry point, main JavaScript is about 10.1 KB gzip, lazy animation 11.9 KB and initial CSS 3.4 KB. Snow and high-water images are decoded on demand and reused as renderer textures.
+The single-scene implementation and page navigation add no npm package. With the lazy History entry point, main JavaScript is about 10.5 KB gzip, lazy animation 11.9 KB and initial CSS 3.6 KB. Snow and high-water images are decoded on demand and reused as renderer textures.
 
 ## Data pipeline
 

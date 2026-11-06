@@ -1,5 +1,11 @@
 # Decision Log
 
+## 2026-11-06 - About and History use full page views
+- Owner requested separate page views instead of modal popups for About and History, explicitly leaving Report for later. Preserve the accepted fixed landing scene and the existing #about/#history links.
+- Use a small shared hash-navigation controller rather than a router dependency or paths requiring server rewrites. One visible view, shared header, active navigation, document titles, heading focus and Back to crossing; native browser Back/Forward works. Keep mounted view state, including the selected historical milestone and scene preferences.
+- Only Readings, Forecast and Report remain dialogs. Closing one returns to its originating page. The Report form's markup, appearance and submission setup are unchanged. History lazy loading now observes page visibility, including deep links and a download completing while the user is elsewhere.
+- Full page content uses ordinary document scrolling and the available width; the landing-only viewport width constraint remains scoped to the landing scene. Archive concept previews retain their earlier presentation as historical design evidence.
+
 ## 2026-07-19 — Single-page architecture
 - Decision: use one scrollable page with jump links instead of multi-page navigation.
 - Rationale: faster access to key information on mobile and better continuity for local users.

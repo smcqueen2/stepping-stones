@@ -53,7 +53,7 @@ export function mountHistoryTimeline(host: HTMLElement) {
     painting.decoding = 'async';
     painting.loading = index === 0 ? 'eager' : 'lazy';
     const caption = element('div', 'history-caption');
-    const title = element('h3', '', milestone.title);
+    const title = element('h2', '', milestone.title);
     title.id = headingId;
     caption.append(
       element('p', 'history-category', milestone.category),
@@ -106,7 +106,7 @@ export function mountHistoryTimeline(host: HTMLElement) {
   const legendCopy = element('div', 'history-note-copy');
   legendCopy.append(
     element('p', 'history-category', content.legend.label),
-    element('h3', '', content.legend.title),
+    element('h2', '', content.legend.title),
     element('p', '', content.legend.text),
     element('p', 'history-date-note', content.legend.note),
     sourceLinks(content.legend.sources),

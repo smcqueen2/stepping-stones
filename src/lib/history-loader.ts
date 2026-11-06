@@ -2,18 +2,18 @@ type HistoryModule = { mountHistoryTimeline: (host: HTMLElement) => () => void }
 
 /** Keep the researched content, styles and paintings off the landing-page request path. */
 export function installHistoryLoader(loadModule: () => Promise<HistoryModule> = () => import('./history-timeline')) {
-  const dialog = document.querySelector<HTMLDialogElement>('#history');
+  const page = document.getElementById('history');
   const host = document.getElementById('history-content');
   const status = document.getElementById('history-loading');
   const retry = document.getElementById('history-retry');
-  if (!dialog || !host || !status || !retry) return () => {};
+  if (!page || !host || !status || !retry) return () => {};
   let pending = false;
   let mounted = false;
   let disposed = false;
   let disposeView: (() => void) | undefined;
 
   async function load() {
-    if (disposed || pending || mounted || !dialog!.open) return;
+    if (disposed || pending || mounted || page!.hidden) return;
     pending = true;
     retry!.hidden = true;
     status!.hidden = false;
@@ -21,7 +21,7 @@ export function installHistoryLoader(loadModule: () => Promise<HistoryModule> = 
     status!.textContent = 'Loading the illustrated timeline…';
     try {
       const module = await loadModule();
-      if (disposed || !dialog!.open) return;
+      if (disposed || page!.hidden) return;
       disposeView = module.mountHistoryTimeline(host!);
       mounted = true;
       host!.hidden = false;
@@ -33,14 +33,14 @@ export function installHistoryLoader(loadModule: () => Promise<HistoryModule> = 
       }
     } finally {
       pending = false;
-      // A close/reopen while the import was pending can otherwise miss its open event.
-      if (!disposed && !mounted && dialog!.open && retry!.hidden) void load();
+      // Navigating away and back during the import can otherwise miss its visibility event.
+      if (!disposed && !mounted && !page!.hidden && retry!.hidden) void load();
     }
   }
-  const observer = new MutationObserver(() => { if (dialog.open) void load(); });
-  observer.observe(dialog, { attributes: true, attributeFilter: ['open'] });
+  const observer = new MutationObserver(() => { if (!page.hidden) void load(); });
+  observer.observe(page, { attributes: true, attributeFilter: ['hidden'] });
   retry.addEventListener('click', load);
-  if (dialog.open) void load();
+  if (!page.hidden) void load();
   return () => {
     disposed = true;
     observer.disconnect();

@@ -17,7 +17,7 @@ it('keeps the selected chapter, painting, sources and accessible slide in sync',
     expect(slides.filter(slide => slide.getAttribute('aria-hidden') === 'false')).toEqual([slides[index]]);
     expect(slides[index].inert).toBe(false);
     expect(slides[(index + 1) % slides.length].inert).toBe(true);
-    expect(slides[index].querySelector('h3')!.textContent).toBe(milestone.title);
+    expect(slides[index].querySelector('h2')!.textContent).toBe(milestone.title);
     expect(slides[index].querySelector('img')!.alt).toBe(milestone.artLabel);
     expect(slides[index].querySelector('img')!.getAttribute('src')).not.toContain('undefined');
     const notes = host.querySelector('.history-notes .history-note-copy')!;

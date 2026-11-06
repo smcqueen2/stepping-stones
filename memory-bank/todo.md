@@ -2,7 +2,9 @@
 
 Recorded from user feedback on 2026-10-22. Updated 2026-11-06.
 
-- [ ] Complete physical-phone review in Chrome on the connected Pixel 9a. Both Wi-Fi and USB HTTP checks now succeed; awaiting the owner's browser result. Initial mobile fixes cover portrait/landscape, 44px controls, larger supporting text, safe areas, bounded Scene controls and sticky dialog Close controls. Use physical touch/rotation feedback for the next pass.
+- [ ] Complete physical-phone touch/rotation review in Chrome on the connected Pixel 9a. Owner has confirmed Chrome loads over both Wi-Fi and USB after allowing local-network access; connection troubleshooting is resolved. Initial mobile fixes cover portrait/landscape, 44px controls, larger supporting text, safe areas and bounded Scene controls. Use physical touch/rotation feedback for the next pass.
+
+- [x] Convert About and History from modals to separate full page views, requested 2026-11-06. Shared navigation, Back to crossing, browser Back/Forward, direct hash links, page titles/focus, retained milestone and lazy History. Report remains a native modal with its existing form. All 57 tests, TypeScript/build and desktop/phone/short-landscape browser checks pass. Owner authorised commit/push on 6 November.
 
 - [x] Integrate and publish the researched one-page History timeline for inspection. User requested this on 2026-11-06 before the data-refresh work. Living landscape is the first integrated version at `#history`, with a main History link, 12 milestones, the five existing paintings, dates/Previous/Next, mobile milestone picker, source/date notes and separately labelled folklore. Canonical research/art remain in `docs/design/historical-timeline/`, with Painted chapters retained as an alternative. Code/styles load on first opening; no new dependency. All 51 tests, TypeScript/build and desktop/320/412px browser checks pass. Await feedback on the deployed layout.
 

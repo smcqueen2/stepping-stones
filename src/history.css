@@ -1,7 +1,3 @@
-.history-dialog { width: min(1120px, calc(100% - 32px)); max-height: calc(100dvh - 32px); }
-.history-heading { position: sticky; top: 0; z-index: 2; background: var(--bg); padding-block: 8px 14px; margin-bottom: 0; }
-.history-eyebrow { margin: 0 0 7px; font-size: 11px; letter-spacing: 1.4px; text-transform: uppercase; color: var(--muted); }
-.history-intro { color: var(--muted); font-size: 14px; margin: 8px 0 22px; }
 .history-window { overflow: hidden; background: var(--bg); isolation: isolate; }
 .history-track { display: flex; align-items: stretch; transition: transform 550ms cubic-bezier(.22,.68,.18,1); }
 .history-slide { flex: 0 0 100%; min-width: 0; min-height: 470px; position: relative; display: flex; flex-direction: column; justify-content: flex-end; }
@@ -9,7 +5,7 @@
 .history-caption { position: relative; width: min(410px, calc(100% - 40px)); margin: 58px 20px 20px; padding: 22px; background: var(--card); box-shadow: 0 8px 26px #17392b20; border-radius: 3px; }
 .history-category { color: var(--muted); font-size: 11px; letter-spacing: 1px; margin: 0 0 9px; text-transform: uppercase; }
 .history-period { font-size: 13px; color: var(--muted); margin: 0 0 9px; }
-.history-caption h3 { font: 400 clamp(26px, 3vw, 34px)/1.12 Georgia, serif; letter-spacing: -.5px; margin: 0 0 13px; }
+.history-caption h2 { font: 400 clamp(26px, 3vw, 34px)/1.12 Georgia, serif; letter-spacing: -.5px; margin: 0 0 13px; }
 .history-summary { font-size: 14px; line-height: 1.65; margin: 0; }
 .history-sources { display: flex; flex-wrap: wrap; gap: 6px 15px; padding: 0; margin: 16px 0 0; list-style: none; font-size: 12px; line-height: 1.5; }
 .history-caption .history-sources { padding-top: 12px; border-top: 1px solid var(--card-border); }
@@ -27,16 +23,13 @@
 .history-notes summary { min-height: 44px; align-content: center; font-size: 14px; }
 .history-note-copy { max-width: 78ch; font-size: 14px; line-height: 1.75; }
 .history-note-copy p { margin: 14px 0; }
-.history-note-copy h3 { font: 400 27px/1.2 Georgia, serif; margin: 12px 0; }
+.history-note-copy h2 { font: 400 27px/1.2 Georgia, serif; margin: 12px 0; }
 .history-date-note { color: var(--muted); font-size: 13px; }
 @media (max-width: 700px), (max-height: 600px) {
-  .history-dialog { width: calc(100% - 16px); padding: 16px; max-height: calc(100dvh - 16px); }
-  .history-heading { gap: 10px; padding-block: 4px 12px; }
-  .history-heading h2 { font-size: 28px; }
   .history-slide { justify-content: flex-start; min-height: 0; }
   .history-painting { position: relative; width: 100%; height: clamp(180px, 48vw, 300px); object-fit: cover; }
   .history-caption { width: auto; margin: -22px 10px 12px; padding: 19px; }
-  .history-caption h3 { font-size: 28px; }
+  .history-caption h2 { font-size: 28px; }
   .history-art-label { position: relative; inset: auto; order: 3; margin: 0 10px 12px; max-width: none; padding: 0; background: var(--bg); }
   .history-dates { display: none; }
   .history-jump { display: block; }

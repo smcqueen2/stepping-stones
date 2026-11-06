@@ -9,22 +9,22 @@
     />
     <title>Ogmore Stepping Stones | Local Crossing Guide</title>
   </head>
-  <body>
-    <a class="skip-link" href="#crossing-outlook">Skip to crossing outlook</a>
+  <body data-view="top">
+    <a class="skip-link" href="#top">Skip to content</a>
     <header class="site-header">
       <div class="header-inner">
-        <a class="brand" href="#top">Ogmore<span>Stepping stones</span></a>
+        <a class="brand" href="#top" data-open-page>Ogmore<span>Stepping stones</span></a>
         <nav class="section-nav" aria-label="Crossing information">
           <span class="location-label">Ogmore-by-Sea · Wales</span>
-          <a href="#history" data-open-dialog>History</a>
-          <a href="#about" data-open-dialog>About</a>
+          <a href="#history" data-open-page>History</a>
+          <a href="#about" data-open-page>About</a>
           <a href="#report" data-open-dialog>Report</a>
         </nav>
       </div>
     </header>
 
-    <main id="top">
-      <section id="hero" class="hero" aria-label="Ogmore Castle and crossing outlook">
+    <main id="top" tabindex="-1">
+      <section id="hero" class="hero" data-page-view="top" aria-label="Ogmore Castle and crossing outlook">
         <div class="scene-stage">
         <div class="hero-art" role="img" aria-label="Painted-style scene of Ogmore Castle and stepping stones">
           <div class="hero-scene">
@@ -93,6 +93,37 @@
         </section>
         </div>
       </section>
+      <section id="history" class="page-view history-page" data-page-view="history" aria-labelledby="history-title" hidden>
+        <a class="back-link" href="#top" data-open-page>← Back to crossing</a>
+        <header class="page-heading">
+          <p class="page-eyebrow">Castle, crossing &amp; coast</p>
+          <h1 id="history-title" tabindex="-1">Ogmore, through time.</h1>
+          <p class="page-intro">Follow the places and people that shaped this valley.</p>
+        </header>
+        <p id="history-loading" role="status">Loading the illustrated timeline…</p>
+        <button id="history-retry" type="button" hidden>Try again</button>
+        <div id="history-content" hidden></div>
+      </section>
+
+      <section id="about" class="page-view about-page" data-page-view="about" aria-labelledby="about-title" hidden>
+        <a class="back-link" href="#top" data-open-page>← Back to crossing</a>
+        <header class="page-heading">
+          <p class="page-eyebrow">About this project</p>
+          <h1 id="about-title" tabindex="-1">A crossing shaped by the river.</h1>
+        </header>
+        <article class="card prose">
+          <p>
+            Built by a local resident to help walkers, runners, and cyclists avoid surprises at
+            the crossing. This is a free, open-source community tool.
+          </p>
+          <p>
+            The model is deliberately cautious and uses “likely” language to avoid false
+            certainty.
+          </p>
+          <p>The painting illustrates a combined river, tide and rainfall prediction. It does not measure the depth at each stone or guarantee safe passage.</p>
+          <p class="page-links"><a href="#history" data-open-page>The stones and the castle</a><a href="#report" data-open-dialog>Share an observation</a></p>
+        </article>
+      </section>
     </main>
 
       <dialog id="live" class="app-dialog" aria-labelledby="live-title">
@@ -125,35 +156,6 @@
         </p>
         <div id="forecast-summary" class="cards"></div>
         <div id="forecast-timeline" class="timeline" aria-label="Hourly forecast timeline"></div>
-      </dialog>
-
-      <dialog id="history" class="app-dialog history-dialog" aria-labelledby="history-title">
-        <div class="dialog-heading history-heading">
-          <div><p class="history-eyebrow">Castle, crossing &amp; coast</p><h2 id="history-title">Ogmore, through time.</h2></div>
-          <button type="button" data-close-dialog aria-label="Close history">Close</button>
-        </div>
-        <p class="history-intro">Follow the places and people that shaped this valley.</p>
-        <p id="history-loading" role="status">Loading the illustrated timeline…</p>
-        <button id="history-retry" type="button" hidden>Try again</button>
-        <div id="history-content" hidden></div>
-      </dialog>
-
-      <dialog id="about" class="app-dialog" aria-labelledby="about-title">
-        <div class="dialog-heading"><h2 id="about-title">A crossing shaped by the river.</h2><button type="button" data-close-dialog aria-label="Close information">Close</button></div>
-        <div class="cards">
-          <article class="card prose">
-            <p>
-              Built by a local resident to help walkers, runners, and cyclists avoid surprises at
-              the crossing. This is a free, open-source community tool.
-            </p>
-            <p>
-              The model is deliberately cautious and uses “likely” language to avoid false
-              certainty.
-            </p>
-            <p>The painting illustrates a combined river, tide and rainfall prediction. It does not measure the depth at each stone or guarantee safe passage.</p>
-            <p class="dialog-links"><a href="#history" data-open-dialog>The stones and the castle</a><a href="#report" data-open-dialog>Share an observation</a></p>
-          </article>
-        </div>
       </dialog>
 
       <dialog id="report" class="app-dialog" aria-labelledby="report-title">
