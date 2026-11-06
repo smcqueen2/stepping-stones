@@ -1,5 +1,15 @@
 # Decision Log
 
+## 2026-11-06 - Painted moon and varied star twinkle
+- Owner requested a watercolour moon and twinkling stars in the black night sky. Use a new transparent painted crescent generated with built-in ImageGen, preserving its master/prompt and shipping a small on-demand WebP. Extend the existing CSS stars with soft irregular points, varied sizes, staggered phases and slow opacity/scale changes.
+- Keep celestial layers behind the landscape/castle silhouettes, retain the existing night/day fade and subtly dim them through the illustrative weather. Move the moon left on narrow/short views to avoid the Scene control and keep. The crescent and star positions are decorative rather than astronomical predictions.
+- Pause twinkle in daylight, off screen, on other views and in hidden tabs; reduced motion uses static stars. Share the existing lighting lifecycle, adding no package, shader texture/pass or frame loop. The reporting backend remains on hold.
+
+## 2026-11-06 - Measured river and tide levels at a glance
+- Owner requested easy-to-read river and current tide metrics on the main page. Add a compact, separate lower-right overlay so the existing crossing-status card remains clear; on narrow/short views it sits below that card.
+- Always show the latest measured values, independently of a future forecast selection. Retain river metres and tide metres above Ordnance Datum, including negative values; identify the actual source and regional nature of the tide gauge. Gauge levels are not depth at the stones. Detailed Readings keeps higher precision/rates.
+- Use existing data/freshness/timer and model trend, with no extra fetch, package, backend or animation. Label regression direction as Recent rise/fall or Little change, not an exact tide turning time. Clear expired/invalid-time readings, and validate each value/trend independently. The reporting backend hold remains unchanged.
+
 ## 2026-11-06 - Scroll through History with a vertical timeline
 - Owner requested vertical scrolling instead of paginated chapters, with a historical timeline next to the scrollbar showing the reading position. The new layout supersedes the click-through implementation; retain the archived designs and sourced content as provenance.
 - Render all twelve chapters in normal document flow, with their existing paintings/overlays, AI labels and per-period source/context/date notes. Keep folklore separately labelled. No new image, package, research claim or effect on crossing predictions.

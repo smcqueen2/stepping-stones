@@ -106,6 +106,9 @@ describe('forecast overlay controls', () => {
     vi.spyOn(document, 'hidden', 'get').mockReturnValue(false);
     document.body.innerHTML = `<div class="hero-art"><img id="river-high" data-src="/river-high.webp"></div>
       <h1 id="outlook-title"><span id="outlook-state"></span></h1><p id="outlook-description"></p><span id="outlook-horizon"></span>
+      <section class="water-level-card"><p id="water-level-age"></p>
+        <div id="water-level-river"><span id="river-glance-value"></span><span id="river-glance-trend"></span><span id="river-glance-source"></span></div>
+        <div id="water-level-tide"><span id="tide-glance-value"></span><span id="tide-glance-trend"></span><span id="tide-glance-source"></span></div></section>
       <button data-outlook-minutes="0"></button><button data-outlook-minutes="60"></button><button data-outlook-minutes="180"></button>
       <dialog><button data-forecast-time="${iso(200)}"></button></dialog>`;
     document.querySelector<HTMLImageElement>('img')!.decode = vi.fn().mockResolvedValue(undefined);
@@ -116,6 +119,58 @@ describe('forecast overlay controls', () => {
   afterEach(() => { controller.dispose(); vi.restoreAllMocks(); vi.useRealTimers(); document.body.innerHTML = ''; });
   const click = (n: number) => document.querySelector<HTMLButtonElement>(`[data-outlook-minutes="${n}"]`)!.click();
   const state = () => document.getElementById('outlook-state')!;
+  it('keeps measured river and regional tide levels distinct from a selected future prediction', () => {
+    const data = fixture();
+    data.live!.sourceStations = [
+      { role: 'river', stationId: 4083, stationTitle: 'Ogmore at Bridgend', parameterId: 110, source: 'NRW' },
+      { role: 'tide', stationId: 72839, stationTitle: 'Newport tide gauge', parameterId: 10254, source: 'NRW' },
+    ];
+    controller.setData(data);
+    expect(document.getElementById('river-glance-value')!.textContent).toBe('0.80');
+    expect(document.getElementById('tide-glance-value')!.textContent).toBe('-1.20');
+    expect(document.getElementById('river-glance-trend')!.textContent).toBe('↑ Recent rise');
+    expect(document.getElementById('river-glance-source')!.textContent).toBe('Bridgend gauge');
+    expect(document.getElementById('tide-glance-source')!.textContent).toBe('Newport · regional');
+    expect(document.getElementById('water-level-age')!.textContent).toBe('10 min old');
+    click(180);
+    expect(state().textContent).toBe('Likely Unpassable');
+    expect(document.getElementById('river-glance-value')!.textContent).toBe('0.80');
+    expect(document.getElementById('tide-glance-value')!.textContent).toBe('-1.20');
+    data.live!.sourceStations[1].stationTitle = 'Fallback coastal gauge';
+    controller.setData(data);
+    expect(document.getElementById('tide-glance-source')!.textContent).toBe('Fallback coastal gauge · regional');
+  });
+  it('accepts zero and negative gauge values and validates each reading and trend independently', () => {
+    const data = fixture();
+    Object.assign(data.live!.current, { riverLevelM: 0, tideLevelMAOD: -4.2, riverTrendMPerHour: -.1, tideTrendMPerHour: .001 });
+    controller.setData(data);
+    expect(document.getElementById('river-glance-value')!.textContent).toBe('0.00');
+    expect(document.getElementById('tide-glance-value')!.textContent).toBe('-4.20');
+    expect(document.getElementById('river-glance-trend')!.textContent).toBe('↓ Recent fall');
+    expect(document.getElementById('tide-glance-trend')!.textContent).toBe('→ Little change');
+    Object.assign(data.live!.current, { tideLevelMAOD: NaN, riverTrendMPerHour: NaN });
+    controller.setData(data);
+    expect(document.getElementById('river-glance-value')!.textContent).toBe('0.00');
+    expect(document.getElementById('river-glance-trend')!.textContent).toBe('Trend unavailable');
+    expect(document.getElementById('water-level-river')!.dataset.available).toBe('true');
+    expect(document.getElementById('tide-glance-value')!.textContent).toBe('—');
+    expect(document.getElementById('water-level-tide')!.dataset.available).toBe('false');
+  });
+  it('clears previous values when timestamps are invalid, explicitly stale or missing', () => {
+    const data = fixture();
+    data.live!.generatedAt = iso(11);
+    controller.setData(data);
+    expect(document.getElementById('river-glance-value')!.textContent).toBe('—');
+    expect(document.getElementById('water-level-age')!.textContent).toBe('Unavailable');
+    data.live!.generatedAt = iso(-5);
+    data.live!.freshness.stale = true;
+    controller.setData(data);
+    expect(document.getElementById('water-level-age')!.textContent).toBe('Out of date');
+    expect(document.querySelector<HTMLElement>('.water-level-card')!.dataset.freshness).toBe('stale');
+    controller.setData({});
+    expect(document.getElementById('tide-glance-value')!.textContent).toBe('—');
+    expect(document.getElementById('water-level-age')!.textContent).toBe('Unavailable');
+  });
   it('changes the caption and water together, preserves selection on refresh and reuses artwork', async () => {
     expect(document.querySelector('img')!.hasAttribute('src')).toBe(false);
     click(180);
@@ -153,6 +208,9 @@ describe('forecast overlay controls', () => {
     expect(state().textContent).toBe('Data out of date');
     expect(document.getElementById('outlook-description')!.textContent).toContain('Readings are');
     expect(state().classList.contains('state-good')).toBe(false);
+    expect(document.getElementById('river-glance-value')!.textContent).toBe('—');
+    expect(document.getElementById('tide-glance-value')!.textContent).toBe('—');
+    expect(document.getElementById('water-level-age')!.textContent).toBe('Out of date');
     expect(document.querySelector<HTMLButtonElement>('[data-outlook-minutes="180"]')!.disabled).toBe(true);
     controller.dispose();
     expect(vi.getTimerCount()).toBe(0);

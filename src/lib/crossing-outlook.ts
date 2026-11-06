@@ -109,8 +109,34 @@ export function installCrossingOutlook() {
     node.classList.remove('state-good', 'state-caution', 'state-bad', 'state-pending');
     node.classList.add(state ? stateClass[state] : 'state-pending');
   }
+  function renderWaterLevels(now: number): void {
+    const live = data.live;
+    const age = live ? readingAge(live, now) : Infinity;
+    const stale = Boolean(live && (live.freshness.stale || Number.isFinite(age) && age > (data.config?.freshness.staleAfterMinutes ?? 120)));
+    const fresh = Boolean(live && Number.isFinite(age) && !stale);
+    const card = document.querySelector<HTMLElement>('.water-level-card');
+    if (card) card.dataset.freshness = fresh ? 'fresh' : stale ? 'stale' : live || data.loaded ? 'unavailable' : 'loading';
+    text('water-level-age', fresh ? `${age} min old` : stale ? 'Out of date' : live || data.loaded ? 'Unavailable' : 'Checking…');
+    for (const role of ['river', 'tide'] as const) {
+      const value = role === 'river' ? live?.current.riverLevelM : live?.current.tideLevelMAOD;
+      const trend = role === 'river' ? live?.current.riverTrendMPerHour : live?.current.tideTrendMPerHour;
+      const available = fresh && finite(value);
+      const metric = document.getElementById(`water-level-${role}`);
+      if (metric) metric.dataset.available = String(available);
+      text(`${role}-glance-value`, available ? value.toFixed(2) : '—');
+      // The existing model trend is a regression across recent readings, not a tide turning-time forecast.
+      text(`${role}-glance-trend`, !available ? stale ? 'Out of date' : live || data.loaded ? 'Unavailable' : 'Awaiting readings'
+        : !finite(trend) ? 'Trend unavailable' : Math.abs(trend) < .005 ? '→ Little change' : trend > 0 ? '↑ Recent rise' : '↓ Recent fall');
+      const station = live?.sourceStations.find(source => source?.role === role);
+      const name = typeof station?.stationTitle === 'string' ? station.stationTitle.trim() : '';
+      text(`${role}-glance-source`, role === 'river'
+        ? station?.stationId === 4083 ? 'Bridgend gauge' : name || 'River gauge'
+        : name ? `${name.replace(/\s+tide gauge$/i, '')} · regional` : 'Regional tide gauge');
+    }
+  }
   function render(): void {
     const now = Date.now();
+    renderWaterLevels(now);
     const outlook = selectOutlook(data, selection, now);
     const current = selectOutlook(data, 0, now);
     activeVisual = waterAppearance(outlook.available ? outlook.score : undefined, outlook.available ? outlook.state : undefined);

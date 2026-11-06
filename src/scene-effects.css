@@ -50,34 +50,68 @@
 
 .hero-stars {
   bottom: auto;
-  height: 24%;
-  background:
-    radial-gradient(circle at 9% 46%, #ffedce 0 0.7px, transparent 1.7px),
-    radial-gradient(circle at 18% 20%, #e1e9fb 0 0.9px, transparent 2px),
-    radial-gradient(circle at 30% 63%, #ffedce 0 0.6px, transparent 1.5px),
-    radial-gradient(circle at 37% 31%, #e1e9fb 0 0.7px, transparent 1.7px),
-    radial-gradient(circle at 45% 14%, #ffedce 0 0.6px, transparent 1.5px),
-    radial-gradient(circle at 69% 18%, #e1e9fb 0 0.8px, transparent 1.8px),
-    radial-gradient(circle at 74% 66%, #ffedce 0 0.6px, transparent 1.5px),
-    radial-gradient(circle at 91% 26%, #e1e9fb 0 0.7px, transparent 1.7px),
-    radial-gradient(circle at 96% 70%, #ffedce 0 0.6px, transparent 1.5px);
-  opacity: calc(var(--scene-stars, 0) * (1 - var(--weather-clouds, 0)));
+  height: 35%;
+  opacity: calc(var(--scene-stars, 0) * (1 - var(--weather-clouds, 0) * .25) * (1 - var(--weather-fog, 0) * .85));
+}
+
+.hero-star {
+  position: absolute;
+  left: var(--star-x);
+  top: var(--star-y);
+  width: calc(clamp(3px, .48vw, 6px) * var(--star-size, 1));
+  aspect-ratio: 1;
+  border-radius: 43% 57% 46% 54%;
+  background: radial-gradient(ellipse at 36% 35%, var(--star-core, #fff3d5) 0 18%, #ede7dcaa 36%, transparent 72%);
+  filter: blur(.2px);
+  opacity: .65;
+  animation: watercolour-twinkle var(--star-time, 10s) ease-in-out var(--star-delay, 0s) infinite alternate;
+  animation-play-state: paused;
+}
+
+.hero-star:nth-child(3n) { --star-core: #dbe7f4; }
+.hero-star::before {
+  content: '';
+  position: absolute;
+  inset: -65%;
+  background: radial-gradient(ellipse, #dfe7f64d, transparent 70%);
+}
+.hero-star::after {
+  content: '';
+  position: absolute;
+  inset: -15%;
+  background: var(--star-core, #fff3d5);
+  clip-path: polygon(49% 0, 59% 39%, 100% 52%, 60% 60%, 51% 100%, 40% 60%, 0 48%, 40% 40%);
+  opacity: .45;
+}
+.hero-art[data-sky-motion="running"][data-lighting="night"] .hero-star { animation-play-state: running; }
+
+@keyframes watercolour-twinkle {
+  0%, 18% { opacity: .28; transform: scale(.83); }
+  46% { opacity: .85; transform: scale(1.08); }
+  73% { opacity: .46; transform: scale(.95); }
+  100% { opacity: .72; transform: scale(1.02); }
 }
 
 .hero-moon {
   position: absolute;
-  top: 9%;
-  right: 15%;
-  width: 4.4%;
+  top: 4%;
+  right: 16%;
+  width: 7.4%;
+  height: auto;
   aspect-ratio: 1;
-  border-radius: 50%;
-  background:
-    radial-gradient(circle at 35% 68%, rgba(176, 187, 203, 0.35), transparent 28%),
-    radial-gradient(circle at 66% 78%, rgba(176, 187, 203, 0.25), transparent 18%),
-    #f4ebd8;
-  mask-image: radial-gradient(circle at 70% 26%, transparent 0 47%, #000 50%);
-  opacity: calc(var(--scene-stars, 0) * (1 - var(--weather-clouds, 0)));
-  filter: blur(0.35px) drop-shadow(0 0 5px rgba(226, 231, 250, 0.25));
+  object-fit: contain;
+  opacity: 0;
   transition: opacity 1200ms ease;
   pointer-events: none;
+}
+.hero-moon.is-ready {
+  opacity: calc(var(--scene-stars, 0) * (1 - var(--weather-clouds, 0) * .15) * (1 - var(--weather-fog, 0) * .65));
+}
+
+@media (max-width: 700px), (max-height: 600px) {
+  .hero-moon { left: 15%; right: auto; top: 4%; width: 11%; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero-star { animation: none; opacity: .65; transform: none; }
 }

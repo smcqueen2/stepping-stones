@@ -51,15 +51,17 @@ describe('lighting clock and preview controls', () => {
     vi.setSystemTime(new Date('2026-06-21T12:00:00Z'));
     vi.spyOn(document, 'hidden', 'get').mockReturnValue(false);
     document.body.innerHTML = `
-      <div class="hero-art"></div>
+      <div class="hero-art"><img class="hero-moon" data-src="/moon-watercolour.webp" /></div>
       <div id="scene-lighting"><button data-lighting-mode="live">Live</button><button data-lighting-mode="night">Night</button></div>
       <time id="scene-local-time"></time><span id="scene-light-label"></span>`;
+    document.querySelector<HTMLImageElement>('.hero-moon')!.decode = vi.fn().mockResolvedValue(undefined);
   });
   afterEach(() => {
     dispose?.();
     dispose = undefined;
     document.body.innerHTML = '';
     vi.restoreAllMocks();
+    vi.unstubAllGlobals();
     vi.useRealTimers();
   });
 
@@ -74,6 +76,58 @@ describe('lighting clock and preview controls', () => {
     expect(hero.dataset.lighting).toBe('day');
     expect(hero.dataset.lightingMode).toBe('live');
     expect(document.querySelector('button[data-lighting-mode="live"]')?.getAttribute('aria-pressed')).toBe('true');
+  });
+
+  it('loads the painted moon only when stars become visible and reuses it on later previews', async () => {
+    dispose = installSceneLighting();
+    const moon = document.querySelector<HTMLImageElement>('.hero-moon')!;
+    expect(moon.hasAttribute('src')).toBe(false);
+    document.querySelector<HTMLButtonElement>('button[data-lighting-mode="night"]')!.click();
+    expect(moon.getAttribute('src')).toBe('/moon-watercolour.webp');
+    await Promise.resolve();
+    expect(moon.classList.contains('is-ready')).toBe(true);
+    document.querySelector<HTMLButtonElement>('button[data-lighting-mode="live"]')!.click();
+    document.querySelector<HTMLButtonElement>('button[data-lighting-mode="night"]')!.click();
+    expect(moon.decode).toHaveBeenCalledOnce();
+  });
+
+  it('pauses sky motion outside the viewport or in hidden tabs and disconnects on disposal', () => {
+    let notify!: IntersectionObserverCallback;
+    const observe = vi.fn();
+    const disconnect = vi.fn();
+    vi.stubGlobal('IntersectionObserver', class {
+      constructor(callback: IntersectionObserverCallback) { notify = callback; }
+      observe = observe;
+      disconnect = disconnect;
+    });
+    dispose = installSceneLighting();
+    const hero = document.querySelector<HTMLElement>('.hero-art')!;
+    expect(observe).toHaveBeenCalledWith(hero);
+    expect(hero.dataset.skyMotion).toBe('running');
+    notify([{ isIntersecting: false } as IntersectionObserverEntry], {} as IntersectionObserver);
+    expect(hero.dataset.skyMotion).toBe('paused');
+    notify([{ isIntersecting: true } as IntersectionObserverEntry], {} as IntersectionObserver);
+    expect(hero.dataset.skyMotion).toBe('running');
+    vi.spyOn(document, 'hidden', 'get').mockReturnValue(true);
+    document.dispatchEvent(new Event('visibilitychange'));
+    expect(hero.dataset.skyMotion).toBe('paused');
+    expect(vi.getTimerCount()).toBe(0);
+    dispose(); dispose = undefined;
+    expect(disconnect).toHaveBeenCalledOnce();
+    notify([{ isIntersecting: true } as IntersectionObserverEntry], {} as IntersectionObserver);
+    expect(hero.dataset.skyMotion).toBe('paused');
+  });
+
+  it('does not reveal a moon that finishes decoding after disposal', async () => {
+    const moon = document.querySelector<HTMLImageElement>('.hero-moon')!;
+    let decoded!: () => void;
+    moon.decode = vi.fn(() => new Promise<void>(resolve => { decoded = resolve; }));
+    dispose = installSceneLighting();
+    document.querySelector<HTMLButtonElement>('button[data-lighting-mode="night"]')!.click();
+    dispose(); dispose = undefined;
+    decoded();
+    await Promise.resolve();
+    expect(moon.classList.contains('is-ready')).toBe(false);
   });
 
   it('updates each minute, catches up after a hidden tab, and cleans up its timer', () => {

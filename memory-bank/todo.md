@@ -2,6 +2,10 @@
 
 Recorded from user feedback on 2026-10-22. Updated 2026-11-06.
 
+- [x] Add a watercolour moon and softly twinkling stars to the night sky: transparent on-demand crescent, varied slow CSS stars behind silhouettes, weather/daylight fade, phone placement and visibility/reduced-motion handling. 81-test full suite plus final focused lighting checks, TypeScript/build and browser previews pass. Owner authorised commit/push together with the water metrics.
+
+- [x] Add easy-to-read river and current tide metrics to the main page: separate Latest readings overlay, source/units, recent trends and age, measured values retained alongside future outlooks, stale/invalid guards and phone layout. 78 tests, TypeScript/build and browser checks pass. Owner authorised commit/push together with the painted night sky.
+
 - [x] Replace paginated History with a continuous vertical story and a fixed timeline beside the scrollbar, requested 6 November. Scroll-following active period/progress, clickable desktop dates, compact phone rail/picker, unchanged research/art/AI labels and per-chapter notes. All 75 tests, TypeScript/build and desktop/phone/short-landscape browser checks pass. Owner authorised commit/push; supersedes the earlier slide controls.
 
 - [x] Build the quick main-page reporting interface for local review: five-position condition slider, small modal, no sign-in/time/notes fields, clearly labelled preview and coming-soon hourly count. 72 tests, TypeScript/build and desktop/mobile browser checks pass. Owner authorised commit/push together with the vertical History layout; shared collection remains on hold below.

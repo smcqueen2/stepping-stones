@@ -34,7 +34,7 @@ States are:
 
 ### Prediction and water appearance
 
-The crossing status (Likely Passable, Caution or Likely Unpassable) is the main headline, with a smaller plain-language reason below it. The former poetic headline and overlay gauge-number row are removed. Detailed river/tide values and trends remain under Readings. The same short reason is used for its current assessment, while a future selection uses that selected forecast hour's inputs.
+The crossing status (Likely Passable, Caution or Likely Unpassable) is the main headline, with a smaller plain-language reason below it. The former poetic headline and inline gauge-number row are removed; current gauge readings now have their own compact overlay. Detailed river/tide values and trends remain under Readings. The same short reason is used for its current assessment, while a future selection uses that selected forecast hour's inputs.
 
 Reasons use the model's existing normalized river, tide and rain components, with configured weights to select an active high contributor. A high river and low tide are described together, and rain wording describes a possible future rise. The generator now includes optional `live.current.riskComponents`, matching the components already supplied for forecast hours. Older payloads or missing/invalid component/config data use a neutral explanation without guessing a cause.
 
@@ -45,6 +45,14 @@ The selected prediction drives both the condition label and an illustrated water
 The approved high-water artwork (~158 KB) loads only when needed. Its river area is masked over the original painting, retaining the bank, swan, castle, snow and sky. The shader reuses that decoded image and blends it with the original at the same opacity. A packed mask keeps exposed stones still at low water and lets water flow over them when covered. Static/reduced-motion rendering uses the matching DOM layer. All effects share one draw pass, using at most eight textures with both snowy trees and high water. Provenance and the original prompts are in [the water asset notes](docs/assets/river-high.md).
 
 Future presets select a nearby future forecast timestamp and show its actual local time; missing or expired hours are unavailable. Freshness is recomputed every minute, including time elapsed since generation and the older of the river/tide readings. Stale data removes the classified outlook, disables future selections and shows a neutral illustration. Data refreshes every 15 minutes while visible; pending requests time out after 10 seconds. Fresh cached data can survive an update failure, with a delayed-update caption. Reload resets forecast selection and scene overrides.
+
+### At a glance water readings
+
+The **Latest readings** overlay shows river and regional tide levels side by side, with two decimal places, distinct units, the source gauges, recent trend arrows and reading age. It sits at the bottom right of the scene on desktop and below the crossing card on phones/short windows. The crossing status remains separate. Selecting a future outlook leaves these measured values unchanged; they are never substituted with projected levels.
+
+River levels retain metres at the gauge, while the tide retains metres above Ordnance Datum (**m AOD**, explained by its abbreviation). Negative tide values are preserved; these are gauge levels, not water depth at the stones. The [official tide-gauge API reference](https://environment.data.gov.uk/flood-monitoring/doc/tidegauge) describes the difference between local and Ordnance Datum measurements. Source captions use the loaded payload and change with a fallback gauge; the tide is explicitly labelled regional.
+
+**Recent rise**, **Recent fall** and **Little change** describe the existing regression across up to 32 recent readings, using the same small-change threshold as the detailed Readings view. They do not predict an exact tide turning time. The overlay reuses the existing payload, freshness limits and minute timer, adding no request, package, chart or animation. Expired, explicitly stale or invalid-time data clears both values and trends; individual invalid numbers/trends are handled independently. Detailed Readings retains three-decimal values and rates.
 
 ## Castle and valley history
 
@@ -72,6 +80,10 @@ The illustration follows the light at Ogmore using [SunCalc](https://github.com/
 
 Open **Scene** at the top right of the painting to find the **Light**, **Weather** and **Wind** controls. Light previews each phase; **Live** resumes local time. Previews are labelled and reloads always return to live mode. The moon and stars are decorative. The complete painting, including moving water and trees, receives the lighting; page text and condition indicators retain their existing colours.
 
+The night sky has an AI-generated watercolour crescent moon and eighteen softly painted-looking stars. Stars brighten and settle at different speeds and phases, with no hard blinking. Both layers sit behind the actual castle and tree silhouettes; narrow/short views place the moon on the left, clear of the Scene button. Clouds and fog soften their visibility while retaining some light through the illustrative cloud treatment. Daylight hides them. The crescent is decorative and does not show the actual lunar phase or position.
+
+The transparent moon image is about 13.5 KB and loads only when the night-sky fade first becomes visible; later previews reuse it. Stars use CSS opacity/scale animation with no library, shader texture/pass or extra animation-frame loop. Motion pauses in daylight, hidden tabs, other page views and when the scene is off screen. Reduced motion retains static stars and the moon, with no appearance transitions; WebGL is not required. The generated master, optimized asset and exact built-in ImageGen prompt are recorded in [the night-sky asset notes](docs/assets/night-sky/README.md).
+
 The sky has its own brightness curve, fading towards black at night while the castle, landscape and water receive gentler dimming and a lighter cool wash. The existing sky asset and transparent-edge backdrop darken together; no night bitmap is downloaded. The tree renderer samples the sky layer's interpolated CSS brightness for newly uncovered branch edges, so the moving canopy matches the sky throughout the transition. This adds one scalar uniform, with the same textures, draw pass and frame cap. Daylight preserves the original painting. The same sky treatment works in the static fallback, and reduced motion disables its transitions too.
 
 Lighting refreshes each minute, pauses its timer in hidden tabs and catches up when returning. Reduced motion disables colour transitions while keeping the correct time-of-day appearance, including without WebGL. SunCalc has no runtime dependencies; lighting adds about 2.6 KB of compressed JavaScript and 0.6 KB of CSS to the previous build.
@@ -90,7 +102,7 @@ The grass also gains a blanket of settled snow, with irregular patches resting o
 
 The weather feature reuses OGL and adds no npm package. Compared with lighting alone, it adds about 2.6 KB compressed JavaScript and 0.25 KB CSS. tsParticles' [snow preset](https://particles.js.org/demos/recipes/snow) was considered; the existing renderer lets this illustration keep its single draw pass and existing pause/resume lifecycle.
 
-The single-scene implementation, page navigation and condition-report preview add no npm package. Main JavaScript is about 10.8 KB gzip, lazy animation 12.0 KB and initial CSS 4.1 KB. Snow and high-water images are decoded on demand and reused as renderer textures.
+The single-scene implementation, page navigation, condition-report preview, water-reading overlay and night-sky decoration add no npm package. Main JavaScript is about 11.3 KB gzip, lazy animation 12.0 KB and initial CSS 4.7 KB. Snow and high-water images are decoded on demand and reused as renderer textures; the moon uses its own small on-demand image element.
 
 ## Data pipeline
 

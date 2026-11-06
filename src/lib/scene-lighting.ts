@@ -48,9 +48,22 @@ export function installSceneLighting(): () => void {
   const phase = document.querySelector<HTMLElement>('#scene-light-label');
   if (!hero || !control || !time || !phase) return () => {};
   const buttons = Array.from(control.querySelectorAll<HTMLButtonElement>('button[data-lighting-mode]'));
+  const moon = hero.querySelector<HTMLImageElement>('.hero-moon');
 
   let mode: LightingMode = 'live';
   let timer: number | undefined;
+  let onScreen = true;
+  let disposed = false;
+
+  function syncSkyMotion(): void {
+    if (disposed) return;
+    hero!.dataset.skyMotion = !document.hidden && onScreen ? 'running' : 'paused';
+  }
+  const visibility = typeof IntersectionObserver === 'function' ? new IntersectionObserver(entries => {
+    onScreen = entries[0]?.isIntersecting ?? false;
+    syncSkyMotion();
+  }) : undefined;
+  visibility?.observe(hero);
 
   function update(): void {
     const now = new Date();
@@ -64,6 +77,11 @@ export function installSceneLighting(): () => void {
     hero!.style.setProperty('--scene-twilight', light.twilight.toFixed(4));
     hero!.style.setProperty('--scene-stars', light.stars.toFixed(4));
     hero!.style.setProperty('--scene-glow-x', light.glowX);
+    if (light.stars > .01 && moon?.dataset.src && !moon.hasAttribute('src')) {
+      moon.src = moon.dataset.src;
+      void moon.decode().then(() => { if (!disposed) moon.classList.add('is-ready'); })
+        .catch(() => { if (!disposed) moon.removeAttribute('src'); });
+    }
     time!.dateTime = now.toISOString();
     time!.textContent = light.clock;
     phase!.textContent = light.label;
@@ -73,6 +91,7 @@ export function installSceneLighting(): () => void {
   function sync(): void {
     window.clearTimeout(timer);
     timer = undefined;
+    syncSkyMotion();
     if (document.hidden) return;
     update();
     // Align to the clock minute, and recalculate immediately when returning.
@@ -94,6 +113,9 @@ export function installSceneLighting(): () => void {
   sync();
 
   return () => {
+    disposed = true;
+    visibility?.disconnect();
+    hero.dataset.skyMotion = 'paused';
     window.clearTimeout(timer);
     buttons.forEach(button => { button.disabled = true; });
     control.removeEventListener('click', changeMode);
