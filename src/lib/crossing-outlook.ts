@@ -1,9 +1,9 @@
-import type { ConfigPayload, ForecastPayload, LivePayload, StateLabel } from './types';
+import type { ConfigPayload, ForecastPayload, LivePayload, RiskComponents, StateLabel } from './types';
 
 export type OutlookData = { live?: LivePayload; forecast?: ForecastPayload; config?: ConfigPayload; loaded?: boolean; updateFailed?: boolean };
 export type OutlookSelection = number | string;
 type Outlook = {
-  available: true; score: number; state: StateLabel; at: number; river: number; tide: number; ageMinutes: number;
+  available: true; score: number; state: StateLabel; at: number; river: number; tide: number; ageMinutes: number; components?: RiskComponents;
 } | { available: false; state: string; detail: string; stale: boolean };
 const minute = 60_000;
 const clock = new Intl.DateTimeFormat('en-GB', { timeZone: 'Europe/London', hour: '2-digit', minute: '2-digit', timeZoneName: 'short' });
@@ -30,8 +30,10 @@ export function selectOutlook(data: OutlookData, selection: OutlookSelection = 0
   if (!Number.isFinite(age)) return unavailable('Data unavailable', 'The reading timestamp could not be verified.');
   if (live.freshness.stale || age > staleAfter) return unavailable('Data out of date', `Readings are ${age} minutes old. Check conditions on site.`, true);
   let score: number, state: StateLabel, river: number, tide: number, at: number;
+  let components: RiskComponents | undefined;
   if (selection === 0) {
     ({ riskScore: score, state, riverLevelM: river, tideLevelMAOD: tide } = live.current);
+    components = live.current.riskComponents;
     at = now;
   } else {
     const forecast = data.forecast;
@@ -46,12 +48,32 @@ export function selectOutlook(data: OutlookData, selection: OutlookSelection = 0
       || Math.abs(Date.parse(hour.timestamp) - target) < Math.abs(Date.parse(best.timestamp) - target) ? hour : best, undefined);
     if (!nearest || Math.abs(Date.parse(nearest.timestamp) - target) > 45 * minute) return unavailable('Forecast unavailable', 'There is no prediction close to this time.');
     ({ riskScore: score, state, projectedRiverLevelM: river, projectedTideLevelMAOD: tide } = nearest);
+    components = nearest.riskComponents;
     at = Date.parse(nearest.timestamp);
   }
   if (!finite(score) || score < 0 || score > 1 || !Object.hasOwn(stateClass, state) || !finite(river) || !finite(tide)) {
     return unavailable('Data unavailable', 'The selected prediction could not be verified.');
   }
-  return { available: true, score, state, at, river, tide, ageMinutes: age };
+  return { available: true, score, state, at, river, tide, ageMinutes: age, components };
+}
+
+/** Copy bands describe the existing normalized inputs, not flood or crossing-depth thresholds. */
+export function crossingReason(components?: RiskComponents, weights?: ConfigPayload['weights']): string {
+  const fallback = 'Based on the latest water readings.';
+  const keys = ['river', 'tide', 'rain'] as const;
+  if (!components || !weights || keys.some(key => !finite(components[key]) || components[key] < 0 || components[key] > 1
+    || !finite(weights[key]) || weights[key] < 0 || weights[key] > 1)) return fallback;
+  const high = keys.filter(key => components[key] >= .7 && weights[key] > 0);
+  if (high.includes('river') && high.includes('tide')) return 'River and tide levels are high.';
+  const dominant = high.sort((a, b) => components[b] * weights[b] - components[a] * weights[a])[0];
+  if (dominant === 'river') return components.tide <= .3 && weights.tide > 0 ? 'River is high, but tide is low.' : 'River level is high.';
+  if (dominant === 'tide') return components.river <= .3 && weights.river > 0 ? 'Tide is high, but river level is low.' : 'Tide level is high.';
+  if (dominant === 'rain') return 'Rain could raise river levels.';
+  if (weights.river <= 0 || weights.tide <= 0) return fallback;
+  if (components.river <= .3 && components.tide <= .3) return 'River and tide levels are low.';
+  if (components.river <= .3) return 'River level is low.';
+  if (components.tide <= .3) return 'Tide level is low.';
+  return 'River and tide levels are moderate.';
 }
 
 /** A bounded illustration of combined risk, not a conversion from gauge metres. */
@@ -93,11 +115,8 @@ export function installCrossingOutlook() {
     const current = selectOutlook(data, 0, now);
     activeVisual = waterAppearance(outlook.available ? outlook.score : undefined, outlook.available ? outlook.state : undefined);
     label('outlook-state', outlook.state, outlook.available ? outlook.state : undefined);
-    text('outlook-title', activeVisual.title);
-    text('outlook-description', outlook.available ? activeVisual.description : outlook.detail);
+    text('outlook-description', outlook.available ? crossingReason(outlook.components, data.config?.weights) : outlook.detail);
     text('outlook-horizon', selection === 0 ? 'Now' : outlook.available ? clock.format(outlook.at) : typeof selection === 'number' ? `+${selection / 60} hours` : 'Selected time');
-    const levels = outlook.available ? `River ${outlook.river.toFixed(2)} m · Tide ${outlook.tide.toFixed(2)} mAOD` : '';
-    text('outlook-context', levels);
     const generated = Date.parse(data.live?.generatedAt ?? '');
     text('outlook-as-of', data.updateFailed ? 'Data update delayed.' : '');
     if (hero) {
@@ -116,7 +135,7 @@ export function installCrossingOutlook() {
       button.setAttribute('aria-pressed', String(selection === button.dataset.forecastTime));
     });
     label('live-state', current.state, current.available ? current.state : undefined);
-    text('live-reason', current.available ? data.live!.current.reason : current.detail);
+    text('live-reason', current.available ? crossingReason(current.components, data.config?.weights) : current.detail);
     text('data-freshness', current.available ? `Readings ${current.ageMinutes} minutes old. Sources: ${data.live!.sourceStations.map(station => station.stationTitle).join(', ')}.` : current.detail);
     text('outlook-freshness', current.available ? `Readings ${current.ageMinutes} min old.` : current.state);
     if (data.live) {

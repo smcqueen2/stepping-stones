@@ -28,7 +28,7 @@
         <div class="scene-stage">
         <div class="hero-art" role="img" aria-label="Painted-style scene of Ogmore Castle and stepping stones">
           <div class="hero-scene">
-            <img class="hero-layer" alt="" aria-hidden="true" src="%BASE_URL%images/hero/01_sky.webp" />
+            <img class="hero-layer hero-sky" alt="" aria-hidden="true" src="%BASE_URL%images/hero/01_sky.webp" />
             <img class="hero-layer" alt="" aria-hidden="true" src="%BASE_URL%images/hero/02_landscape_background.webp" />
             <img id="landscape-snow" class="hero-layer snow-art landscape-snow" alt="" aria-hidden="true" decoding="async" data-snow-art data-src="%BASE_URL%images/hero/02_landscape_snow.webp" />
             <img class="hero-layer" alt="" aria-hidden="true" src="%BASE_URL%images/hero/03_castle.webp" />
@@ -77,10 +77,8 @@
         </details>
         <section id="crossing-outlook" class="outlook-card" aria-label="Crossing outlook" tabindex="-1">
           <p class="outlook-eyebrow">Crossing outlook · <span id="outlook-horizon">Now</span></p>
-          <h1 id="outlook-title">A river that<br>never stands still.</h1>
-          <p id="outlook-state" class="outlook-state state-pending" role="status">Loading conditions…</p>
+          <h1 id="outlook-title" aria-live="polite" aria-atomic="true"><span id="outlook-state" class="outlook-state state-pending">Loading conditions…</span></h1>
           <p id="outlook-description">Checking river, tide and rainfall data.</p>
-          <p id="outlook-context" class="outlook-context"></p>
           <div id="outlook-times" class="outlook-times" role="group" aria-label="Forecast time">
             <button type="button" data-outlook-minutes="0" aria-pressed="true">Now</button>
             <button type="button" data-outlook-minutes="60" aria-pressed="false" disabled>+1 hour</button>
@@ -161,6 +159,7 @@
           </article>
         </div>
         <p id="data-freshness" class="muted"></p>
+        <p class="muted small">High and low compare with the previous 48 hours of gauge readings, rather than the depth at the stones.</p>
       </dialog>
 
       <dialog id="forecast" class="app-dialog forecast-dialog" aria-labelledby="forecast-title">

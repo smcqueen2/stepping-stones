@@ -2,15 +2,19 @@
 import { getSceneLighting, installSceneLighting } from '../../src/lib/scene-lighting';
 
 describe('lighting at Ogmore', () => {
-  it('preserves the daytime painting and darkens the scene at night', () => {
+  it('preserves the daytime painting and darkens the night sky more than the landscape', () => {
     const day = getSceneLighting(new Date('2026-06-21T12:00:00Z'));
     const night = getSceneLighting(new Date('2026-12-21T00:00:00Z'));
     expect(day.phase).toBe('day');
     expect(day.brightness).toBe(1);
+    expect(day.skyBrightness).toBe(1);
     expect(day.night).toBe(0);
     expect(day.stars).toBe(0);
     expect(night.phase).toBe('night');
-    expect(night.brightness).toBeLessThan(0.7);
+    expect(night.brightness).toBeGreaterThan(0.8);
+    expect(night.brightness).toBeLessThan(1);
+    expect(night.skyBrightness).toBeLessThan(0.05);
+    expect(night.skyBrightness).toBeLessThan(night.brightness);
     expect(night.stars).toBe(1);
   });
 
@@ -64,6 +68,7 @@ describe('lighting clock and preview controls', () => {
     const hero = document.querySelector<HTMLElement>('.hero-art')!;
     document.querySelector<HTMLButtonElement>('button[data-lighting-mode="night"]')!.click();
     expect(hero.dataset.lighting).toBe('night');
+    expect(Number(hero.style.getPropertyValue('--scene-sky-brightness'))).toBeLessThan(0.05);
     expect(document.querySelector('#scene-light-label')?.textContent).toBe('Night preview');
     document.querySelector<HTMLButtonElement>('button[data-lighting-mode="live"]')!.click();
     expect(hero.dataset.lighting).toBe('day');

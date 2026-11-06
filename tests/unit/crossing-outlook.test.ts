@@ -1,15 +1,16 @@
 // @vitest-environment jsdom
-import { installCrossingOutlook, selectOutlook, waterAppearance, type OutlookData } from '../../src/lib/crossing-outlook';
+import { crossingReason, installCrossingOutlook, selectOutlook, waterAppearance, type OutlookData } from '../../src/lib/crossing-outlook';
 import type { ForecastHour, LivePayload } from '../../src/lib/types';
 
 const now = Date.parse('2026-10-24T16:40:00Z');
 const iso = (minutes: number) => new Date(now + minutes * 60_000).toISOString();
+const weights = { tide: .45, river: .35, rain: .2 };
 function fixture(): OutlookData {
   const live: LivePayload = {
     generatedAt: iso(-5), sourceStations: [],
     freshness: { generatedAt: iso(-5), latestObservationAt: iso(-10), ageMinutes: 5, stale: false },
     current: { riverLevelM: .8, tideLevelMAOD: -1.2, riverTrendMPerHour: .1, tideTrendMPerHour: .2,
-      riskScore: .3, state: 'Likely Passable', reason: 'Lower predicted risk.' },
+      riskScore: .3, riskComponents: { river: .3, tide: .3, rain: .3 }, state: 'Likely Passable', reason: 'Lower predicted risk.' },
     shortHorizonPrediction: { horizonMinutes: 90, predictedRiverLevelM: 1, projectedTideLevelMAOD: 0, riskScore: .9, state: 'Likely Unpassable' },
   };
   const hour = (at: number, risk: number): ForecastHour => ({
@@ -17,10 +18,43 @@ function fixture(): OutlookData {
     riskComponents: { tide: risk, river: risk, rain: risk }, riskScore: risk,
     state: risk < .45 ? 'Likely Passable' : risk < .7 ? 'Caution' : 'Likely Unpassable',
   });
-  return { live, forecast: { generatedAt: iso(-5), horizonHours: 24,
+  return { live, config: { freshness: { staleAfterMinutes: 120, severeStaleAfterMinutes: 360 },
+    stateThresholds: { likelyPassableMax: .45, cautionMax: .7 }, weights,
+    rainScaling: { millimetresForHighRisk: 5 }, messaging: { disclaimer: '', staleWarning: '' } },
+    forecast: { generatedAt: iso(-5), horizonHours: 24,
     summary: { highestRiskWindow: '', likelyUnpassableHours: 1, cautionHours: 1, likelyPassableHours: 1 },
     hours: [hour(-40, .99), hour(20, .3), hour(80, .55), hour(200, .85)] } };
 }
+
+describe('plain-language crossing reasons', () => {
+  it.each([
+    [{ river: .9, tide: .9, rain: 0 }, 'River and tide levels are high.'],
+    [{ river: .9, tide: .5, rain: 0 }, 'River level is high.'],
+    [{ river: .5, tide: .9, rain: 0 }, 'Tide level is high.'],
+    [{ river: .9, tide: .1, rain: 0 }, 'River is high, but tide is low.'],
+    [{ river: .1, tide: .9, rain: 0 }, 'Tide is high, but river level is low.'],
+    [{ river: .1, tide: .1, rain: 0 }, 'River and tide levels are low.'],
+    [{ river: .1, tide: .5, rain: 0 }, 'River level is low.'],
+    [{ river: .5, tide: .1, rain: 0 }, 'Tide level is low.'],
+    [{ river: .5, tide: .5, rain: 0 }, 'River and tide levels are moderate.'],
+    [{ river: .5, tide: .5, rain: .9 }, 'Rain could raise river levels.'],
+    [{ river: .8, tide: .5, rain: .95 }, 'River level is high.'],
+  ] as const)('describes the existing model inputs %j', (components, expected) => {
+    expect(crossingReason(components, weights)).toBe(expected);
+  });
+
+  it('keeps a neutral explanation when cause data is absent, invalid or disabled', () => {
+    const fallback = 'Based on the latest water readings.';
+    expect(crossingReason(undefined, weights)).toBe(fallback);
+    expect(crossingReason({ river: .9, tide: .5, rain: 0 })).toBe(fallback);
+    expect(crossingReason({ river: NaN, tide: .9, rain: 0 }, weights)).toBe(fallback);
+    expect(crossingReason({ river: 1.1, tide: .9, rain: 0 }, weights)).toBe(fallback);
+    expect(crossingReason({ river: .9, tide: .5, rain: 0 }, { ...weights, river: 0 })).toBe(fallback);
+    const data = fixture();
+    delete data.live!.current.riskComponents;
+    expect(selectOutlook(data, 0, now)).toMatchObject({ available: true, state: 'Likely Passable' });
+  });
+});
 
 describe('selected prediction and illustrated water', () => {
   it('uses the actual future hour for each preset and keeps gauge units separate', () => {
@@ -71,7 +105,7 @@ describe('forecast overlay controls', () => {
     vi.useFakeTimers(); vi.setSystemTime(now);
     vi.spyOn(document, 'hidden', 'get').mockReturnValue(false);
     document.body.innerHTML = `<div class="hero-art"><img id="river-high" data-src="/river-high.webp"></div>
-      <span id="outlook-title"></span><span id="outlook-state"></span><span id="outlook-horizon"></span>
+      <h1 id="outlook-title"><span id="outlook-state"></span></h1><p id="outlook-description"></p><span id="outlook-horizon"></span>
       <button data-outlook-minutes="0"></button><button data-outlook-minutes="60"></button><button data-outlook-minutes="180"></button>
       <dialog><button data-forecast-time="${iso(200)}"></button></dialog>`;
     document.querySelector<HTMLImageElement>('img')!.decode = vi.fn().mockResolvedValue(undefined);
@@ -87,6 +121,8 @@ describe('forecast overlay controls', () => {
     click(180);
     await vi.advanceTimersByTimeAsync(0);
     expect(state().textContent).toBe('Likely Unpassable');
+    expect(document.getElementById('outlook-title')!.textContent).toBe('Likely Unpassable');
+    expect(document.getElementById('outlook-description')!.textContent).toBe('River and tide levels are high.');
     expect(document.querySelector<HTMLElement>('.hero-art')!.dataset.riverCoverage).toBe('1.0000');
     expect(document.querySelector('img')!.classList.contains('is-ready')).toBe(true);
     controller.setData(fixture());
@@ -101,9 +137,21 @@ describe('forecast overlay controls', () => {
     expect(document.querySelector('dialog')!.close).toHaveBeenCalledTimes(1);
     expect(document.querySelector('[data-outlook-minutes="0"]')!.getAttribute('aria-pressed')).toBe('false');
   });
+  it('explains the selected future hour rather than repeating the current cause', () => {
+    const data = fixture();
+    Object.assign(data.live!.current, { riskComponents: { river: .9, tide: .5, rain: 0 }, riskScore: .54, state: 'Caution' });
+    Object.assign(data.forecast!.hours[3], { riskComponents: { river: .5, tide: .95, rain: 0 }, riskScore: .603, state: 'Caution' });
+    controller.setData(data);
+    expect(document.getElementById('outlook-description')!.textContent).toBe('River level is high.');
+    click(180);
+    expect(document.getElementById('outlook-description')!.textContent).toBe('Tide level is high.');
+    click(0);
+    expect(document.getElementById('outlook-description')!.textContent).toBe('River level is high.');
+  });
   it('removes a reassuring classification when data expires and cleans up its clock', async () => {
     await vi.advanceTimersByTimeAsync(122 * 60_000);
     expect(state().textContent).toBe('Data out of date');
+    expect(document.getElementById('outlook-description')!.textContent).toContain('Readings are');
     expect(state().classList.contains('state-good')).toBe(false);
     expect(document.querySelector<HTMLButtonElement>('[data-outlook-minutes="180"]')!.disabled).toBe(true);
     controller.dispose();

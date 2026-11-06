@@ -1,5 +1,14 @@
 # Decision Log
 
+## 2026-11-06 - Darken the sky independently at night
+- User wants the sky to reach black with lighter overall scene dimming. Use a runtime filter on the existing sky layer and a matching transparent-edge backdrop, preserving the daytime artwork and the accepted solar-altitude/local-time cycle.
+- Keep the foliage renderer's exposed-sky fill in sync with the actual interpolated sky filter, not just the target value, to avoid bright halos during wind or preview transitions. Reuse the current draw pass/textures and support the static/reduced-motion treatment without a new asset or package.
+
+## 2026-11-06 - Plain status before supporting detail
+- User wants a simple crossing status as the primary heading and a short explanation in smaller type. Replace the poetic headline and move raw gauge values to the existing Readings view.
+- Explain using the actual computed model inputs for the selected time, not absolute gauge guesses, the obsolete generic JSON reason or a nearby forecast as a stand-in for Now. Expose current risk components without changing the model. Use neutral text for missing or invalid explanation metadata.
+- High/low copy describes normalized positions in the generator's existing 48-hour gauge range. State classification and freshness checks keep their existing thresholds; no flood or crossing-depth calibration is implied. Opposing river/tide conditions are named together, and future rainfall is described as a possibility.
+
 ## 2026-11-06 - About and History use full page views
 - Owner requested separate page views instead of modal popups for About and History, explicitly leaving Report for later. Preserve the accepted fixed landing scene and the existing #about/#history links.
 - Use a small shared hash-navigation controller rather than a router dependency or paths requiring server rewrites. One visible view, shared header, active navigation, document titles, heading focus and Back to crossing; native browser Back/Forward works. Keep mounted view state, including the selected historical milestone and scene preferences.

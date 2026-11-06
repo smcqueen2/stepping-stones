@@ -1,4 +1,5 @@
 export type StateLabel = 'Likely Passable' | 'Caution' | 'Likely Unpassable';
+export type RiskComponents = { tide: number; river: number; rain: number };
 
 export interface SourceStation {
   role: 'river' | 'tide';
@@ -27,6 +28,7 @@ export interface LivePayload {
     tideLevelMAOD: number;
     tideTrendMPerHour: number;
     riskScore: number;
+    riskComponents?: RiskComponents;
     state: StateLabel;
     reason: string;
   };
@@ -45,11 +47,7 @@ export interface ForecastHour {
   projectedRiverLevelM: number;
   rainfallMm: number;
   precipitationProbabilityPct: number;
-  riskComponents: {
-    tide: number;
-    river: number;
-    rain: number;
-  };
+  riskComponents: RiskComponents;
   riskScore: number;
   state: StateLabel;
 }

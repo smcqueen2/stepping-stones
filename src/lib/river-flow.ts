@@ -31,6 +31,7 @@ const fragment = /* glsl */ `
   uniform float uSnowCover;
   uniform float uWaterCover;
   uniform float uFlowTime;
+  uniform float uSkyBrightness;
   varying vec2 vUv;
 
   float hash(vec2 p) {
@@ -100,7 +101,7 @@ const fragment = /* glsl */ `
       // Fill newly uncovered crown edges with nearby painted sky, not ghost leaves.
       vec4 sky = texture2D(uSky, vUv);
       vec3 skyBehindCrown = texture2D(uSky, clamp(vUv + vec2(0.0, 32.0 / 941.0), 0.0, 1.0)).rgb;
-      vec3 backdrop = mix(skyBehindCrown, sky.rgb, sky.a);
+      vec3 backdrop = mix(skyBehindCrown, sky.rgb, sky.a) * uSkyBrightness;
       vec3 scene = backdrop * (1.0 - foliageAlpha) + foliagePaint;
       return vec4(scene, foliageCoverage);
     }
@@ -220,6 +221,7 @@ export async function mountRiverFlow(canvas: HTMLCanvasElement): Promise<() => v
       uSnowLandscape: { value: textures[3] }, uSnowCover: { value: 0 },
       uCastle: { value: textures[4] }, uTrees: { value: textures[5] },
       uTime: { value: 0 },
+      uSkyBrightness: { value: 1 },
       uRain: { value: 0 }, uSnow: { value: 0 },
       uWind: { value: 1 }, uGust: { value: 0 }, uDrift: { value: 0.2 },
     },
@@ -244,6 +246,7 @@ export async function mountRiverFlow(canvas: HTMLCanvasElement): Promise<() => v
   let flowSpeed = 1;
   const snowLandscape = document.querySelector<HTMLImageElement>('#landscape-snow');
   const highWater = document.querySelector<HTMLImageElement>('#river-high');
+  const sky = document.querySelector<HTMLImageElement>('.hero-sky');
   let snowyTexture: Texture | undefined;
   let highWaterTexture: Texture | undefined;
 
@@ -254,6 +257,10 @@ export async function mountRiverFlow(canvas: HTMLCanvasElement): Promise<() => v
     elapsed += delta;
     lastDraw = now;
     program.uniforms.uTime.value = elapsed;
+    // Read the interpolated CSS filter so newly revealed crown edges match the
+    // sky throughout a lighting transition, without another texture or draw pass.
+    const skyFilter = sky ? getComputedStyle(sky).filter : '';
+    program.uniforms.uSkyBrightness.value = Number(skyFilter.match(/brightness\(([\d.]+)\)/)?.[1] ?? 1);
     const weather = getSceneWeatherVisual();
     // Reuse the decoded, on-demand DOM image instead of fetching a second copy.
     // Each additional image is uploaded only after its on-demand DOM decode.

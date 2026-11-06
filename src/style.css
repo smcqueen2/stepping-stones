@@ -52,7 +52,7 @@ button:focus-visible, a:focus-visible, summary:focus-visible, input:focus-visibl
 .about-social-links a:hover { border-color: var(--ink); }
 .about-social-links svg { flex-shrink: 0; width: 20px; height: 20px; fill: currentColor; }
 .scene-stage { position: relative; }
-.hero-art { position: relative; isolation: isolate; aspect-ratio: 1672 / 941; overflow: hidden; background: #eef2f6; }
+.hero-art { position: relative; isolation: isolate; aspect-ratio: 1672 / 941; overflow: hidden; background: rgb(calc(238 * var(--scene-sky-brightness, 1)) calc(242 * var(--scene-sky-brightness, 1)) calc(246 * var(--scene-sky-brightness, 1))); transition: background-color 1200ms ease; }
 .hero-layer { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: fill; pointer-events: none; user-select: none; }
 .hero-layer.snow-art { opacity: 0; transition: opacity 1100ms ease; }
 .landscape-snow { clip-path: inset(0 0 34% 0); }
@@ -63,9 +63,8 @@ button:focus-visible, a:focus-visible, summary:focus-visible, input:focus-visibl
 .outlook-card { position: absolute; z-index: 2; left: 3.6%; bottom: 5%; width: 282px; max-width: 44%; padding: 22px; background: var(--card); border-radius: 4px; box-shadow: 0 12px 45px #17392b22; }
 .outlook-eyebrow { margin: 0; font-size: 11px; font-weight: 500; letter-spacing: 1.6px; text-transform: uppercase; color: var(--muted); }
 .outlook-card h1 { font: 400 32px/1.06 Georgia, serif; letter-spacing: -.7px; margin: 13px 0 10px; }
-.outlook-state { display: flex; align-items: center; gap: 7px; font-weight: 600; font-size: 12px; margin: 0; }
-.outlook-state::before { content: ''; width: 7px; height: 7px; border-radius: 50%; background: currentColor; flex: 0 0 7px; }
-#outlook-description { margin: 10px 0 0; font-size: 12px; }
+.outlook-state { font: inherit; }
+#outlook-description { margin: 10px 0 0; font-size: 14px; line-height: 1.5; }
 .outlook-context, .outlook-as-of { font-size: 11px; color: var(--muted); margin: 8px 0 0; }
 .outlook-context:empty, .outlook-as-of:empty { display: none; }
 .outlook-times { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 17px; }
@@ -128,7 +127,7 @@ button:focus-visible, a:focus-visible, summary:focus-visible, input:focus-visibl
   .page-view .prose { padding: 20px; }
   .outlook-card { position: relative; left: auto; bottom: auto; width: auto; max-width: none; margin: -16px max(18px, env(safe-area-inset-right)) 0 max(18px, env(safe-area-inset-left)); padding: 18px 20px; }
   .outlook-card h1 { font-size: 29px; margin-top: 9px; }
-  .outlook-state, #outlook-description { font-size: 14px; }
+  #outlook-description { font-size: 14px; }
   .outlook-context, .outlook-as-of, .outlook-disclaimer { font-size: 12px; }
   .outlook-times { margin-top: 13px; gap: 8px; }
   .outlook-times button, .scene-button { min-height: 44px; font-size: 13px; }
@@ -156,5 +155,5 @@ button:focus-visible, a:focus-visible, summary:focus-visible, input:focus-visibl
 @media (pointer: coarse) { button, .section-nav a, summary { min-height: 44px; } .section-nav a { display: inline-flex; align-items: center; } }
 @media (prefers-reduced-motion: reduce) {
   .river-flow { display: none; }
-  .hero-layer, .hero-scene, .hero-light, .hero-stars, .hero-moon, .hero-weather-clouds, .hero-weather-fog { transition: none !important; }
+  .hero-art, .hero-layer, .hero-scene, .hero-light, .hero-stars, .hero-moon, .hero-weather-clouds, .hero-weather-fog { transition: none !important; }
 }

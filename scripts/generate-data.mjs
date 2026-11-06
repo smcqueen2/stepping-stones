@@ -330,6 +330,11 @@ async function main() {
       tideLevelMAOD: Number(tideLatest.value.toFixed(3)),
       tideTrendMPerHour: Number(tideTrend.toFixed(4)),
       riskScore: Number(currentScore.toFixed(3)),
+      riskComponents: {
+        tide: Number(currentComponents.tide.toFixed(3)),
+        river: Number(currentComponents.river.toFixed(3)),
+        rain: Number(currentComponents.rain.toFixed(3)),
+      },
       state: currentState,
       reason: formatReason(currentState, freshness),
     },

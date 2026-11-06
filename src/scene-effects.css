@@ -6,6 +6,11 @@
   transition: filter 1200ms ease;
 }
 
+.hero-sky {
+  filter: brightness(var(--scene-sky-brightness, 1));
+  transition: filter 1200ms ease;
+}
+
 .hero-light,
 .hero-stars,
 .hero-weather-clouds,

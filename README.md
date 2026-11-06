@@ -34,6 +34,12 @@ States are:
 
 ### Prediction and water appearance
 
+The crossing status (Likely Passable, Caution or Likely Unpassable) is the main headline, with a smaller plain-language reason below it. The former poetic headline and overlay gauge-number row are removed. Detailed river/tide values and trends remain under Readings. The same short reason is used for its current assessment, while a future selection uses that selected forecast hour's inputs.
+
+Reasons use the model's existing normalized river, tide and rain components, with configured weights to select an active high contributor. A high river and low tide are described together, and rain wording describes a possible future rise. The generator now includes optional `live.current.riskComponents`, matching the components already supplied for forecast hours. Older payloads or missing/invalid component/config data use a neutral explanation without guessing a cause.
+
+Copy bands of 0.3 and 0.7 describe low/high positions in the previous 48-hour gauge range; they are not new crossing-risk thresholds, flood limits or measurements of depth at individual stones. Readings includes this distinction. The score, state classification, calibration, freshness checks and water rendering remain unchanged; stale/unavailable readings still replace the classification and explanation.
+
 The selected prediction drives both the condition label and an illustrated water treatment. Higher combined risk gradually covers the stone route and increases the current; lower risk exposes more stone tops. This is a visual proxy for the existing model, not a local depth calculation. Upstream river metres and regional tide metres AOD remain separate readings. The model's weights and state thresholds are unchanged.
 
 The approved high-water artwork (~158 KB) loads only when needed. Its river area is masked over the original painting, retaining the bank, swan, castle, snow and sky. The shader reuses that decoded image and blends it with the original at the same opacity. A packed mask keeps exposed stones still at low water and lets water flow over them when covered. Static/reduced-motion rendering uses the matching DOM layer. All effects share one draw pass, using at most eight textures with both snowy trees and high water. Provenance and the original prompts are in [the water asset notes](docs/assets/river-high.md).
@@ -62,6 +68,8 @@ The illustration follows the light at Ogmore using [SunCalc](https://github.com/
 
 Open **Scene** at the top right of the painting to find the **Light**, **Weather** and **Wind** controls. Light previews each phase; **Live** resumes local time. Previews are labelled and reloads always return to live mode. The moon and stars are decorative. The complete painting, including moving water and trees, receives the lighting; page text and condition indicators retain their existing colours.
 
+The sky has its own brightness curve, fading towards black at night while the castle, landscape and water receive gentler dimming and a lighter cool wash. The existing sky asset and transparent-edge backdrop darken together; no night bitmap is downloaded. The tree renderer samples the sky layer's interpolated CSS brightness for newly uncovered branch edges, so the moving canopy matches the sky throughout the transition. This adds one scalar uniform, with the same textures, draw pass and frame cap. Daylight preserves the original painting. The same sky treatment works in the static fallback, and reduced motion disables its transitions too.
+
 Lighting refreshes each minute, pauses its timer in hidden tabs and catches up when returning. Reduced motion disables colour transitions while keeping the correct time-of-day appearance, including without WebGL. SunCalc has no runtime dependencies; lighting adds about 2.6 KB of compressed JavaScript and 0.6 KB of CSS to the previous build.
 
 ### Weather and manual scenes
@@ -78,7 +86,7 @@ The grass also gains a blanket of settled snow, with irregular patches resting o
 
 The weather feature reuses OGL and adds no npm package. Compared with lighting alone, it adds about 2.6 KB compressed JavaScript and 0.25 KB CSS. tsParticles' [snow preset](https://particles.js.org/demos/recipes/snow) was considered; the existing renderer lets this illustration keep its single draw pass and existing pause/resume lifecycle.
 
-The single-scene implementation and page navigation add no npm package. With the lazy History entry point, main JavaScript is about 10.5 KB gzip, lazy animation 11.9 KB and initial CSS 3.6 KB. Snow and high-water images are decoded on demand and reused as renderer textures.
+The single-scene implementation and page navigation add no npm package. With the lazy History entry point and plain-language status explanation, main JavaScript is about 10.8 KB gzip, lazy animation 12.0 KB and initial CSS 3.7 KB. Snow and high-water images are decoded on demand and reused as renderer textures.
 
 ## Data pipeline
 

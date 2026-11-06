@@ -1,5 +1,19 @@
 # Progress
 
+### Black night sky and gentler scene lighting - 2026-11-06
+
+- Owner requested a sky that darkens to black at night with subtler whole-image dimming. The existing sky image now has a separate brightness curve and matching backdrop for transparent edges. Deep-night sky brightness reaches 0.015; global brightness floor is now 0.88 (was 0.64), saturation floor 0.9 (was 0.72), and cool night wash peaks at 0.18 (was 0.64). Daylight remains at full original brightness, and seasonal/local-time phase logic is unchanged.
+- The existing foliage shader multiplies its exposed-sky fill by the DOM sky's interpolated filter value. This prevents pale daytime fringes during sway and during transitions, using one extra scalar uniform, no new textures/pass/assets/package. Reduced-motion CSS also disables sky/backdrop transitions; static sky uses the same treatment.
+- All 70 tests across 11 files, TypeScript and production build pass. Updated the existing lighting tests to check separate sky/landscape grading and the preview CSS channel. Browser checked Day/Dusk/Dawn/Night controls, Windy at night, decoded snowy castle/landscape under Snow + Windy + Night, and 1280x900/320x568 layout. Sky reached brightness(0.015), scene brightness(0.88) saturate(0.9), renderer stayed running, no console warnings/errors. Restored all modes to Live and reset viewport.
+- Screenshot parent `night-sky-light-landscape-2026-11-06.png`. Main JS 10.78 KB gzip, lazy renderer 11.96 KB, initial CSS 3.73 KB. Owner authorised committing and pushing this tweak together with the earlier plain-status update; generated live/forecast JSON remains separate. Remote and deployment verification belong to the release record.
+
+### Plain crossing status and smaller explanation - 2026-11-06
+
+- Owner requested simple status-led wording. The main card now makes the existing status its h1 (32px desktop/29px phone), with a 14px reason below. Removed the poetic headline and numeric overlay row; Readings retains actual river/tide numbers, trends and source freshness. Heading remains an accessible, polite live region.
+- Reasons use the actual selected model components and configured weights, including combined high water, opposing high/low river/tide and rain that could raise levels. Generator exposes existing current components in an optional `current.riskComponents` field; old/malformed/missing metadata falls back to neutral copy. Classification, scores, weights, freshness gates and visual water treatment are unchanged. High/low text describes the existing previous-48-hour normalized gauge range, explained in Readings, not a flood threshold or local stone depth.
+- All 70 tests pass across 11 files; TypeScript, generator syntax/runtime and production build pass. New tests cover cause selection, weighted priorities, invalid/missing/disabled metadata, legacy data, future-vs-current explanations, status as heading and stale-copy replacement. Refreshed real live/forecast data for preview; snapshots remain excluded from release.
+- Browser checked live and +1h explanations, numeric Readings and relative-level note, named h1/live region, desktop 1280x900 and phone 320x568 with distinct type sizes and no overflow. Returned to Now/live lighting, viewport reset; no console warnings/errors. Screenshots parent `crossing-status-simple-desktop-2026-11-06.png` and `crossing-status-simple-mobile-2026-11-06.png`. Main JS 10.76 KB gzip; no new package. Owner authorised release together with the night-sky refinement.
+
 ### About-page project and profile icons - 2026-11-06
 
 - Added labelled GitHub and LinkedIn links to About, pointing to `https://github.com/smcqueen2/stepping-stones` and the owner's supplied `https://www.linkedin.com/in/stephenmcqueen/`. Inline SVGs use Bootstrap Icons; source/provenance is in `docs/assets/social-icons.md` and the MIT notice ships in `public/licenses/bootstrap-icons.txt`. No icon package/font or external image request.

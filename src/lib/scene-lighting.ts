@@ -30,16 +30,17 @@ export function getSceneLighting(date: Date, mode: LightingMode = 'live') {
     phase,
     clock: clock.format(date),
     label: mode === 'live' ? labels[phase] : `${labels[phase]} preview`,
-    brightness: 0.64 + daylight * 0.36,
-    saturation: 0.72 + daylight * 0.28,
-    night: (1 - smoothstep(-10, -1, altitude)) * 0.64,
+    brightness: 0.88 + daylight * 0.12,
+    saturation: 0.9 + daylight * 0.1,
+    skyBrightness: 0.015 + smoothstep(-12, 2, altitude) * 0.985,
+    night: (1 - smoothstep(-10, -1, altitude)) * 0.18,
     twilight: smoothstep(-9, -1, altitude) * (1 - smoothstep(3, 12, altitude)) * 0.9,
     stars: 1 - smoothstep(-12, -4, altitude),
     glowX: morning ? '18%' : '82%',
   };
 }
 
-/** Colour the complete painting, including the WebGL water and trees. */
+/** Darken the sky separately while gently grading the painting and animated layers. */
 export function installSceneLighting(): () => void {
   const hero = document.querySelector<HTMLElement>('.hero-art');
   const control = document.querySelector<HTMLElement>('#scene-lighting');
@@ -58,6 +59,7 @@ export function installSceneLighting(): () => void {
     hero!.dataset.lightingMode = mode;
     hero!.style.setProperty('--scene-brightness', light.brightness.toFixed(4));
     hero!.style.setProperty('--scene-saturation', light.saturation.toFixed(4));
+    hero!.style.setProperty('--scene-sky-brightness', light.skyBrightness.toFixed(4));
     hero!.style.setProperty('--scene-night', light.night.toFixed(4));
     hero!.style.setProperty('--scene-twilight', light.twilight.toFixed(4));
     hero!.style.setProperty('--scene-stars', light.stars.toFixed(4));
