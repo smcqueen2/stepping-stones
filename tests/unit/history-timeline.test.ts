@@ -66,7 +66,7 @@ it('follows actual scroll position in both directions without changing focus or 
   scrollTo(800 * 5 + 40);
   expect(active()).toBe(dates()[5]);
   expect(host.querySelector<HTMLSelectElement>('select')!.value).toBe('5');
-  expect(host.querySelector('.history-rail-active-date')!.textContent).toBe(content.milestones[5].shortDate);
+  expect(host.querySelector('.history-rail-mark[data-current="true"] .history-rail-date')!.textContent).toBe(content.milestones[5].shortDate);
   expect(Number(host.querySelector<HTMLElement>('.history-timeline')!.style.getPropertyValue('--history-progress'))).toBeGreaterThan(5 / 11);
   expect(document.activeElement).toBe(focused);
   scrollTo(800);

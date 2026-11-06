@@ -1,5 +1,9 @@
 # Decision Log
 
+## 2026-11-06 - Label every compact History timeline marker
+- Owner prefers every date beside its dot rather than one current date below the timeline, and explicitly requested commit/push. Render all twelve short dates alongside the compact markers, retaining current/past styling and the larger native jump picker. Desktop date buttons remain unchanged.
+- Widen the compact rail and reserve story space for it; reduce caption padding on the narrowest screens to retain readable text. Keep all dates within portrait/short-landscape viewport height. The standalone bottom date label is removed; historical copy, art and scroll tracking are unchanged.
+
 ## 2026-11-06 - Painted moon and varied star twinkle
 - Owner requested a watercolour moon and twinkling stars in the black night sky. Use a new transparent painted crescent generated with built-in ImageGen, preserving its master/prompt and shipping a small on-demand WebP. Extend the existing CSS stars with soft irregular points, varied sizes, staggered phases and slow opacity/scale changes.
 - Keep celestial layers behind the landscape/castle silhouettes, retain the existing night/day fade and subtly dim them through the illustrative weather. Move the moon left on narrow/short views to avoid the Scene control and keep. The crescent and star positions are decorative rather than astronomical predictions.

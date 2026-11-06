@@ -27,25 +27,32 @@
 .history-rail-list::after, .history-rail-marks::after { background: #47745e; transform: scaleY(var(--history-progress, 0)); transform-origin: top; }
 .history-rail-list button { position: relative; display: flex; align-items: center; justify-content: flex-end; gap: 12px; width: 100%; min-height: 34px; border: 0; padding: 6px 10px 6px 0; background: transparent; color: var(--muted); font-size: 11px; }
 .history-rail-dot { position: relative; z-index: 1; display: block; flex-shrink: 0; width: 8px; height: 8px; border: 1px solid #8a9f90; background: var(--bg); border-radius: 50%; }
-.history-rail-list button[data-past='true'] .history-rail-dot, .history-rail-dot[data-past='true'] { background: #8a9f90; }
+.history-rail-list button[data-past='true'] .history-rail-dot, .history-rail-mark[data-past='true'] .history-rail-dot { background: #8a9f90; }
 .history-rail-list button[aria-current] { color: var(--ink); font-weight: 650; }
-.history-rail-list button[aria-current] .history-rail-dot, .history-rail-dot[data-current='true'] { background: var(--ink); border-color: var(--ink); box-shadow: 0 0 0 4px #47745e22; }
+.history-rail-list button[aria-current] .history-rail-dot, .history-rail-mark[data-current='true'] .history-rail-dot { background: var(--ink); border-color: var(--ink); box-shadow: 0 0 0 4px #47745e22; }
 .history-rail-list button:hover .history-rail-date { text-decoration: underline; text-underline-offset: 4px; }
 .history-rail-compact, .history-jump { display: none; }
 @media (max-width: 800px), (max-height: 680px) {
-  .history-page { padding-right: max(52px, calc(env(safe-area-inset-right) + 40px)); }
+  .history-page { padding-right: max(100px, calc(env(safe-area-inset-right) + 92px)); }
   .history-scene { display: block; min-height: 0; background: transparent; overflow: visible; }
   .history-painting { position: relative; display: block; width: 100%; height: clamp(170px, 48vw, 340px); object-fit: cover; }
   .history-caption { width: auto; margin: -22px 10px 12px; padding: 19px; }
   .history-caption h2 { font-size: 27px; }
   .history-art-label { position: relative; inset: auto; margin: 0 10px 12px; max-width: none; padding: 0; background: var(--bg); }
   .history-sources a { display: inline-flex; align-items: center; min-height: 44px; }
-  .history-rail { width: 26px; right: max(8px, env(safe-area-inset-right)); padding: 6px 0; }
+  .history-rail { width: 86px; right: max(8px, env(safe-area-inset-right)); padding: 6px 0; }
   .history-rail-navigation { display: none; }
-  .history-rail-compact { display: flex; flex-direction: column; align-items: center; gap: 14px; }
-  .history-rail-marks { position: relative; height: min(44dvh, 320px); min-height: 120px; display: flex; flex-direction: column; justify-content: space-between; align-items: center; width: 26px; }
-  .history-rail-marks::before, .history-rail-marks::after { top: 4px; bottom: 4px; right: 12px; }
-  .history-rail-active-date { margin: 0; writing-mode: vertical-rl; font-size: 11px; color: var(--muted); max-height: 110px; }
+  .history-rail-compact { display: block; }
+  .history-rail-marks { position: relative; height: min(74dvh, 420px); min-height: 180px; display: flex; flex-direction: column; justify-content: space-between; width: 100%; }
+  .history-rail-marks::before, .history-rail-marks::after { top: 7px; bottom: 7px; right: 11px; }
+  .history-rail-mark { display: flex; align-items: center; justify-content: flex-end; gap: 6px; min-height: 14px; padding-right: 8px; font-size: 10px; line-height: 14px; color: var(--muted); }
+  .history-rail-mark .history-rail-date { white-space: nowrap; }
+  .history-rail-mark[data-current='true'] { color: var(--ink); font-weight: 650; }
   .history-jump { display: block; font-size: 13px; color: var(--muted); margin-bottom: 28px; }
   .history-jump select { width: 100%; display: block; padding: 11px 8px; min-height: 44px; font: inherit; font-size: 16px; border: 1px solid var(--card-border); border-radius: 3px; background: var(--card); color: var(--ink); margin-top: 7px; }
+}
+@media (max-width: 370px) {
+  .history-page { padding-left: 16px; }
+  .history-caption { margin-inline: 0; padding: 14px; }
+  .history-caption h2 { font-size: 24px; }
 }

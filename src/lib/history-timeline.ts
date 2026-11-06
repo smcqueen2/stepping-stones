@@ -95,14 +95,17 @@ export function mountHistoryTimeline(host: HTMLElement) {
     return button;
   });
   dates.append(dateList);
-  // Small-screen markers convey progress without squeezing twelve touch targets into the viewport.
+  // Small-screen dates label every marker; the picker provides larger jump controls.
   const compact = element('div', 'history-rail-compact');
   compact.setAttribute('aria-hidden', 'true');
   const marks = element('div', 'history-rail-marks');
-  const dots = content.milestones.map(() => element('span', 'history-rail-dot'));
-  marks.append(...dots);
-  const activeDate = element('p', 'history-rail-active-date');
-  compact.append(marks, activeDate);
+  const compactSteps = content.milestones.map(milestone => {
+    const step = element('span', 'history-rail-mark');
+    step.append(element('span', 'history-rail-date', milestone.shortDate), element('span', 'history-rail-dot'));
+    return step;
+  });
+  marks.append(...compactSteps);
+  compact.append(marks);
   rail.append(dates, compact);
 
   const jumpControl = element('div', 'history-jump');
@@ -140,10 +143,9 @@ export function mountHistoryTimeline(host: HTMLElement) {
       if (i === index) button.setAttribute('aria-current', 'location');
       else button.removeAttribute('aria-current');
       button.dataset.past = String(i < index);
-      dots[i].dataset.current = String(i === index);
-      dots[i].dataset.past = String(i < index);
+      compactSteps[i].dataset.current = String(i === index);
+      compactSteps[i].dataset.past = String(i < index);
     });
-    activeDate.textContent = content.milestones[index].shortDate;
     if (document.activeElement !== jump) jump.value = String(index);
   }
 

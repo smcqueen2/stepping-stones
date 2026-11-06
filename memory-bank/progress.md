@@ -1,5 +1,12 @@
 # Progress
 
+### Dates beside every History timeline dot - 2026-11-06
+
+- Owner requested dates beside all vertical timeline dots instead of the compact view's single date at the bottom, with commit/push when ready. Compact markers now each display the milestone's existing short date, with active/past styling; removed the separate rotated bottom label. Desktop clickable dates, native picker and scroll tracking remain.
+- Compact rail uses an 86px reserved column and viewport-bounded height so all twelve labels fit in portrait/short landscape. Adjusted narrowest-screen caption padding/heading size to retain story readability. No historical copy, asset, dependency or other feature changes.
+- All 9 existing History timeline/loader tests, TypeScript and production build pass. Updated the existing scroll-following assertion for the labelled active marker. Browser verified all twelve dates beside dots in 320x568 and 844x390, within viewport bounds and without horizontal overflow, plus picker/scroll highlighting and desktop date jump after resetting the viewport. No console warnings/errors.
+- Proof parent `history-dates-beside-dots-mobile-2026-11-06.png`; desktop History review tab retained on the castle chapter. Lazy History 7.10 KB gzip, CSS 1.60 KB; landing bundles unchanged. Owner authorised commit/push; remote/deployment proof belongs to the release record. Generated live/forecast snapshots and private active context remain outside this change; reporting backend stays on hold.
+
 ### Watercolour moon and twinkling stars - 2026-11-06
 
 - Added an AI-generated painted crescent and eighteen soft CSS stars with individual sizes, negative phase delays and 7.3–13.6 second alternating twinkle cycles. They fade with the existing seasonal solar lighting, sit behind castle/tree silhouettes, and soften under clouds/fog. Daylight hides both. Narrow/short windows place the moon on the left, clear of Scene controls. Lunar phase/position remains decorative.
