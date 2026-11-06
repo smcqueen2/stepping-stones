@@ -1,5 +1,6 @@
 import { Program, Renderer, Texture, Triangle } from 'ogl';
 import { getSceneWeatherVisual } from './scene-weather';
+import { getSceneCrossingVisual } from './crossing-outlook';
 
 const vertex = /* glsl */ `
   attribute vec2 position;
@@ -14,6 +15,7 @@ const vertex = /* glsl */ `
 const fragment = /* glsl */ `
   precision highp float;
   uniform sampler2D uPainting;
+  uniform sampler2D uHighWater;
   uniform sampler2D uMask;
   uniform sampler2D uSky;
   uniform sampler2D uLandscape;
@@ -27,6 +29,8 @@ const fragment = /* glsl */ `
   uniform float uGust;
   uniform float uDrift;
   uniform float uSnowCover;
+  uniform float uWaterCover;
+  uniform float uFlowTime;
   varying vec2 vUv;
 
   float hash(vec2 p) {
@@ -101,20 +105,21 @@ const fragment = /* glsl */ `
       return vec4(scene, foliageCoverage);
     }
 
-    float mask = texture2D(uMask, vUv).r;
+    vec2 masks = texture2D(uMask, vUv).rg;
+    float mask = mix(masks.r, masks.g, uWaterCover);
     if (mask < 0.001) {
       return vec4(0.0);
     }
 
     // Advect several scales of evolving noise rightward. There is no tile reset
     // or repeated stripe: neighbouring patches bend at different rates.
-    vec2 p = vUv * vec2(13.0, 43.0) - vec2(uTime * 0.48, 0.0);
-    vec2 eddy = vec2(noise(p * 0.37 + vec2(0.0, uTime * 0.065)),
-                     noise(p * 0.41 + vec2(17.4, -uTime * 0.051)));
+    vec2 p = vUv * vec2(13.0, 43.0) - vec2(uFlowTime * 0.48, 0.0);
+    vec2 eddy = vec2(noise(p * 0.37 + vec2(0.0, uFlowTime * 0.065)),
+                     noise(p * 0.41 + vec2(17.4, -uFlowTime * 0.051)));
     p += (eddy - 0.5) * 1.8;
-    float current = noise(p + vec2(0.0, uTime * 0.11));
-    float ripple = noise(p * 2.11 + vec2(uTime * 0.071, 8.3));
-    float detail = noise(p * 4.37 - vec2(12.7, uTime * 0.093));
+    float current = noise(p + vec2(0.0, uFlowTime * 0.11));
+    float ripple = noise(p * 2.11 + vec2(uFlowTime * 0.071, 8.3));
+    float detail = noise(p * 4.37 - vec2(12.7, uFlowTime * 0.093));
 
     vec2 displacement = vec2((current - 0.5) * 22.0 + (ripple - 0.5) * 8.0,
                              (ripple - 0.5) * 5.0 + (detail - 0.5) * 2.0)
@@ -124,6 +129,11 @@ const fragment = /* glsl */ `
     float sourceWater = smoothstep(0.05, 0.95, texture2D(uMask, displacedUv).r);
     vec2 sampleUv = mix(vUv, displacedUv, sourceWater);
     vec3 paint = texture2D(uPainting, sampleUv).rgb;
+    // Green includes the stone route; red protects exposed stones at low water.
+    // Stay within the river and keep the bank and swan fixed in both variants.
+    float highSourceWater = smoothstep(0.05, 0.95, texture2D(uMask, displacedUv).g);
+    vec2 highUv = mix(vUv, displacedUv, highSourceWater);
+    paint = mix(paint, texture2D(uHighWater, highUv).rgb, uWaterCover);
     float light = (ripple - 0.5) * 0.055 + (detail - 0.5) * 0.025;
     paint += vec3(0.85, 0.91, 0.87) * light * sourceWater;
     return vec4(paint, mask);
@@ -205,6 +215,7 @@ export async function mountRiverFlow(canvas: HTMLCanvasElement): Promise<() => v
     vertex, fragment, depthTest: false, depthWrite: false, cullFace: false,
     uniforms: {
       uPainting: { value: textures[0] }, uMask: { value: textures[1] },
+      uHighWater: { value: textures[0] }, uWaterCover: { value: 0 }, uFlowTime: { value: 0 },
       uSky: { value: textures[2] }, uLandscape: { value: textures[3] },
       uSnowLandscape: { value: textures[3] }, uSnowCover: { value: 0 },
       uCastle: { value: textures[4] }, uTrees: { value: textures[5] },
@@ -229,8 +240,12 @@ export async function mountRiverFlow(canvas: HTMLCanvasElement): Promise<() => v
   let frame = 0;
   let lastDraw = 0;
   let elapsed = 0;
+  let flowTime = 0;
+  let flowSpeed = 1;
   const snowLandscape = document.querySelector<HTMLImageElement>('#landscape-snow');
+  const highWater = document.querySelector<HTMLImageElement>('#river-high');
   let snowyTexture: Texture | undefined;
+  let highWaterTexture: Texture | undefined;
 
   function draw(now: number): void {
     frame = requestAnimationFrame(draw);
@@ -241,7 +256,7 @@ export async function mountRiverFlow(canvas: HTMLCanvasElement): Promise<() => v
     program.uniforms.uTime.value = elapsed;
     const weather = getSceneWeatherVisual();
     // Reuse the decoded, on-demand DOM image instead of fetching a second copy.
-    // Clear scenes keep the original six textures; snowy scenes use seven.
+    // Each additional image is uploaded only after its on-demand DOM decode.
     if (!snowyTexture && snowLandscape?.classList.contains('is-ready')) {
       snowyTexture = new Texture(gl, {
         image: snowLandscape, generateMipmaps: false, minFilter: gl.LINEAR, magFilter: gl.LINEAR,
@@ -250,11 +265,24 @@ export async function mountRiverFlow(canvas: HTMLCanvasElement): Promise<() => v
       textures.push(snowyTexture);
       program.uniforms.uSnowLandscape.value = snowyTexture;
     }
+    if (!highWaterTexture && highWater?.classList.contains('is-ready')) {
+      highWaterTexture = new Texture(gl, {
+        image: highWater, generateMipmaps: false, minFilter: gl.LINEAR, magFilter: gl.LINEAR,
+        wrapS: gl.CLAMP_TO_EDGE, wrapT: gl.CLAMP_TO_EDGE,
+      });
+      textures.push(highWaterTexture);
+      program.uniforms.uHighWater.value = highWaterTexture;
+    }
+    program.uniforms.uWaterCover.value = highWaterTexture && highWater
+      ? Number(getComputedStyle(highWater).opacity) : 0;
     // Match the DOM layer's reveal/fade, including a snow image arriving late.
     // Reading opacity does not change the layout or add an animation loop.
     program.uniforms.uSnowCover.value = snowyTexture && snowLandscape
       ? Number(getComputedStyle(snowLandscape).opacity) : 0;
     const ease = delta ? 1 - Math.exp(-delta * 3) : 1;
+    flowSpeed += (getSceneCrossingVisual().currentSpeed - flowSpeed) * ease;
+    flowTime += delta * flowSpeed;
+    program.uniforms.uFlowTime.value = flowTime;
     for (const [uniform, value] of [
       ['uRain', weather.rain], ['uSnow', weather.snow], ['uWind', weather.wind],
       ['uGust', weather.gust], ['uDrift', weather.drift],

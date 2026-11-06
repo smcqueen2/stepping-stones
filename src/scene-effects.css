@@ -1,0 +1,78 @@
+.hero-scene {
+  position: absolute;
+  inset: 0;
+  isolation: isolate;
+  filter: brightness(var(--scene-brightness, 1)) saturate(var(--scene-saturation, 1));
+  transition: filter 1200ms ease;
+}
+
+.hero-light,
+.hero-stars,
+.hero-weather-clouds,
+.hero-weather-fog {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  transition: opacity 1200ms ease;
+}
+
+.hero-weather-clouds {
+  background: linear-gradient(180deg, #6c788d 0%, rgba(104, 117, 135, 0.6) 47%, transparent 82%);
+  mix-blend-mode: multiply;
+  opacity: calc(var(--weather-clouds, 0) * 0.65);
+}
+
+.hero-weather-fog {
+  background:
+    radial-gradient(ellipse at 25% 54%, rgba(229, 235, 237, 0.9), transparent 75%),
+    linear-gradient(180deg, transparent, rgba(224, 233, 238, 0.8));
+  opacity: var(--weather-fog, 0);
+}
+
+.hero-light-night {
+  background: linear-gradient(180deg, #243460 0%, #53627f 54%, #324969 100%);
+  mix-blend-mode: multiply;
+  opacity: var(--scene-night, 0);
+}
+
+.hero-light-twilight {
+  background:
+    radial-gradient(ellipse at var(--scene-glow-x, 82%) 36%, rgba(255, 208, 132, 0.9), transparent 65%),
+    linear-gradient(180deg, #9c82ac 0%, #e6a799 24%, #f4c591 43%, rgba(186, 123, 113, 0.12) 75%);
+  mix-blend-mode: soft-light;
+  opacity: var(--scene-twilight, 0);
+}
+
+.hero-stars {
+  bottom: auto;
+  height: 24%;
+  background:
+    radial-gradient(circle at 9% 46%, #ffedce 0 0.7px, transparent 1.7px),
+    radial-gradient(circle at 18% 20%, #e1e9fb 0 0.9px, transparent 2px),
+    radial-gradient(circle at 30% 63%, #ffedce 0 0.6px, transparent 1.5px),
+    radial-gradient(circle at 37% 31%, #e1e9fb 0 0.7px, transparent 1.7px),
+    radial-gradient(circle at 45% 14%, #ffedce 0 0.6px, transparent 1.5px),
+    radial-gradient(circle at 69% 18%, #e1e9fb 0 0.8px, transparent 1.8px),
+    radial-gradient(circle at 74% 66%, #ffedce 0 0.6px, transparent 1.5px),
+    radial-gradient(circle at 91% 26%, #e1e9fb 0 0.7px, transparent 1.7px),
+    radial-gradient(circle at 96% 70%, #ffedce 0 0.6px, transparent 1.5px);
+  opacity: calc(var(--scene-stars, 0) * (1 - var(--weather-clouds, 0)));
+}
+
+.hero-moon {
+  position: absolute;
+  top: 9%;
+  right: 15%;
+  width: 4.4%;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background:
+    radial-gradient(circle at 35% 68%, rgba(176, 187, 203, 0.35), transparent 28%),
+    radial-gradient(circle at 66% 78%, rgba(176, 187, 203, 0.25), transparent 18%),
+    #f4ebd8;
+  mask-image: radial-gradient(circle at 70% 26%, transparent 0 47%, #000 50%);
+  opacity: calc(var(--scene-stars, 0) * (1 - var(--weather-clouds, 0)));
+  filter: blur(0.35px) drop-shadow(0 0 5px rgba(226, 231, 250, 0.25));
+  transition: opacity 1200ms ease;
+  pointer-events: none;
+}

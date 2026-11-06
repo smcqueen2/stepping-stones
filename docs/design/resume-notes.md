@@ -6,6 +6,10 @@ The owner paused work for the evening and requested a commit/push of the design 
 
 The archive was present locally, but the earlier session had not completed its commit/push. Local and remote `main` still pointed to `06f8b7d`. The previously requested documentation-only checkpoint is being completed on resumption. The landing implementation remains separately uncommitted; Data and History remain design proposals awaiting feedback. No local development server was listening on port 5173 at this audit, and Packet Monitor was stopped. The recorded application tests below describe the October validation and have not been rerun for this documentation checkpoint.
 
+### Subsequent implementation release — 6 November
+
+The documentation archive was pushed as `a7f08fc`. The owner then requested completing the landing work and phone preview. The previously local landing source is now included in the application commit with an initial mobile pass: short-landscape layout correction, larger touch controls/text, compact Scene toggle, safe areas, bounded settings panel and sticky dialog Close controls. All 46 tests, TypeScript and production build pass again. Data/History still await layout selection and implementation. The earlier local/uncommitted descriptions below document the October checkpoint, rather than this subsequent application release. See the main README for LAN and optional authorised Android USB preview commands.
+
 ## Landing page: accepted direction
 
 - Keep the castle, river and stepping stones in one stable frame. The user rejected scrolling/panning after trying the initial concepts.

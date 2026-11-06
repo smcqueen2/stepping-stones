@@ -8,7 +8,7 @@ Prepared on 24 October; documentation checkpoint completed when work resumed on 
 
 | Area | Saved review | Status |
 | --- | --- | --- |
-| Landing page | [Fixed single-scene preview](landing-page-concepts/index.html), [design notes](landing-page-concepts/design-notes.md) | User accepted one stable castle/river scene with immediate prediction overlays. Implemented locally; application changes remain uncommitted at this documentation checkpoint. |
+| Landing page | [Fixed single-scene preview](landing-page-concepts/index.html), [design notes](landing-page-concepts/design-notes.md) | User accepted one stable castle/river scene with immediate prediction overlays. The implementation and initial mobile pass are included in the 6 November application commit; the preview preserves the earlier design study. |
 | Data | [Two interactive designs](data-page/index.html), [scope and sources](data-page/design-notes.md) | River journal and Conditions compared await feedback. Design exploration only. |
 | History | [Two interactive designs](historical-timeline/index.html), [historical research](historical-timeline/research-brief.md) | Living landscape and Painted chapters await feedback. Twelve researched milestones and four new watercolours; design exploration only. |
 | Earlier landing ideas | [Original three concepts](landing-page-concepts/earlier-concepts.html) | Archived for reference. Their scroll/pan interaction was explicitly rejected and superseded by the fixed scene. |

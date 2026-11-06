@@ -4,15 +4,19 @@ A community-run, open-source site to provide **best-guess** crossing guidance fo
 
 ## Why this exists
 
-Walkers and cyclists often use this route to cross the River Ogmore. Conditions can shift quickly due to tides and weather. This project aims to provide a simple, locally-focused signal while avoiding certainty language.
+Walkers and cyclists often use this route to cross the River Ewenny, close to its confluence with the Ogmore. Conditions can shift quickly due to tides and weather. This project aims to provide a simple, locally-focused signal while avoiding certainty language.
 
 ## Safety note
 
 This website provides **guidance only**. It does **not** guarantee safe crossing conditions. Always assess the river and weather in person before crossing.
 
-## Site shape (v1.1)
+## Site shape
 
-Single-page app with jump navigation to:
+The landing page is one fixed watercolour scene, with the castle and stepping stones visible together. A persistent crossing-outlook overlay offers **Now**, **+1 hour** and **+3 hours**. Selecting an hour in the full forecast also updates the same scene. The camera never follows scrolling. On narrow screens the overlay overlaps the bottom edge of the complete painting, keeping the route visible.
+
+Phone portrait and short landscape windows use a flowing layout so the outlook cannot escape above the header. Main forecast/scene controls have 44-pixel touch targets, supporting copy is larger, and the compact Scene toggle leaves more of the castle visible. The Scene panel scrolls within the available height; dialog headings keep their Close button visible. Safe-area padding supports phone cutouts, and native input text remains at least 16 pixels on narrow screens.
+
+Supporting information opens in native, keyboard-accessible dialogs. Their hashes support links and browser navigation:
 
 - `#live` – current best-guess state and live inputs.
 - `#forecast` – next 24 hours of likely conditions.
@@ -26,19 +30,27 @@ States are:
 - **Caution**
 - **Likely Unpassable**
 
+### Prediction and water appearance
+
+The selected prediction drives both the condition label and an illustrated water treatment. Higher combined risk gradually covers the stone route and increases the current; lower risk exposes more stone tops. This is a visual proxy for the existing model, not a local depth calculation. Upstream river metres and regional tide metres AOD remain separate readings. The model's weights and state thresholds are unchanged.
+
+The approved high-water artwork (~158 KB) loads only when needed. Its river area is masked over the original painting, retaining the bank, swan, castle, snow and sky. The shader reuses that decoded image and blends it with the original at the same opacity. A packed mask keeps exposed stones still at low water and lets water flow over them when covered. Static/reduced-motion rendering uses the matching DOM layer. All effects share one draw pass, using at most eight textures with both snowy trees and high water. Provenance and the original prompts are in [the water asset notes](docs/assets/river-high.md).
+
+Future presets select a nearby future forecast timestamp and show its actual local time; missing or expired hours are unavailable. Freshness is recomputed every minute, including time elapsed since generation and the older of the river/tide readings. Stale data removes the classified outlook, disables future selections and shows a neutral illustration. Data refreshes every 15 minutes while visible; pending requests time out after 10 seconds. Fresh cached data can survive an update failure, with a delayed-update caption. Reload resets forecast selection and scene overrides.
+
 ## Hero animation
 
-The water uses a lazy-loaded [OGL](https://github.com/oframe/ogl) renderer and a custom refraction shader over the original watercolour image. Evolving noise moves right through the river mask; the banks, stones and swan remain fixed. This is a decorative approximation of water flow.
+The water uses a lazy-loaded [OGL](https://github.com/oframe/ogl) renderer and a custom refraction shader over the original watercolour image. Evolving noise moves right through the river mask; banks, exposed stones and the swan stay fixed. Covered stones blend into the higher-water painting. This is a decorative approximation of water flow.
 
 The same renderer animates the trees behind the castle. Smaller canopy groups have their own branch timing, flexibility and response delay. Passing gusts build and fade into quieter spells, with stronger bending at the crowns and small leaf movements. Smooth joins between groups prevent visible seams. A separate mask anchors the lower foliage and protects the castle's painted edges and tower silhouette.
 
-OGL has no runtime dependencies. The renderer uses one draw pass, caps drawing at 30 fps and 1080 pixels wide, and pauses while off screen or in a hidden tab. Reduced motion or unavailable WebGL leaves the static painting visible. The lazy animation module, including water, trees and precipitation, is about 11.4 KB gzipped.
+OGL has no runtime dependencies. The renderer uses one draw pass, caps drawing at 30 fps and 1080 pixels wide, and pauses while off screen or in a hidden tab. Reduced motion or unavailable WebGL leaves the static painting visible, including the selected water treatment. The lazy animation module is about 11.9 KB gzipped.
 
 ### Day and night lighting
 
 The illustration follows the light at Ogmore using [SunCalc](https://github.com/mourner/suncalc) 2.1.1 and the same location as the rainfall feed (51.4759, -3.6206). Solar altitude drives gradual dawn, daylight, dusk and night colour washes, so transitions follow the seasons. The clock uses `Europe/London`, including GMT/BST changes. There is no location permission or extra data request.
 
-Use the **Light** buttons below the painting to preview each phase; choose **Live** to resume local time. Previews are labelled and reloads always return to live mode. The moon and stars are decorative. The complete painting, including moving water and trees, receives the lighting; page text and condition indicators retain their existing colours.
+Open **Scene** at the top right of the painting to find the **Light**, **Weather** and **Wind** controls. Light previews each phase; **Live** resumes local time. Previews are labelled and reloads always return to live mode. The moon and stars are decorative. The complete painting, including moving water and trees, receives the lighting; page text and condition indicators retain their existing colours.
 
 Lighting refreshes each minute, pauses its timer in hidden tabs and catches up when returning. Reduced motion disables colour transitions while keeping the correct time-of-day appearance, including without WebGL. SunCalc has no runtime dependencies; lighting adds about 2.6 KB of compressed JavaScript and 0.6 KB of CSS to the previous build.
 
@@ -56,7 +68,7 @@ The grass also gains a blanket of settled snow, with irregular patches resting o
 
 The weather feature reuses OGL and adds no npm package. Compared with lighting alone, it adds about 2.6 KB compressed JavaScript and 0.25 KB CSS. tsParticles' [snow preset](https://particles.js.org/demos/recipes/snow) was considered; the existing renderer lets this illustration keep its single draw pass and existing pause/resume lifecycle.
 
-Independent wind controls and on-demand snow artwork add about 0.6 KB compressed JavaScript over that weather build. The main module is 7.56 KB gzip and the lazy animation module is 11.61 KB gzip; snowy trees reuse the existing draw pass and add one texture only after the image decodes.
+The single-scene implementation adds no npm package. Main JavaScript is about 9.7 KB gzip, lazy animation 11.9 KB and CSS 3.1 KB. Snow and high-water images are decoded on demand and reused as renderer textures.
 
 ## Data pipeline
 
@@ -66,6 +78,8 @@ Runtime is frontend-only, but live JSON is generated server-side in GitHub Actio
 - NRW tide station primary: `72839` (`Newport`, parameter `10254`)
 - NRW tide fallbacks: `72639` then `72439`
 - Rainfall forecast: Open-Meteo hourly forecast for Ogmore area
+
+The generator selects the next 24 future hourly rows from the provider's two-day response. River trend projects from the actual observation timestamp, rather than a row's position in a midnight-based array. Both source timestamps inform freshness. All displayed times use Europe/London; forecast rows distinguish BST/GMT across the autumn clock change.
 
 Generated files:
 
@@ -94,6 +108,24 @@ npm install
 npm run generate:data
 npm run dev
 ```
+
+### Preview on a phone over Wi-Fi
+
+Connect the phone and development PC to the same Wi-Fi network, then start Vite with:
+
+```bash
+npm run dev:lan
+```
+
+Open the Wi-Fi **Network** URL printed by Vite on the phone. Keep the PC awake while viewing. On Windows, allow inbound TCP port 5173 for the Node executable on the Wi-Fi interface, restricted to the local subnet. Router port forwarding is not needed. Stop the server with Ctrl+C when finished; ordinary `npm run dev` keeps the default local-only preview.
+
+For an Android phone already authorised for USB debugging, an optional USB preview avoids changing Wi-Fi addresses. Keep the local server running, connect the phone and use the installed Android Platform Tools:
+
+```bash
+adb -d reverse tcp:5173 tcp:5173
+```
+
+Open **http://localhost:5173/** in Chrome on the connected phone. The mapping uses USB and must be recreated after disconnecting/reconnecting. Remove just this preview mapping with `adb -d reverse --remove tcp:5173`; leave any other development mappings intact. This does not require router changes. See [Chrome's USB port-forwarding guide](https://developer.chrome.com/docs/devtools/remote-debugging/local-server).
 
 Build with fresh generated data:
 

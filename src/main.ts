@@ -1,120 +1,62 @@
 import './style.css';
 import { installSceneLighting } from './lib/scene-lighting';
 import { installSceneWeather } from './lib/scene-weather';
-import type { ConfigPayload, ForecastPayload, LivePayload, StateLabel } from './lib/types';
+import { installCrossingOutlook, type OutlookData } from './lib/crossing-outlook';
+import { installDialogs } from './lib/dialogs';
+import type { ConfigPayload, ForecastPayload, LivePayload } from './lib/types';
 
-const stateClass: Record<StateLabel, string> = {
-  'Likely Passable': 'state-good',
-  Caution: 'state-caution',
-  'Likely Unpassable': 'state-bad',
-};
+const forecastClock = new Intl.DateTimeFormat('en-GB', {
+  timeZone: 'Europe/London', weekday: 'short', hour: '2-digit', minute: '2-digit', timeZoneName: 'short',
+});
 
-async function fetchJson<T>(url: string): Promise<T> {
-  const response = await fetch(url, { cache: 'no-store' });
-  if (!response.ok) {
-    throw new Error(`Failed to load ${url}: ${response.status}`);
-  }
-  return (await response.json()) as T;
+async function fetchJson<T>(url: string, signal: AbortSignal): Promise<T> {
+  const response = await fetch(url, { cache: 'no-store', signal });
+  if (!response.ok) throw new Error('Data request failed: ' + response.status);
+  return await response.json() as T;
 }
 
-function asTrend(value: number): string {
-  if (Math.abs(value) < 0.005) {
-    return 'Steady';
-  }
-  return value > 0 ? 'Rising' : 'Falling';
-}
-
-function asTrendDelta(value: number, unit: string): string {
-  return `${asTrend(value)} (${value >= 0 ? '+' : ''}${value.toFixed(3)} ${unit}/h)`;
-}
-
-function setStateLabel(el: HTMLElement, state: StateLabel): void {
-  el.textContent = state;
-  el.classList.remove('state-pending', 'state-good', 'state-caution', 'state-bad');
-  el.classList.add(stateClass[state]);
-}
-
-function waterScale(score: number): number {
-  return 0.28 + score * 0.7;
-}
-
-function setRiverVisual(currentScore: number, predictedScore: number): void {
-  const root = document.documentElement;
-  root.style.setProperty('--river-current-level', waterScale(currentScore).toFixed(3));
-  root.style.setProperty('--river-predicted-level', waterScale(predictedScore).toFixed(3));
-}
-
-function renderForecastTimeline(payload: ForecastPayload): void {
-  const container = document.getElementById('forecast-timeline');
-  if (!container) return;
-
-  const rows = payload.hours.map((hour) => {
-    const time = new Date(hour.timestamp).toLocaleString('en-GB', {
-      weekday: 'short',
-      hour: '2-digit',
-      minute: '2-digit',
-    });
-
-    return `
-      <article class="timeline-item">
-        <h4>${time}</h4>
-        <p class="small"><strong>${hour.state}</strong></p>
-        <p class="small">Risk: ${(hour.riskScore * 100).toFixed(0)}%</p>
-        <p class="small">Rain: ${hour.rainfallMm.toFixed(1)}mm (${hour.precipitationProbabilityPct}%)</p>
-      </article>
-    `;
-  });
-
-  container.innerHTML = rows.join('');
-}
-
-function renderForecastSummary(payload: ForecastPayload): void {
-  const el = document.getElementById('forecast-summary');
-  if (!el) return;
-
-  el.innerHTML = `
-    <article class="card"><h3>Highest risk window</h3><p>${payload.summary.highestRiskWindow}</p></article>
-    <article class="card"><h3>Likely Unpassable hours</h3><p class="metric">${payload.summary.likelyUnpassableHours}</p></article>
-    <article class="card"><h3>Caution hours</h3><p class="metric">${payload.summary.cautionHours}</p></article>
-    <article class="card"><h3>Likely Passable hours</h3><p class="metric">${payload.summary.likelyPassableHours}</p></article>
-  `;
-}
-
-function installScrollAnimations(): void {
-  const sections = document.querySelectorAll<HTMLElement>('.animate-on-scroll');
-  const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-
-  if (reducedMotion || !('IntersectionObserver' in window)) {
-    sections.forEach((el) => el.classList.add('in-view'));
-    return;
-  }
-
-  const observer = new IntersectionObserver(
-    (entries) => {
-      entries.forEach((entry) => {
-        if (entry.isIntersecting) {
-          entry.target.classList.add('in-view');
-        }
-      });
-    },
-    { threshold: 0.2 },
-  );
-
-  sections.forEach((el) => observer.observe(el));
-}
-
-function installHeroLayerReveal(): void {
-  const layers = Array.from(document.querySelectorAll<HTMLElement>('.hero-layer'));
-  const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-
-  if (reducedMotion) {
-    layers.forEach((layer) => layer.classList.add('is-visible'));
-    return;
-  }
-
-  layers.forEach((layer, index) => {
-    window.setTimeout(() => layer.classList.add('is-visible'), 200 + index * 220);
-  });
+function renderForecast(payload?: ForecastPayload): void {
+  const timeline = document.getElementById('forecast-timeline');
+  const summary = document.getElementById('forecast-summary');
+  if (!timeline || !summary) return;
+  const hours = (payload?.hours ?? []).filter(hour => Date.parse(hour.timestamp) >= Date.now());
+  timeline.replaceChildren(...hours.map(hour => {
+    const button = document.createElement('button');
+    button.type = 'button';
+    button.className = 'timeline-item';
+    button.dataset.forecastTime = hour.timestamp;
+    button.setAttribute('aria-pressed', 'false');
+    const time = document.createElement('span');
+    time.className = 'forecast-time';
+    time.textContent = forecastClock.format(new Date(hour.timestamp));
+    const state = document.createElement('p');
+    state.textContent = hour.state;
+    const values = document.createElement('p');
+    values.className = 'muted';
+    values.textContent = 'River ' + hour.projectedRiverLevelM.toFixed(2) + ' m · Tide ' + hour.projectedTideLevelMAOD.toFixed(2) + ' mAOD';
+    const rain = document.createElement('p');
+    rain.className = 'muted';
+    rain.textContent = 'Rain ' + hour.rainfallMm.toFixed(1) + ' mm (' + hour.precipitationProbabilityPct + '%)';
+    button.append(time, state, values, rain);
+    return button;
+  }));
+  const highest = hours.reduce<(typeof hours)[number] | undefined>((best, hour) => !best || hour.riskScore > best.riskScore ? hour : best, undefined);
+  const cards = [
+    ['Highest predicted risk', highest ? forecastClock.format(new Date(highest.timestamp)) + ' · ' + highest.state : 'Unavailable'],
+    ['Likely Unpassable hours', String(hours.filter(hour => hour.state === 'Likely Unpassable').length)],
+    ['Caution hours', String(hours.filter(hour => hour.state === 'Caution').length)],
+    ['Likely Passable hours', String(hours.filter(hour => hour.state === 'Likely Passable').length)],
+  ];
+  summary.replaceChildren(...cards.map(([name, value]) => {
+    const card = document.createElement('article');
+    card.className = 'card';
+    const title = document.createElement('h3');
+    title.textContent = name;
+    const content = document.createElement('p');
+    content.textContent = value;
+    card.append(title, content);
+    return card;
+  }));
 }
 
 function normalizeEndpoint(raw: string | undefined): string {
@@ -170,60 +112,61 @@ function configureObservationForm(config: ConfigPayload, live: LivePayload): voi
   form.action = endpoint;
 }
 
-async function loadAndRender(): Promise<void> {
-  const dataBase = `${import.meta.env.BASE_URL}data`;
 
-  const [live, forecast, config] = await Promise.all([
-    fetchJson<LivePayload>(`${dataBase}/live.json`),
-    fetchJson<ForecastPayload>(`${dataBase}/forecast.json`),
-    fetchJson<ConfigPayload>(`${dataBase}/config.json`),
-  ]);
-
-  const liveState = document.getElementById('live-state');
-  const statusPill = document.getElementById('status-pill');
-  const liveReason = document.getElementById('live-reason');
-  const riverValue = document.getElementById('river-value');
-  const riverTrend = document.getElementById('river-trend');
-  const tideValue = document.getElementById('tide-value');
-  const tideTrend = document.getElementById('tide-trend');
-  const freshness = document.getElementById('data-freshness');
-  const footerUpdated = document.getElementById('footer-updated');
-
-  if (!liveState || !statusPill || !liveReason || !riverValue || !riverTrend || !tideValue || !tideTrend || !freshness || !footerUpdated) {
-    return;
-  }
-
-  setStateLabel(liveState, live.current.state);
-  statusPill.textContent = live.current.state;
-  statusPill.classList.add(stateClass[live.current.state]);
-
-  liveReason.textContent = live.current.reason;
-  riverValue.textContent = `${live.current.riverLevelM.toFixed(3)} m`;
-  riverTrend.textContent = `Trend: ${asTrendDelta(live.current.riverTrendMPerHour, 'm')}`;
-
-  tideValue.textContent = `${live.current.tideLevelMAOD.toFixed(3)} mAOD`;
-  tideTrend.textContent = `Trend: ${asTrendDelta(live.current.tideTrendMPerHour, 'm')}`;
-
-  if (live.freshness.stale) {
-    freshness.textContent = `${config.messaging.staleWarning} Last observation ${live.freshness.ageMinutes} mins ago.`;
-  } else {
-    freshness.textContent = `Data age: ${live.freshness.ageMinutes} mins. Sources: ${live.sourceStations.map((s) => s.stationTitle).join(', ')}.`;
-  }
-
-  const generatedAt = new Date(live.generatedAt).toLocaleString('en-GB');
-  footerUpdated.textContent = generatedAt;
-
-  renderForecastSummary(forecast);
-  renderForecastTimeline(forecast);
-
-  setRiverVisual(live.current.riskScore, live.shortHorizonPrediction.riskScore);
-  configureObservationForm(config, live);
-}
-
-installScrollAnimations();
-installHeroLayerReveal();
+const disposeDialogs = installDialogs();
 const disposeLighting = installSceneLighting();
 const disposeWeather = installSceneWeather();
+const outlook = installCrossingOutlook();
+const refreshInterval = 15 * 60_000;
+let data: OutlookData = {};
+let lastAttempt = 0;
+let dataTimer: number | undefined;
+let requestTimeout: number | undefined;
+let dataRequest: AbortController | undefined;
+let disposed = false;
+
+function scheduleData(): void {
+  window.clearTimeout(dataTimer);
+  if (!disposed && !document.hidden) dataTimer = window.setTimeout(syncData, Math.max(1000, lastAttempt + refreshInterval - Date.now()));
+}
+
+async function refreshData(): Promise<void> {
+  lastAttempt = Date.now();
+  dataRequest = new AbortController();
+  requestTimeout = window.setTimeout(() => dataRequest?.abort(), 10_000);
+  const base = import.meta.env.BASE_URL + 'data/';
+  try {
+    const results = await Promise.allSettled([
+      fetchJson<LivePayload>(base + 'live.json', dataRequest.signal),
+      fetchJson<ForecastPayload>(base + 'forecast.json', dataRequest.signal),
+      fetchJson<ConfigPayload>(base + 'config.json', dataRequest.signal),
+    ] as const);
+    if (disposed) return;
+    const [live, forecast, config] = results;
+    if (live.status === 'fulfilled' && live.value?.freshness && live.value?.current && Array.isArray(live.value?.sourceStations)) data.live = live.value;
+    if (forecast.status === 'fulfilled' && Array.isArray(forecast.value?.hours)) data.forecast = forecast.value;
+    if (config.status === 'fulfilled' && typeof config.value?.freshness?.staleAfterMinutes === 'number') data.config = config.value;
+    data.updateFailed = results.some(result => result.status === 'rejected');
+    renderForecast(data.forecast);
+    outlook.setData(data);
+    if (data.config && data.live) configureObservationForm(data.config, data.live);
+  } catch {
+    if (!disposed) outlook.setData({ ...data, updateFailed: true });
+  } finally {
+    window.clearTimeout(requestTimeout);
+    dataRequest = undefined;
+    if (!disposed) scheduleData();
+  }
+}
+
+function syncData(): void {
+  window.clearTimeout(dataTimer);
+  if (disposed || document.hidden) return;
+  if (!dataRequest && Date.now() - lastAttempt >= refreshInterval) void refreshData();
+  else if (!dataRequest) scheduleData();
+}
+document.addEventListener('visibilitychange', syncData);
+syncData();
 
 // Keep WebGL out of the initial bundle and skip it entirely for reduced motion.
 const riverCanvas = document.querySelector<HTMLCanvasElement>('#river-flow');
@@ -252,22 +195,18 @@ async function startRiver(): Promise<void> {
 
 riverMotion.addEventListener('change', startRiver);
 void startRiver();
+
 import.meta.hot?.dispose(() => {
+  disposed = true;
+  dataRequest?.abort();
+  window.clearTimeout(dataTimer);
+  window.clearTimeout(requestTimeout);
+  document.removeEventListener('visibilitychange', syncData);
+  disposeDialogs();
+  outlook.dispose();
   disposeLighting();
   disposeWeather();
   riverDisposed = true;
   riverMotion.removeEventListener('change', startRiver);
   disposeRiver?.();
-});
-
-loadAndRender().catch((error) => {
-  const liveState = document.getElementById('live-state');
-  if (liveState) {
-    liveState.textContent = 'Data unavailable';
-    liveState.classList.add('state-caution');
-  }
-  const reason = document.getElementById('live-reason');
-  if (reason) {
-    reason.textContent = `Unable to load current data. ${String(error)}`;
-  }
 });

@@ -12,6 +12,7 @@ import {
   summarizeForecast,
 } from './lib/forecast-model.mjs';
 import { pickPreferredTideStation } from './lib/station-selection.mjs';
+import { futureRainWindow, projectRiverReading } from './lib/forecast-window.mjs';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -107,18 +108,6 @@ function formatReason(state, freshness) {
   }
 
   return 'Model indicates higher likelihood that stones may be submerged or difficult to cross.';
-}
-
-function interpolateRain(hourly, fallbackHours = 24) {
-  const result = [];
-  for (let i = 0; i < fallbackHours; i += 1) {
-    const item = hourly[i];
-    if (!item) {
-      break;
-    }
-    result.push(item);
-  }
-  return result;
 }
 
 function buildFallbackRainForecast(startDate) {
@@ -220,35 +209,19 @@ async function main() {
 
     const hourly = rainResponse.hourly;
 
-    rainForecast = interpolateRain(
-      hourly.time.map((time, index) => ({
+    rainForecast = hourly.time.map((time, index) => ({
         timestamp: new Date(`${time}:00Z`).toISOString(),
         rainfallMm: Number.isFinite(hourly.rain?.[index])
           ? Number(hourly.rain[index])
           : Number(hourly.precipitation?.[index] ?? 0),
         precipitationProbabilityPct: Number(hourly.precipitation_probability?.[index] ?? 0),
-      })),
-    );
+      }));
   } catch (error) {
     console.warn('Open-Meteo fetch failed, using dry fallback forecast.', error);
     rainForecast = buildFallbackRainForecast(now);
   }
 
-  const hourlyWindow = rainForecast.slice(0, 24);
-
-  if (hourlyWindow.length < 24) {
-    const lastTime = hourlyWindow.length
-      ? new Date(hourlyWindow[hourlyWindow.length - 1].timestamp)
-      : now;
-
-    for (let i = hourlyWindow.length; i < 24; i += 1) {
-      hourlyWindow.push({
-        timestamp: iso(addHours(lastTime, i - hourlyWindow.length + 1)),
-        rainfallMm: 0,
-        precipitationProbabilityPct: 0,
-      });
-    }
-  }
+  const hourlyWindow = futureRainWindow(rainForecast, now);
 
   const forecastHours = hourlyWindow.map((hour, index, all) => {
     const target = hour.timestamp;
@@ -264,7 +237,7 @@ async function main() {
       .slice(Math.max(0, index - 5), index + 1)
       .reduce((sum, h) => sum + Number(h.rainfallMm || 0), 0);
 
-    const projectedRiver = riverLatest.value + riverTrend * index + cumulativeRain * 0.006;
+    const projectedRiver = projectRiverReading(riverLatest.value, riverTrend, riverLatest.time, target, cumulativeRain);
 
     const components = {
       tide: normalizeToRange(projectedTide, tideMin, tideMax),
@@ -318,12 +291,15 @@ async function main() {
 
   const latestObservationAt =
     Date.parse(riverLatest.time) > Date.parse(tideLatest.time) ? riverLatest.time : tideLatest.time;
+  const oldestObservationAt =
+    Date.parse(riverLatest.time) < Date.parse(tideLatest.time) ? riverLatest.time : tideLatest.time;
 
-  const ageMinutes = Math.max(0, Math.round((Date.now() - Date.parse(latestObservationAt)) / 60000));
+  const ageMinutes = Math.max(0, Math.round((Date.now() - Date.parse(oldestObservationAt)) / 60000));
 
   const freshness = {
     generatedAt: iso(now),
     latestObservationAt,
+    oldestObservationAt,
     ageMinutes,
     stale: ageMinutes > config.freshness.staleAfterMinutes,
     staleReason: selectedTide.reason,

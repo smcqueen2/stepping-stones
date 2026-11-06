@@ -11,6 +11,7 @@ export interface SourceStation {
 export interface DataFreshness {
   generatedAt: string;
   latestObservationAt: string;
+  oldestObservationAt?: string;
   ageMinutes: number;
   stale: boolean;
   staleReason?: string;

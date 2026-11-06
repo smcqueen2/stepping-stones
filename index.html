@@ -2,7 +2,7 @@
 <html lang="en-GB">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
     <meta
       name="description"
       content="Community guidance for crossing the Ogmore stepping stones near Ogmore Castle."
@@ -10,23 +10,21 @@
     <title>Ogmore Stepping Stones | Local Crossing Guide</title>
   </head>
   <body>
-    <a class="skip-link" href="#live">Skip to live conditions</a>
+    <a class="skip-link" href="#crossing-outlook">Skip to crossing outlook</a>
     <header class="site-header">
       <div class="header-inner">
-        <a class="brand" href="#top">Ogmore Stepping Stones</a>
-        <nav class="section-nav" aria-label="Section navigation">
-          <a href="#live">Live</a>
-          <a href="#forecast">Forecast</a>
-          <a href="#history">History</a>
-          <a href="#about">About</a>
-          <a href="#report">Report</a>
+        <a class="brand" href="#top">Ogmore<span>Stepping stones</span></a>
+        <nav class="section-nav" aria-label="Crossing information">
+          <span class="location-label">Ogmore-by-Sea · Wales</span>
+          <a href="#about" data-open-dialog>About the crossing</a>
+          <a href="#report" data-open-dialog>Report</a>
         </nav>
-        <div id="status-pill" class="status-pill">Loading…</div>
       </div>
     </header>
 
     <main id="top">
-      <section id="hero" class="hero section animate-on-scroll in-view" aria-labelledby="hero-title">
+      <section id="hero" class="hero" aria-label="Ogmore Castle and crossing outlook">
+        <div class="scene-stage">
         <div class="hero-art" role="img" aria-label="Painted-style scene of Ogmore Castle and stepping stones">
           <div class="hero-scene">
             <img class="hero-layer" alt="" aria-hidden="true" src="%BASE_URL%images/hero/01_sky.webp" />
@@ -34,10 +32,9 @@
             <img id="landscape-snow" class="hero-layer snow-art landscape-snow" alt="" aria-hidden="true" decoding="async" data-snow-art data-src="%BASE_URL%images/hero/02_landscape_snow.webp" />
             <img class="hero-layer" alt="" aria-hidden="true" src="%BASE_URL%images/hero/03_castle.webp" />
             <img class="hero-layer" alt="" aria-hidden="true" src="%BASE_URL%images/hero/04_river_and_stepping_stones.webp" />
+            <img id="river-high" class="hero-layer high-water" alt="" aria-hidden="true" decoding="async" data-src="%BASE_URL%images/hero/04_river_high.webp" />
             <canvas id="river-flow" class="hero-layer river-flow" width="1672" height="941" aria-hidden="true"></canvas>
             <img id="castle-snow" class="hero-layer snow-art castle-snow" alt="" aria-hidden="true" decoding="async" data-snow-art data-src="%BASE_URL%images/hero/03_castle_snow.webp" />
-            <div id="river-current" class="river-tint river-tint-current"></div>
-            <div id="river-predicted" class="river-tint river-tint-predicted"></div>
           </div>
           <div class="hero-light hero-light-night" aria-hidden="true"></div>
           <div class="hero-light hero-light-twilight" aria-hidden="true"></div>
@@ -46,9 +43,9 @@
           <div class="hero-stars" aria-hidden="true"></div>
           <div class="hero-moon" aria-hidden="true"></div>
         </div>
-        <div class="scene-toolbar">
-          <p class="scene-time">Ogmore · <time id="scene-local-time"></time> · <span id="scene-light-label">Live lighting</span></p>
-        </div>
+        <details class="scene-settings">
+          <summary>Scene<span class="scene-summary-context"> · <span id="scene-light-label">Live lighting</span></span></summary>
+          <div class="scene-settings-panel">
         <div class="scene-controls">
           <div id="scene-lighting" class="scene-control-group" role="group" aria-label="Lighting">
             <span class="scene-controls-label">Light</span>
@@ -75,20 +72,30 @@
           </div>
         </div>
         <p class="scene-weather-status"><span id="scene-weather-label">Loading Ogmore weather…</span> · <a href="https://open-meteo.com/" target="_blank" rel="noopener noreferrer">Open-Meteo</a></p>
-        <div class="hero-content">
-          <h1 id="hero-title">Local guidance for crossing the Ogmore stepping stones</h1>
-          <p>
-            This site gives a best-guess view of likely crossing conditions using live river level,
-            tide level, and rainfall outlook. Conditions can change quickly.
-          </p>
-          <p class="disclaimer">
-            Safety first: this is community guidance, not a guarantee. Always assess conditions on site.
-          </p>
+          </div>
+        </details>
+        <section id="crossing-outlook" class="outlook-card" aria-label="Crossing outlook" tabindex="-1">
+          <p class="outlook-eyebrow">Crossing outlook · <span id="outlook-horizon">Now</span></p>
+          <h1 id="outlook-title">A river that<br>never stands still.</h1>
+          <p id="outlook-state" class="outlook-state state-pending" role="status">Loading conditions…</p>
+          <p id="outlook-description">Checking river, tide and rainfall data.</p>
+          <p id="outlook-context" class="outlook-context"></p>
+          <div id="outlook-times" class="outlook-times" role="group" aria-label="Forecast time">
+            <button type="button" data-outlook-minutes="0" aria-pressed="true">Now</button>
+            <button type="button" data-outlook-minutes="60" aria-pressed="false" disabled>+1 hour</button>
+            <button type="button" data-outlook-minutes="180" aria-pressed="false" disabled>+3 hours</button>
+          </div>
+          <p id="outlook-as-of" class="outlook-as-of"></p>
+          <p class="outlook-links"><a href="#live" data-open-dialog>Readings</a><a href="#forecast" data-open-dialog>Full forecast ↗</a></p>
+          <p class="outlook-disclaimer">Illustrated prediction. Always assess on site.</p>
+          <p id="outlook-art-status" class="outlook-context" role="status"></p>
+        </section>
         </div>
       </section>
+    </main>
 
-      <section id="live" class="section animate-on-scroll" aria-labelledby="live-title">
-        <h2 id="live-title">Live conditions</h2>
+      <dialog id="live" class="app-dialog" aria-labelledby="live-title">
+        <div class="dialog-heading"><h2 id="live-title">Live readings</h2><button type="button" data-close-dialog aria-label="Close live readings">Close</button></div>
         <div class="cards three-up">
           <article class="card">
             <h3>Current assessment</h3>
@@ -107,20 +114,20 @@
           </article>
         </div>
         <p id="data-freshness" class="muted"></p>
-      </section>
+      </dialog>
 
-      <section id="forecast" class="section animate-on-scroll" aria-labelledby="forecast-title">
-        <h2 id="forecast-title">24-hour forecast</h2>
+      <dialog id="forecast" class="app-dialog forecast-dialog" aria-labelledby="forecast-title">
+        <div class="dialog-heading"><h2 id="forecast-title">Forecast</h2><button type="button" data-close-dialog aria-label="Close forecast">Close</button></div>
         <p>
           Forecast blends tide cycle projection, expected rainfall, and river trend to estimate
           likely crossing conditions through the day.
         </p>
         <div id="forecast-summary" class="cards"></div>
         <div id="forecast-timeline" class="timeline" aria-label="Hourly forecast timeline"></div>
-      </section>
+      </dialog>
 
-      <section id="history" class="section animate-on-scroll" aria-labelledby="history-title">
-        <h2 id="history-title">History of the stones and area</h2>
+      <dialog id="history" class="app-dialog" aria-labelledby="history-title">
+        <div class="dialog-heading"><h2 id="history-title">The stones and the castle</h2><button type="button" data-close-dialog aria-label="Close history">Close</button></div>
         <div class="cards">
           <article class="card prose">
             <p>
@@ -138,10 +145,10 @@
             </p>
           </article>
         </div>
-      </section>
+      </dialog>
 
-      <section id="about" class="section animate-on-scroll" aria-labelledby="about-title">
-        <h2 id="about-title">About this project</h2>
+      <dialog id="about" class="app-dialog" aria-labelledby="about-title">
+        <div class="dialog-heading"><h2 id="about-title">A crossing shaped by the river.</h2><button type="button" data-close-dialog aria-label="Close information">Close</button></div>
         <div class="cards">
           <article class="card prose">
             <p>
@@ -152,12 +159,14 @@
               The model is deliberately cautious and uses “likely” language to avoid false
               certainty.
             </p>
+            <p>The painting illustrates a combined river, tide and rainfall prediction. It does not measure the depth at each stone or guarantee safe passage.</p>
+            <p class="dialog-links"><a href="#history" data-open-dialog>The stones and the castle</a><a href="#report" data-open-dialog>Share an observation</a></p>
           </article>
         </div>
-      </section>
+      </dialog>
 
-      <section id="report" class="section animate-on-scroll" aria-labelledby="report-title">
-        <h2 id="report-title">Report an observation</h2>
+      <dialog id="report" class="app-dialog" aria-labelledby="report-title">
+        <div class="dialog-heading"><h2 id="report-title">Report an observation</h2><button type="button" data-close-dialog aria-label="Close observation form">Close</button></div>
         <div class="cards">
           <article class="card prose">
             <p>
@@ -200,7 +209,7 @@
                   <textarea name="notes" rows="3" placeholder="Example: Castle side, first three stones clear, fast flow near bank."></textarea>
                 </label>
 
-                <button id="observation-submit" type="submit" class="button-link">Submit observation</button>
+                <button id="observation-submit" type="submit" class="button-link" disabled>Submit observation</button>
                 <p id="observation-status" class="muted small" role="status" aria-live="polite"></p>
               </div>
             </form>
@@ -210,13 +219,11 @@
             </p>
           </article>
         </div>
-      </section>
-    </main>
+      </dialog>
 
     <footer class="site-footer">
-      <p>
-        Community best-guess guidance only. Last updated: <span id="footer-updated">--</span>
-      </p>
+      <p>River, tide &amp; rainfall inform the outlook. <span id="outlook-freshness"></span></p>
+      <p>Ogmore · <time id="scene-local-time"></time> · Updated <span id="footer-updated">--</span></p>
     </footer>
 
     <script type="module" src="/src/main.ts"></script>

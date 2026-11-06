@@ -1,6 +1,12 @@
 # Future tasks
 
-Recorded from user feedback on 2026-10-22. Updated 2026-10-23.
+Recorded from user feedback on 2026-10-22. Updated 2026-11-06.
+
+- [ ] Complete physical-phone review in Chrome on the connected Pixel 9a. Both Wi-Fi and USB HTTP checks now succeed; awaiting the owner's browser result. Initial mobile fixes cover portrait/landscape, 44px controls, larger supporting text, safe areas, bounded Scene controls and sticky dialog Close controls. Use physical touch/rotation feedback for the next pass.
+
+- [ ] Agree and implement a dedicated one-page History timeline. User requested detailed castle/surrounding-area research and designs before implementation. Two interactive alternatives, Living landscape and Painted chapters, are in `../designs/historical-timeline/ogmore-history-timeline-concepts.html`; click dates or Previous/Next to slide between 12 sourced milestones. Four matching watercolour studies join the existing painting, with interpretive labels. Research, uncertain dates, folklore boundaries, exact art prompts and sources are saved in `research-brief.md`, `timeline-content.json` and `image-prompts.json` beside the preview. Desktop/360/320px and primary interactions checked. Await design feedback; history view not implemented.
+
+- [ ] Explore and agree a dedicated Data view with historical river levels, tides and pertinent weather data. Requested 2026-10-24 while the owner is away from the laptop. Two interactive designs are in `../designs/data-page/ogmore-data-page-concepts.html`: River journal and Conditions compared. Actual seven-day NRW river/tide and Open-Meteo archived model precipitation were verified and embedded as a labelled dated snapshot. Proposed first scope: 24h/48h/7d, per-source timestamps/units, gaps, range minima/maxima and accessible readings. Month/year ranges need coverage/archiving review; forecast verification needs forecasts saved as issued plus real crossing observations. See `../designs/data-page/design-notes.md`. Design review only; data view not implemented.
 
 - [x] Make tree sway less uniform, with more variation in timing, movement and gust strength across the canopy. Implemented and accepted by the user on 2026-10-23; smaller canopy groups have independent branch rhythms, flexibility and response delays, with passing gusts and quiet spells.
 - [x] Add a day/night lighting cycle matched to the local time of day, with gradual lighting transitions. Implemented and accepted on 2026-10-23 for Ogmore (`Europe/London`, GMT/BST), with seasonal sunlight calculations and labelled dawn/day/dusk/night previews.
@@ -8,4 +14,8 @@ Recorded from user feedback on 2026-10-22. Updated 2026-10-23.
 - [x] Allow wind to combine independently with rain or snow in manual previews. Implemented with a separate Wind group; accepted for release on 2026-10-23.
 - [x] Show a snow-covered castle variant in snowy conditions. Implemented with an on-demand transparent watercolour asset; accepted for release on 2026-10-23.
 - [x] Extend the snowy scene to snow-covered grass and patchy tree snow. Snowy branches share the existing wind displacement and artwork loads on demand; accepted for release on 2026-10-23.
-- [ ] Give the home page a more distinctive visual style, building on the existing watercolour artwork.
+- [x] Give the home page a more distinctive visual style, building on the existing watercolour artwork. Accepted fixed-scene design implemented on 2026-10-24; revalidated and included in the 6 November implementation/mobile release.
+  - Design review requested 2026-10-23: castle-led arrival, scroll pan to the stepping stones, simple predicted-conditions overlay, and water/stone visibility reflecting the data-based prediction. Three concepts are in `../designs/landing-page-concepts/`; await user feedback before app implementation.
+  - Revised 2026-10-24: user liked the overall style but rejected scroll panning, choosing one fixed scene with immediate overlays and forecast-controlled water conditions. The accepted review is in the thread visualization folder as `ogmore-single-scene.html`.
+  - User requested implementation on 2026-10-24. Completed: fixed castle/river framing, persistent prediction overlay with real Now/+1h/+3h and selectable future hours, data-driven stone coverage/current, dialogs for supporting content, retained scene effects and responsive layout. All 46 tests, TypeScript and production build pass. Local and uncommitted.
+  - On 2026-11-06 the user requested resuming this implementation/release and phone work. Live data refreshed, all 46 tests/TypeScript/build pass again, phone-landscape overflow fixed and initial mobile controls improved. The previous local/uncommitted note above records the October checkpoint.

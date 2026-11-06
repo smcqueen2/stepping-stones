@@ -6,9 +6,9 @@ const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../..')
 const html = readFileSync(path.join(root, 'index.html'), 'utf-8');
 
 describe('single-page structure contract', () => {
-  it('contains all required section anchors', () => {
+  it('keeps all supporting content in addressable dialogs', () => {
     for (const id of ['live', 'forecast', 'history', 'about', 'report']) {
-      expect(html).toContain(`id="${id}"`);
+      expect(html).toContain(`<dialog id="${id}"`);
     }
   });
 

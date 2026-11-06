@@ -4,6 +4,8 @@ The owner paused for the evening and requested saving the design work to GitHub.
 
 On 6 November 2026, resumption checks found the prepared archive was still untracked and remote `main` remained at `06f8b7d`. The outstanding documentation-only commit/push request is being completed as the checkpoint is resumed. No application tests have been rerun for this documentation save.
 
+Subsequently on 6 November: archive `a7f08fc` was verified on origin/main. The user then requested the landing implementation/release and phone access. That application commit now includes the previously local source and first mobile improvements, with all 46 tests/TypeScript/build passing. The local/uncommitted descriptions below retain the original checkpoint history. Data and History design choices remain open.
+
 - Landing: fixed single scene and immediate prediction overlays accepted; original scroll/pan alternatives superseded. The implementation is local and remains uncommitted separately from this documentation checkpoint.
 - Data: River journal / Conditions compared awaiting feedback; dated real seven-day study, source distinctions, templates and scope saved.
 - History: Living landscape / Painted chapters awaiting feedback; twelve milestones, primary-source research, date qualifications, separately labelled folklore, matching watercolours and exact prompts saved.

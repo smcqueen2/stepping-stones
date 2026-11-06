@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1672" height="941" viewBox="0 0 1672 941">
+  <defs>
+    <filter id="feather"><feGaussianBlur stdDeviation="2" /></filter>
+    <mask id="water" maskUnits="userSpaceOnUse" x="0" y="0" width="1672" height="941">
+      <g filter="url(#feather)">
+        <path fill="white" d="M0 596 L160 610 L350 615 L540 623 L750 632 L960 641 L1160 643 L1340 650 L1510 645 L1672 659 V941 H0 Z" />
+        <ellipse fill="black" cx="1602" cy="648" rx="26" ry="23" />
+      </g>
+    </mask>
+  </defs>
+  <rect width="1672" height="941" fill="white" mask="url(#water)" />
+</svg>
