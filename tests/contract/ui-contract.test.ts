@@ -24,8 +24,9 @@ describe('single-page structure contract', () => {
 
   it('contains public observation form controls', () => {
     expect(html).toContain('id="observation-form"');
-    expect(html).toContain('name="observed_state"');
-    expect(html).toContain('name="observations[]"');
+    expect(html).toContain('id="report-condition" name="condition" type="range"');
+    expect(html).toContain('id="community-count"');
+    expect(html).not.toContain('datetime-local');
     expect(html).toContain('id="observation-submit"');
   });
 });

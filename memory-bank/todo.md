@@ -2,6 +2,11 @@
 
 Recorded from user feedback on 2026-10-22. Updated 2026-11-06.
 
+- [x] Replace paginated History with a continuous vertical story and a fixed timeline beside the scrollbar, requested 6 November. Scroll-following active period/progress, clickable desktop dates, compact phone rail/picker, unchanged research/art/AI labels and per-chapter notes. All 75 tests, TypeScript/build and desktop/phone/short-landscape browser checks pass. Owner authorised commit/push; supersedes the earlier slide controls.
+
+- [x] Build the quick main-page reporting interface for local review: five-position condition slider, small modal, no sign-in/time/notes fields, clearly labelled preview and coming-soon hourly count. 72 tests, TypeScript/build and desktop/mobile browser checks pass. Owner authorised commit/push together with the vertical History layout; shared collection remains on hold below.
+- [ ] Shared condition collection and rolling hourly report count: ON HOLD at the owner's explicit request, "dont prepare any backend yet" (6 November). No service scaffolding or endpoint is retained. Resume only when the owner asks to proceed; do not infer approval for a provider, account setup or backend work from the interface request.
+
 - [ ] Complete physical-phone touch/rotation review in Chrome on the connected Pixel 9a. Owner has confirmed Chrome loads over both Wi-Fi and USB after allowing local-network access; connection troubleshooting is resolved. Initial mobile fixes cover portrait/landscape, 44px controls, larger supporting text, safe areas and bounded Scene controls. Use physical touch/rotation feedback for the next pass.
 
 - [x] Convert About and History from modals to separate full page views, requested 2026-11-06. Shared navigation, Back to crossing, browser Back/Forward, direct hash links, page titles/focus, retained milestone and lazy History. Report remains a native modal with its existing form. All 57 tests, TypeScript/build and desktop/phone/short-landscape browser checks pass. Owner authorised commit/push on 6 November.

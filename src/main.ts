@@ -4,6 +4,7 @@ import { installSceneWeather } from './lib/scene-weather';
 import { installCrossingOutlook, type OutlookData } from './lib/crossing-outlook';
 import { installNavigation } from './lib/navigation';
 import { installHistoryLoader } from './lib/history-loader';
+import { installCommunityReports } from './lib/community-reports';
 import type { ConfigPayload, ForecastPayload, LivePayload } from './lib/types';
 
 const forecastClock = new Intl.DateTimeFormat('en-GB', {
@@ -60,62 +61,9 @@ function renderForecast(payload?: ForecastPayload): void {
   }));
 }
 
-function normalizeEndpoint(raw: string | undefined): string {
-  if (!raw) {
-    return '';
-  }
-
-  const endpoint = raw.trim();
-  if (!endpoint || endpoint.includes('REPLACE_WITH_EMAIL')) {
-    return '';
-  }
-
-  return endpoint;
-}
-
-function configureObservationForm(config: ConfigPayload, live: LivePayload): void {
-  const form = document.getElementById('observation-form') as HTMLFormElement | null;
-  const submitButton = document.getElementById('observation-submit') as HTMLButtonElement | null;
-  const status = document.getElementById('observation-status');
-  const nextInput = document.getElementById('observation-next') as HTMLInputElement | null;
-  const modelState = document.getElementById('model-live-state') as HTMLInputElement | null;
-  const modelRisk = document.getElementById('model-live-risk') as HTMLInputElement | null;
-  const modelGenerated = document.getElementById('model-generated-at') as HTMLInputElement | null;
-
-  if (!form || !submitButton || !status || !nextInput || !modelState || !modelRisk || !modelGenerated) {
-    return;
-  }
-
-  modelState.value = live.current.state;
-  modelRisk.value = String(live.current.riskScore);
-  modelGenerated.value = live.generatedAt;
-  nextInput.value = `${window.location.origin}${window.location.pathname}?observation=thanks#report`;
-
-  const queryState = new URLSearchParams(window.location.search).get('observation');
-  if (queryState === 'thanks') {
-    status.textContent =
-      config.observationSubmission?.successMessage ??
-      'Thanks. Your observation has been submitted and will help improve the model.';
-  }
-
-  const endpoint = normalizeEndpoint(config.observationSubmission?.endpoint);
-  const enabled = Boolean(config.observationSubmission?.enabled && endpoint);
-
-  if (!enabled) {
-    form.removeAttribute('action');
-    submitButton.disabled = true;
-    status.textContent =
-      config.observationSubmission?.disabledMessage ??
-      'Observation form is temporarily unavailable while the submit endpoint is being configured.';
-    return;
-  }
-
-  form.action = endpoint;
-}
-
-
 const disposeNavigation = installNavigation();
 const disposeHistory = installHistoryLoader();
+const disposeReports = installCommunityReports();
 const disposeLighting = installSceneLighting();
 const disposeWeather = installSceneWeather();
 const outlook = installCrossingOutlook();
@@ -151,7 +99,6 @@ async function refreshData(): Promise<void> {
     data.updateFailed = results.some(result => result.status === 'rejected');
     renderForecast(data.forecast);
     outlook.setData(data);
-    if (data.config && data.live) configureObservationForm(data.config, data.live);
   } catch {
     if (!disposed) outlook.setData({ ...data, updateFailed: true });
   } finally {
@@ -206,6 +153,7 @@ import.meta.hot?.dispose(() => {
   document.removeEventListener('visibilitychange', syncData);
   disposeNavigation();
   disposeHistory();
+  disposeReports();
   outlook.dispose();
   disposeLighting();
   disposeWeather();

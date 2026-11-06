@@ -72,6 +72,9 @@ button:focus-visible, a:focus-visible, summary:focus-visible, input:focus-visibl
 .outlook-times button[aria-pressed="true"], .scene-button[aria-pressed="true"] { background: var(--ink); color: var(--bg); border-color: var(--ink); }
 .outlook-links { display: flex; gap: 18px; font-size: 11px; margin: 13px 0 0; }
 .outlook-disclaimer { font-size: 11px; color: var(--muted); margin: 13px 0 0; }
+.community-reports { border-top: 1px solid var(--card-border); margin-top: 15px; padding-top: 12px; font-size: 12px; }
+.community-reports p { color: var(--muted); margin: 0 0 3px; }
+.community-reports a { display: inline-flex; align-items: center; gap: 5px; min-height: 44px; }
 .state-good { color: var(--good); }
 .state-caution { color: var(--warn); }
 .state-bad { color: var(--bad); }
@@ -108,11 +111,24 @@ button:focus-visible, a:focus-visible, summary:focus-visible, input:focus-visibl
 .timeline-item .forecast-time { display: block; font-size: 13px; font-weight: 600; margin: 0 0 8px; }
 .timeline-item p { margin: 4px 0; font-size: 12px; }
 .button-link { display: inline-block; border: 0; padding: 10px 17px; border-radius: 24px; background: var(--ink); color: var(--bg); }
-.form-grid, .form-field { display: grid; gap: 12px; }
-.form-field { gap: 5px; }
-.form-field input, .form-field textarea { min-width: 0; width: 100%; padding: 9px 11px; background: var(--card); color: var(--ink); border: 1px solid var(--card-border); border-radius: 5px; }
-.form-fieldset { min-width: 0; display: grid; gap: 8px; padding: 12px; border: 1px solid var(--card-border); border-radius: 5px; }
-.form-fieldset label { display: flex; gap: 8px; align-items: start; font-size: 13px; }
+.report-dialog { width: min(470px, calc(100% - 32px)); }
+.report-dialog .dialog-heading { margin-bottom: 12px; }
+#report-intro { font-size: 14px; color: var(--muted); margin: 0 0 24px; }
+.condition-choice { padding: 20px 18px; background: var(--card); border: 1px solid var(--card-border); border-radius: 7px; }
+.condition-choice label { display: block; font-size: 13px; font-weight: 500; }
+#report-condition { display: block; appearance: none; width: 100%; height: 44px; margin: 12px 0 0; background: transparent; cursor: pointer; }
+#report-condition::-webkit-slider-runnable-track { height: 8px; border-radius: 8px; background: linear-gradient(90deg, #486f82, #91afb2 48%, #659077); }
+#report-condition::-moz-range-track { height: 8px; border-radius: 8px; background: linear-gradient(90deg, #486f82, #91afb2 48%, #659077); }
+#report-condition::-webkit-slider-thumb { appearance: none; width: 30px; height: 30px; margin-top: -11px; border-radius: 50%; border: 3px solid var(--card); background: var(--ink); box-shadow: 0 0 0 1px var(--ink), 0 2px 6px #243a3522; }
+#report-condition::-moz-range-thumb { width: 24px; height: 24px; border-radius: 50%; border: 3px solid var(--card); background: var(--ink); box-shadow: 0 0 0 1px var(--ink); }
+.condition-endpoints { display: flex; justify-content: space-between; gap: 16px; font-size: 11px; color: var(--muted); }
+.condition-endpoints span:last-child { text-align: right; }
+#condition-label { font: 400 24px/1.15 Georgia, serif; letter-spacing: -.3px; margin: 26px 0 7px; }
+#condition-description { font-size: 13px; color: var(--muted); margin: 0; min-height: 39px; }
+#observation-submit { width: 100%; min-height: 48px; margin-top: 20px; font-size: 14px; }
+.report-status { font-size: 13px; margin: 12px 0 0; }
+.report-status:empty { display: none; }
+.report-footnote { font-size: 11px; color: var(--muted); margin: 18px 0 0; }
 @media (min-width: 701px) and (min-height: 601px) {
   body[data-view="top"] :is(.site-header, main, .site-footer) { width: min(1120px, 100%, calc((100svh - 148px) * 1672 / 941)); }
 }
@@ -144,7 +160,13 @@ button:focus-visible, a:focus-visible, summary:focus-visible, input:focus-visibl
   .dialog-heading { position: sticky; top: 0; z-index: 1; background: var(--bg); padding-block: 8px; gap: 12px; }
   .dialog-heading h2 { font-size: 27px; }
   .dialog-heading button { min-height: 44px; flex-shrink: 0; }
-  .form-field input, .form-field textarea { font-size: 16px; }
+  .report-dialog { padding: 16px; }
+  .report-dialog .dialog-heading h2 { font-size: 24px; }
+  #report-intro { margin-bottom: 14px; font-size: 13px; }
+  .condition-choice { padding: 14px; }
+  #condition-label { font-size: 20px; margin-top: 16px; }
+  #observation-submit { margin-top: 14px; }
+  .report-footnote { margin-top: 12px; }
 }
 @media (max-width: 370px) {
   .header-inner { padding-inline: max(16px, env(safe-area-inset-left)) max(16px, env(safe-area-inset-right)); gap: 8px; }

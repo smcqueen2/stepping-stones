@@ -2,55 +2,124 @@
 import content from '../../docs/design/historical-timeline/timeline-content.json';
 import { mountHistoryTimeline } from '../../src/lib/history-timeline';
 
-it('keeps the selected chapter, painting, sources and accessible slide in sync', () => {
-  const host = document.createElement('div');
-  document.body.append(host);
-  const dispose = mountHistoryTimeline(host);
-  const slides = [...host.querySelectorAll<HTMLElement>('.history-slide')];
-  const jump = host.querySelector('select')!;
-  expect(slides).toHaveLength(12);
+let host: HTMLElement;
+let page: HTMLElement;
+let dispose: () => void;
+let articles: HTMLElement[];
+let offset: number;
+let reducedMotion: boolean;
+let frames: Map<number, FrameRequestCallback>;
+const dates = () => [...host.querySelectorAll<HTMLButtonElement>('[data-history-index]')];
+const active = () => host.querySelector<HTMLButtonElement>('[data-history-index][aria-current]');
+function draw() {
+  const pending = [...frames];
+  frames.clear();
+  pending.forEach(([, callback]) => callback(0));
+}
+function scrollTo(y: number) { offset = y; window.dispatchEvent(new Event('scroll')); draw(); }
+beforeEach(() => {
+  document.body.innerHTML = '<section data-page-view="history"><div id="history-content"></div></section>';
+  page = document.querySelector('section')!;
+  host = document.getElementById('history-content')!;
+  frames = new Map();
+  offset = 0;
+  reducedMotion = false;
+  let nextFrame = 0;
+  vi.spyOn(document, 'hidden', 'get').mockReturnValue(false);
+  vi.spyOn(window, 'requestAnimationFrame').mockImplementation(callback => { frames.set(++nextFrame, callback); return nextFrame; });
+  vi.spyOn(window, 'cancelAnimationFrame').mockImplementation(id => { frames.delete(id); });
+  vi.stubGlobal('matchMedia', vi.fn(() => ({ matches: reducedMotion })));
+  dispose = mountHistoryTimeline(host);
+  articles = [...host.querySelectorAll<HTMLElement>('.history-chapter')];
+  articles.forEach((article, index) => {
+    vi.spyOn(article, 'getBoundingClientRect').mockImplementation(() => ({ top: index * 800 - offset } as DOMRect));
+    article.scrollIntoView = vi.fn(() => { offset = index * 800 - 24; });
+  });
+  draw();
+});
+afterEach(() => { dispose(); vi.restoreAllMocks(); vi.unstubAllGlobals(); document.body.innerHTML = ''; });
 
+it('renders all chapters in normal reading order with their artwork, AI labels, notes and sources', () => {
+  expect(articles).toHaveLength(12);
+  expect(host.querySelector('.history-track, .history-controls')).toBeNull();
   content.milestones.forEach((milestone, index) => {
-    jump.value = String(index);
-    jump.dispatchEvent(new Event('change', { bubbles: true }));
-    expect(host.querySelector('.history-count')!.textContent).toBe(`${String(index + 1).padStart(2, '0')} / 12`);
-    expect(slides.filter(slide => slide.getAttribute('aria-hidden') === 'false')).toEqual([slides[index]]);
-    expect(slides[index].inert).toBe(false);
-    expect(slides[(index + 1) % slides.length].inert).toBe(true);
-    expect(slides[index].querySelector('h2')!.textContent).toBe(milestone.title);
-    expect(slides[index].querySelector('img')!.alt).toBe(milestone.artLabel);
-    expect(slides[index].querySelector('img')!.getAttribute('src')).not.toContain('undefined');
-    const notes = host.querySelector('.history-notes .history-note-copy')!;
+    const article = articles[index];
+    expect(article.hasAttribute('aria-hidden')).toBe(false);
+    expect(article.inert).not.toBe(true);
+    expect(article.querySelector('h2')!.textContent).toBe(milestone.title);
+    expect(article.querySelector('img')!.alt).toBe(milestone.artLabel);
+    expect(article.querySelector('img')!.getAttribute('src')).not.toContain('undefined');
+    expect(article.querySelector('.history-art-label')!.textContent).toContain('AI generated');
+    const notes = article.querySelector('.history-note-copy')!;
     expect(notes.textContent).toContain(milestone.context);
     expect(notes.textContent).toContain(milestone.dateNote);
     const links = [...notes.querySelectorAll('a')];
     expect(links.map(link => link.href)).toEqual(milestone.sources.map(key => content.sources[key as keyof typeof content.sources].url));
     expect(links.every(link => link.protocol === 'https:' && link.rel.includes('noopener'))).toBe(true);
   });
-  expect(host.querySelectorAll('.history-notes')[1].textContent).toContain('Local folklore · undated');
-  dispose();
-  expect(host.childElementCount).toBe(0);
-  host.remove();
+  expect(host.querySelector('.history-legend')!.textContent).toContain('Local folklore · undated');
 });
 
-it('bounds previous/next and keyboard navigation without hijacking browser shortcuts', () => {
-  const host = document.createElement('div');
-  document.body.append(host);
-  const dispose = mountHistoryTimeline(host);
-  const [previous, next] = host.querySelectorAll<HTMLButtonElement>('.history-controls button');
-  expect(previous.disabled).toBe(true);
-  next.click();
-  expect(host.querySelector('.history-count')!.textContent).toBe('02 / 12');
-  next.dispatchEvent(new KeyboardEvent('keydown', { key: 'End', bubbles: true }));
-  expect(host.querySelector('.history-count')!.textContent).toBe('12 / 12');
-  expect(next.disabled).toBe(true);
-  previous.dispatchEvent(new KeyboardEvent('keydown', { key: 'Home', bubbles: true }));
-  expect(previous.disabled).toBe(true);
-  next.dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowRight', altKey: true, bubbles: true }));
-  expect(host.querySelector('.history-count')!.textContent).toBe('01 / 12');
-  const dates = host.querySelectorAll<HTMLButtonElement>('[data-history-index]');
-  dates[9].click();
-  expect(dates[9].getAttribute('aria-current')).toBe('step');
-  expect(host.querySelector('.history-count')!.textContent).toBe('10 / 12');
-  dispose(); host.remove();
+it('follows actual scroll position in both directions without changing focus or hiding chapters', () => {
+  const focused = document.activeElement;
+  expect(active()).toBe(dates()[0]);
+  scrollTo(800 * 5 + 40);
+  expect(active()).toBe(dates()[5]);
+  expect(host.querySelector<HTMLSelectElement>('select')!.value).toBe('5');
+  expect(host.querySelector('.history-rail-active-date')!.textContent).toBe(content.milestones[5].shortDate);
+  expect(Number(host.querySelector<HTMLElement>('.history-timeline')!.style.getPropertyValue('--history-progress'))).toBeGreaterThan(5 / 11);
+  expect(document.activeElement).toBe(focused);
+  scrollTo(800);
+  expect(active()).toBe(dates()[1]);
+  scrollTo(800 * 11);
+  expect(active()).toBe(dates()[11]);
+  expect(host.querySelector<HTMLElement>('.history-timeline')!.style.getPropertyValue('--history-progress')).toBe('1');
+});
+
+it('jumps by timeline or picker, preserves source notes and honours reduced motion', () => {
+  dates()[9].click();
+  expect(articles[9].scrollIntoView).toHaveBeenCalledWith({ behavior: 'smooth', block: 'start' });
+  expect(document.activeElement).toBe(articles[9].querySelector('h2'));
+  draw();
+  expect(active()).toBe(dates()[9]);
+  reducedMotion = true;
+  const jump = host.querySelector<HTMLSelectElement>('select')!;
+  jump.value = '3'; jump.dispatchEvent(new Event('change'));
+  expect(articles[3].scrollIntoView).toHaveBeenCalledWith({ behavior: 'instant', block: 'start' });
+  draw();
+  expect(active()).toBe(dates()[3]);
+  expect(articles[9].querySelector('.history-note-copy')!.textContent).toContain(content.milestones[9].context);
+});
+
+it('supports vertical keyboard navigation in the rail without intercepting browser shortcuts', () => {
+  const buttons = dates();
+  buttons[0].focus();
+  buttons[0].dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowDown', bubbles: true }));
+  expect(document.activeElement).toBe(buttons[1]);
+  buttons[1].dispatchEvent(new KeyboardEvent('keydown', { key: 'End', bubbles: true }));
+  expect(document.activeElement).toBe(buttons[11]);
+  buttons[11].dispatchEvent(new KeyboardEvent('keydown', { key: 'Home', bubbles: true, altKey: true }));
+  expect(document.activeElement).toBe(buttons[11]);
+  expect(articles.every(article => vi.mocked(article.scrollIntoView).mock.calls.length === 0)).toBe(true);
+});
+
+it('coalesces scrolling, skips hidden views and cleans up observers and scheduled work', async () => {
+  window.dispatchEvent(new Event('scroll'));
+  window.dispatchEvent(new Event('scroll'));
+  window.dispatchEvent(new Event('resize'));
+  expect(frames.size).toBe(1);
+  page.hidden = true;
+  offset = 800 * 7;
+  draw();
+  expect(active()).toBe(dates()[0]);
+  page.hidden = false;
+  await Promise.resolve();
+  draw();
+  expect(active()).toBe(dates()[7]);
+  window.dispatchEvent(new Event('scroll'));
+  dispose();
+  expect(frames.size).toBe(0);
+  expect(host.childElementCount).toBe(0);
+  window.dispatchEvent(new Event('scroll'));
+  expect(frames.size).toBe(0);
 });

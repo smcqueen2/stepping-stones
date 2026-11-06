@@ -32,19 +32,18 @@ function sourceLinks(keys: string[]) {
   return list;
 }
 
-/** A click-through landscape, using the same sourced copy as the archived design. */
+/** A continuous, normally scrolling story with a separate reading-progress timeline. */
 export function mountHistoryTimeline(host: HTMLElement) {
-  let current = 0;
+  const page = host.closest<HTMLElement>('[data-page-view]');
   const root = element('section', 'history-timeline');
   root.setAttribute('aria-label', 'Illustrated history of Ogmore Castle and its valley');
-  const window = element('div', 'history-window');
-  const track = element('div', 'history-track');
-  window.append(track);
-
-  const slides = content.milestones.map((milestone, index) => {
-    const slide = element('article', 'history-slide');
+  const chapters = element('div', 'history-chapters');
+  const articles = content.milestones.map((milestone, index) => {
+    const article = element('article', 'history-chapter');
+    article.id = `history-period-${milestone.id}`;
     const headingId = `history-chapter-${milestone.id}`;
-    slide.setAttribute('aria-labelledby', headingId);
+    article.setAttribute('aria-labelledby', headingId);
+    const scene = element('div', 'history-scene');
     const painting = element('img', 'history-painting');
     painting.src = paintings[milestone.image];
     painting.alt = milestone.artLabel;
@@ -55,6 +54,7 @@ export function mountHistoryTimeline(host: HTMLElement) {
     const caption = element('div', 'history-caption');
     const title = element('h2', '', milestone.title);
     title.id = headingId;
+    title.tabIndex = -1;
     caption.append(
       element('p', 'history-category', milestone.category),
       element('p', 'history-period', milestone.date),
@@ -62,46 +62,61 @@ export function mountHistoryTimeline(host: HTMLElement) {
       element('p', 'history-summary', milestone.summary),
       sourceLinks(milestone.sources.slice(0, 2)),
     );
-    slide.append(painting, caption, element('p', 'history-art-label', milestone.artLabel));
-    track.append(slide);
-    return slide;
+    scene.append(painting, caption, element('p', 'history-art-label', milestone.artLabel));
+    const notes = element('details', 'history-notes');
+    notes.append(element('summary', '', 'More about this period & sources'));
+    const noteCopy = element('div', 'history-note-copy');
+    noteCopy.append(
+      element('p', '', milestone.context),
+      element('p', 'history-date-note', milestone.dateNote),
+      sourceLinks(milestone.sources),
+    );
+    notes.append(noteCopy);
+    article.append(scene, notes);
+    chapters.append(article);
+    return article;
   });
 
-  const controls = element('div', 'history-controls');
-  const previous = element('button', '', '← Previous');
-  const next = element('button', '', 'Next →');
-  previous.type = next.type = 'button';
-  const counter = element('span', 'history-count');
-  controls.append(previous, counter, next);
-
-  const dates = element('ol', 'history-dates');
-  dates.setAttribute('aria-label', 'Choose a historical milestone');
+  const rail = element('aside', 'history-rail');
+  const dates = element('nav', 'history-rail-navigation');
+  dates.setAttribute('aria-label', 'History timeline');
+  dates.append(element('p', 'history-rail-heading', 'Through time'));
+  const dateList = element('ol', 'history-rail-list');
   const dateButtons = content.milestones.map((milestone, index) => {
     const item = element('li');
-    const button = element('button', '', milestone.shortDate);
+    const button = element('button');
     button.type = 'button';
     button.dataset.historyIndex = String(index);
     button.setAttribute('aria-label', `${milestone.date}: ${milestone.title}`);
+    button.setAttribute('aria-controls', articles[index].id);
+    button.append(element('span', 'history-rail-date', milestone.shortDate), element('span', 'history-rail-dot'));
     item.append(button);
-    dates.append(item);
+    dateList.append(item);
     return button;
   });
-  const jumpLabel = element('label', 'history-jump', 'Jump to a milestone');
+  dates.append(dateList);
+  // Small-screen markers convey progress without squeezing twelve touch targets into the viewport.
+  const compact = element('div', 'history-rail-compact');
+  compact.setAttribute('aria-hidden', 'true');
+  const marks = element('div', 'history-rail-marks');
+  const dots = content.milestones.map(() => element('span', 'history-rail-dot'));
+  marks.append(...dots);
+  const activeDate = element('p', 'history-rail-active-date');
+  compact.append(marks, activeDate);
+  rail.append(dates, compact);
+
+  const jumpControl = element('div', 'history-jump');
+  const jumpLabel = element('label', '', 'Jump to a period');
   const jump = element('select');
+  jump.id = 'history-period-picker';
+  jumpLabel.htmlFor = jump.id;
   content.milestones.forEach((milestone, index) => {
     const option = element('option', '', `${milestone.shortDate} · ${milestone.title}`);
     option.value = String(index);
     jump.append(option);
   });
-  jumpLabel.append(jump);
-
-  const announcement = element('p', 'sr-only');
-  announcement.setAttribute('aria-live', 'polite');
-  const notes = element('details', 'history-notes');
-  notes.append(element('summary', '', 'Read this chapter & its sources'));
-  const noteCopy = element('div', 'history-note-copy');
-  notes.append(noteCopy);
-  const legend = element('details', 'history-notes');
+  jumpControl.append(jumpLabel, jump);
+  const legend = element('details', 'history-notes history-legend');
   legend.append(element('summary', '', 'Beside the history: a local legend'));
   const legendCopy = element('div', 'history-note-copy');
   legendCopy.append(
@@ -112,60 +127,86 @@ export function mountHistoryTimeline(host: HTMLElement) {
     sourceLinks(content.legend.sources),
   );
   legend.append(legendCopy);
-  root.append(window, controls, dates, jumpLabel, announcement, notes, legend);
+  root.append(rail, jumpControl, chapters, legend);
+  host.replaceChildren(root);
+  let current = -1;
+  let frame: number | undefined;
+  let disposed = false;
 
-  function render(announce = false) {
-    const milestone = content.milestones[current];
-    track.style.transform = `translateX(${-100 * current}%)`;
-    slides.forEach((slide, index) => {
-      slide.inert = index !== current;
-      slide.setAttribute('aria-hidden', String(index !== current));
-    });
-    dateButtons.forEach((button, index) => {
-      if (index === current) button.setAttribute('aria-current', 'step');
+  function markCurrent(index: number) {
+    if (index === current) return;
+    current = index;
+    dateButtons.forEach((button, i) => {
+      if (i === index) button.setAttribute('aria-current', 'location');
       else button.removeAttribute('aria-current');
+      button.dataset.past = String(i < index);
+      dots[i].dataset.current = String(i === index);
+      dots[i].dataset.past = String(i < index);
     });
-    previous.disabled = current === 0;
-    next.disabled = current === slides.length - 1;
-    jump.value = String(current);
-    counter.textContent = `${String(current + 1).padStart(2, '0')} / ${slides.length}`;
-    noteCopy.replaceChildren(
-      element('p', '', milestone.context),
-      element('p', 'history-date-note', milestone.dateNote),
-      sourceLinks(milestone.sources),
-    );
-    if (announce) announcement.textContent = `Milestone ${current + 1} of ${slides.length}. ${milestone.date}. ${milestone.title}`;
+    activeDate.textContent = content.milestones[index].shortDate;
+    if (document.activeElement !== jump) jump.value = String(index);
+  }
+
+  function update() {
+    frame = undefined;
+    if (disposed || document.hidden || page?.hidden) return;
+    const line = Math.min(window.innerHeight * .38, 280);
+    const tops = articles.map(article => article.getBoundingClientRect().top);
+    let index = 0;
+    tops.forEach((top, i) => { if (top <= line) index = i; });
+    markCurrent(index);
+    const next = tops[index + 1];
+    const fraction = next === undefined ? 0 : Math.max(0, Math.min(1, (line - tops[index]) / (next - tops[index])));
+    root.style.setProperty('--history-progress', String((index + fraction) / (articles.length - 1)));
+  }
+  function schedule() {
+    if (frame === undefined && !disposed && !document.hidden && !page?.hidden) frame = window.requestAnimationFrame(update);
   }
   function select(index: number) {
-    if (!Number.isInteger(index) || index < 0 || index >= slides.length) return;
-    current = index;
-    render(true);
+    if (!Number.isInteger(index) || index < 0 || index >= articles.length) return;
+    markCurrent(index);
+    articles[index].scrollIntoView({ behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'instant' : 'smooth', block: 'start' });
+    articles[index].querySelector('h2')?.focus({ preventScroll: true });
+    schedule();
   }
   function click(event: MouseEvent) {
-    const button = (event.target as Element).closest<HTMLButtonElement>('button');
-    if (!button || button.disabled) return;
-    if (button === previous) select(current - 1);
-    else if (button === next) select(current + 1);
-    else if (button.dataset.historyIndex !== undefined) select(Number(button.dataset.historyIndex));
+    const button = (event.target as Element).closest<HTMLButtonElement>('button[data-history-index]');
+    if (button) select(Number(button.dataset.historyIndex));
   }
   function change() { select(Number(jump.value)); }
   function keydown(event: KeyboardEvent) {
-    if (!(event.target instanceof HTMLButtonElement) || event.altKey || event.ctrlKey || event.metaKey) return;
-    const index = event.key === 'ArrowRight' ? current + 1 : event.key === 'ArrowLeft' ? current - 1
-      : event.key === 'Home' ? 0 : event.key === 'End' ? slides.length - 1 : undefined;
+    const target = event.target;
+    if (!(target instanceof HTMLButtonElement) || target.dataset.historyIndex === undefined || event.altKey || event.ctrlKey || event.metaKey || event.shiftKey) return;
+    const i = Number(target.dataset.historyIndex);
+    const index = event.key === 'ArrowDown' ? Math.min(i + 1, dateButtons.length - 1)
+      : event.key === 'ArrowUp' ? Math.max(i - 1, 0) : event.key === 'Home' ? 0
+      : event.key === 'End' ? dateButtons.length - 1 : undefined;
     if (index === undefined) return;
     event.preventDefault();
-    select(index);
-    if (event.target.disabled) (current === 0 ? next : previous).focus();
+    // Moving within the timeline keeps keyboard focus in the timeline; Enter/Space jumps to the chapter.
+    dateButtons[index].focus();
   }
   root.addEventListener('click', click);
   root.addEventListener('keydown', keydown);
+  root.addEventListener('toggle', schedule, true);
   jump.addEventListener('change', change);
-  host.replaceChildren(root);
-  render();
+  window.addEventListener('scroll', schedule, { passive: true });
+  window.addEventListener('resize', schedule);
+  document.addEventListener('visibilitychange', schedule);
+  const visibility = new MutationObserver(schedule);
+  if (page) visibility.observe(page, { attributes: true, attributeFilter: ['hidden'] });
+  markCurrent(0);
+  schedule();
   return () => {
+    disposed = true;
+    if (frame !== undefined) window.cancelAnimationFrame(frame);
+    visibility.disconnect();
+    window.removeEventListener('scroll', schedule);
+    window.removeEventListener('resize', schedule);
+    document.removeEventListener('visibilitychange', schedule);
     root.removeEventListener('click', click);
     root.removeEventListener('keydown', keydown);
+    root.removeEventListener('toggle', schedule, true);
     jump.removeEventListener('change', change);
     root.remove();
   };

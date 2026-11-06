@@ -1,5 +1,15 @@
 # Decision Log
 
+## 2026-11-06 - Scroll through History with a vertical timeline
+- Owner requested vertical scrolling instead of paginated chapters, with a historical timeline next to the scrollbar showing the reading position. The new layout supersedes the click-through implementation; retain the archived designs and sourced content as provenance.
+- Render all twelve chapters in normal document flow, with their existing paintings/overlays, AI labels and per-period source/context/date notes. Keep folklore separately labelled. No new image, package, research claim or effect on crossing predictions.
+- Use a fixed right-hand timeline with active/past markers and continuous progress. Date buttons jump to chapters and focus their headings, with reduced-motion jumps and keyboard navigation; passive scrolling never moves focus. Narrow/short views get a compact rail/current period and a labelled native picker, keeping text clear and touch controls large.
+
+## 2026-11-06 - Quick condition reporting interface; defer the backend
+- User wants an option on the main page, a simple modal slider from completely submerged/unpassable to passable, and eventually the number of reports from the past hour. Prioritise a quick anonymous interaction without a date/time, notes or sign-in form.
+- Owner explicitly replied: "neither dont prepare any backend yet" when asked about Cloudflare/Supabase. Keep this change frontend only. Backend scaffolding and local test storage started during exploration were removed; no backend deployment, service dependency, account setup or endpoint remains. Shared storage/counts, duplicate controls and actual submissions await a later request.
+- The slider's five observable states have accessible value descriptions, touch/keyboard operation and a deliberate-choice requirement. The preview button confirms the choice with "Nothing has been sent". Hourly reports are labelled coming soon; do not simulate counts or success. Community observations remain separate from the model's prediction.
+
 ## 2026-11-06 - Darken the sky independently at night
 - User wants the sky to reach black with lighter overall scene dimming. Use a runtime filter on the existing sky layer and a matching transparent-edge backdrop, preserving the daytime artwork and the accepted solar-altitude/local-time cycle.
 - Keep the foliage renderer's exposed-sky fill in sync with the actual interpolated sky filter, not just the target value, to avoid bright halos during wind or preview transitions. Reuse the current draw pass/textures and support the static/reduced-motion treatment without a new asset or package.

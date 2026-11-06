@@ -16,15 +16,15 @@ The landing page is one fixed watercolour scene, with the castle and stepping st
 
 Phone portrait and short landscape windows use a flowing layout so the outlook cannot escape above the header. Main forecast/scene controls have 44-pixel touch targets, supporting copy is larger, and the compact Scene toggle leaves more of the castle visible. The Scene panel scrolls within the available height; dialog headings keep their Close button visible. Safe-area padding supports phone cutouts, and native input text remains at least 16 pixels on narrow screens.
 
-About and History are separate full page views within the app, using the shared header and a Back to crossing link. Changing views updates the document title, current navigation and heading focus, and supports browser Back/Forward. Their existing hash links still work on direct visits and reloads, including GitHub Pages without server rewrites. The crossing scene remains mounted while hidden, so scene settings and the selected History milestone survive navigation.
+About and History are separate full page views within the app, using the shared header and a Back to crossing link. Changing views updates the document title, current navigation and heading focus, and supports browser Back/Forward. Their existing hash links still work on direct visits and reloads, including GitHub Pages without server rewrites. The crossing scene remains mounted while hidden, preserving scene settings. History stays mounted after its first visit; its timeline follows the current scroll position.
 
-Readings, forecast and reporting continue to use native dialogs. Closing a dialog returns to the page it was opened from; the reporting form itself is unchanged. Routes are:
+Readings, forecast and reporting use native dialogs. Closing a dialog returns to the page it was opened from. Reporting is now a simple slider preview opened from the main crossing overlay, rather than a navigation tab. Routes are:
 
 - `#live` – current best-guess state and live inputs.
 - `#forecast` – next 24 hours of likely conditions.
 - `#history` – full page illustrated castle/valley timeline, research sources and local folklore.
 - `#about` – full page project introduction.
-- `#report` – observation feedback form.
+- `#report` – quick condition slider (interface preview; collection deferred).
 
 States are:
 
@@ -50,9 +50,13 @@ Future presets select a nearby future forecast timestamp and show its actual loc
 
 Open **History** in the main navigation, or use the [published History link](https://smcqueen2.github.io/stepping-stones/#history). The one-page view follows twelve milestones through the castle, Ewenni Priory, Merthyr Mawr and the stepping-stone crossing, using the archived Living landscape design as its starting point.
 
-Previous/Next and desktop date buttons slide between chapters; phones use a native milestone picker. Each chapter has source links and expandable context/date notes. The Hawise/common-land story is separately labelled undated folklore. Every image caption and alt description explicitly says **AI generated**, while distinguishing estimated reconstructions from present-day-inspired studies. The medieval chapters use the revised stepping-stones-view reconstruction, labelled as an estimate of the castle around 1250-1300. Navigation is manual, with reduced-motion support, normal page scrolling, shared site links, browser Back/Forward and Back to crossing. The selected milestone is retained when visiting another view and returning.
+All twelve chapters appear in one continuous vertical page, with normal document scrolling and no pagination or scroll snapping. Each painting retains its watercolour caption overlay, followed by that period's expandable context, date qualifications and source links. A fixed vertical timeline beside the right scrollbar highlights the period at the reading position and fills as the story advances. Dates are clickable jump controls; arrow keys, Home and End move keyboard focus through them, and Enter/Space opens that chapter. Jumps focus the chapter heading and use instant movement for reduced motion. Passive scrolling leaves keyboard focus alone.
 
-The canonical researched copy remains [timeline-content.json](docs/design/historical-timeline/timeline-content.json), with the [research brief](docs/design/historical-timeline/research-brief.md), exact prompts and compressed paintings alongside it. The [castle reconstruction notes](docs/design/historical-timeline/reconstruction/research-notes.md) preserve the photographic references, orientation correction and uncertainty. The application imports these assets directly. The History module/styles load only when the page is first visited, with retry if loading fails; no new package was added. History adds a lazy module of about 6.6 KB gzip and 1.2 KB CSS, plus five compressed paintings totalling about 990 KB on use, including the 594 KB revised castle image.
+On narrow screens or short windows, the timeline becomes a slim progress rail showing the current period, leaving room for the text. A labelled native **Jump to a period** picker provides larger controls. Scroll/resize updates share a scheduled animation frame and skip hidden views; expanding chapter notes recalculates progress. The page keeps native browser scrolling, Back/Forward, shared site links and Back to crossing.
+
+The Hawise/common-land story remains separately labelled undated folklore. Every image caption and alt description explicitly says **AI generated**, while distinguishing estimated reconstructions from present-day-inspired studies. The medieval chapters retain the revised stepping-stones-view reconstruction, labelled as an estimate of the castle around 1250-1300. The historical copy, sources and artwork have not changed in this layout update.
+
+The canonical researched copy remains [timeline-content.json](docs/design/historical-timeline/timeline-content.json), with the [research brief](docs/design/historical-timeline/research-brief.md), exact prompts and compressed paintings alongside it. The [castle reconstruction notes](docs/design/historical-timeline/reconstruction/research-notes.md) preserve the photographic references, orientation correction and uncertainty. The application imports these assets directly. The History module/styles load only when the page is first visited, with retry if loading fails; later chapter images use native lazy loading and shared painting URLs. No new package was added. History adds a lazy module of about 7.1 KB gzip and 1.6 KB CSS, plus the same five compressed paintings totalling about 990 KB on use, including the 594 KB revised castle image.
 
 ## Hero animation
 
@@ -86,7 +90,7 @@ The grass also gains a blanket of settled snow, with irregular patches resting o
 
 The weather feature reuses OGL and adds no npm package. Compared with lighting alone, it adds about 2.6 KB compressed JavaScript and 0.25 KB CSS. tsParticles' [snow preset](https://particles.js.org/demos/recipes/snow) was considered; the existing renderer lets this illustration keep its single draw pass and existing pause/resume lifecycle.
 
-The single-scene implementation and page navigation add no npm package. With the lazy History entry point and plain-language status explanation, main JavaScript is about 10.8 KB gzip, lazy animation 12.0 KB and initial CSS 3.7 KB. Snow and high-water images are decoded on demand and reused as renderer textures.
+The single-scene implementation, page navigation and condition-report preview add no npm package. Main JavaScript is about 10.8 KB gzip, lazy animation 12.0 KB and initial CSS 4.1 KB. Snow and high-water images are decoded on demand and reused as renderer textures.
 
 ## Data pipeline
 
@@ -159,23 +163,15 @@ npm test
 
 ## Observation feedback loop
 
-Users can submit observations directly from the page (no GitHub account required).
+**Interface preview only.** On 6 November the owner requested quick anonymous reporting, then explicitly asked not to prepare any backend yet. No backend, database, account setup or production submission endpoint is included in this change.
 
-By default, the form is wired for a FormSubmit-style endpoint and configured in:
+Use **Seen the stones? Share conditions** on the main crossing overlay to open a small native modal. A touch/keyboard slider has five positions from completely submerged/unpassable to clear and passable, each with a short description. Moving the slider or tapping its current position makes a deliberate choice. **Preview report** confirms that selection locally and explicitly says nothing has been sent. There are no sign-in, date/time, checkbox or notes fields. Close/Escape and existing `#report` links remain supported; the header's separate Report link is removed.
 
-- `public/data/config.json` → `observationSubmission.endpoint`
+The landing overlay reserves a line for **reports in the last hour**, marked coming soon. There are no simulated counts, requests, cookies or browser-storage writes for reporting. Slider choices do not change the model's prediction or scene. The old inactive FormSubmit placeholder and its form/configuration code were removed.
 
-Example endpoint:
+Deferred until the owner chooses to proceed: shared storage, actual submission/confirmation, a rolling 60-minute count, duplicate/abuse controls and how community observations should be summarised. An anonymous count should be labelled reports rather than verified unique people. These are future requirements, not implemented features. The website can stay on GitHub Pages with a separate service if later chosen; [GitHub Pages is static hosting](https://docs.github.com/en/pages/getting-started-with-github-pages/what-is-github-pages).
 
-```text
-https://formsubmit.co/you@example.com
-```
-
-On first submission, FormSubmit will send a one-time email verification to activate delivery.
-
-If `endpoint` is left as `REPLACE_WITH_EMAIL`, the submit button is disabled and the page shows a setup message.
-
-The previous GitHub issue template is still in the repo as an optional fallback.
+The previous GitHub issue template and the manual calibration helper remain available separately; this preview does not feed either of them.
 
 Threshold tuning helper:
 
