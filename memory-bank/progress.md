@@ -1,5 +1,13 @@
 # Progress
 
+### Compact river and tide line graphs - 2026-11-07
+
+- Owner requested two subtle crossing-page graph tiles, one river and one tide. Existing River & tide overlay is now two paper tiles with thin green/blue SVG lines, current river reading and the accepted coastal tide guide. Larger screens keep them beside the crossing card; phone/short views keep them below it. Castle framing remains unchanged.
+- Optional live.recentLevels reuses the generator's existing 48-hour NRW responses for a twelve-hour window, retaining actual readings in ten-minute buckets (at most 73 per gauge), with no extra provider/browser request or package. Shared gauge parsing now rejects null/blank/non-numeric readings rather than turning them into zero; genuine zero/negative values remain. Score formulas/thresholds unchanged.
+- Curves use actual timestamps and individual scales (minimum 0.1 m river / 2 m tide spans), break gaps over 45 minutes and never smooth/invent readings. SVGs stretch to their tile with constant stroke width, accessible source/range/unit/last-reading descriptions and visible Welsh local-time labels. The tide curve is visibly Newport/regional gauge history, distinct from the coastal timing estimate. NRW/Open-Meteo/Copernicus attribution remains visible. Missing/malformed/expired/future chart data clears paths and shows explicit loading/unavailable/out-of-date states under existing freshness guards.
+- Full suite 99 tests passed; final graph/outlook checks 33 tests, TypeScript and final production build pass. Real generator output verified with 47 river / 46 tide points; recentLevels adds 4,381 raw bytes / 556 gzip in that sample. Browser verified current plots, initial stale fallback, accessible labels, future selection leaving observed lines unchanged, desktop 1280x720, compact 701x601, phone 320x568 and landscape 844x390: no card/Scene overlap or horizontal/tile overflow. Console clean, Now/live settings retained, viewport reset and local crossing review tab retained.
+- Main JS 12.97 KB gzip, initial CSS 5.00 KB; History/animation unchanged. Proofs in parent crossing-level-graphs-review/desktop/mobile-2026-11-07.png. Owner authorised commit/push; remote/deployment verification belongs to the release record. Generated live/forecast preview snapshots and private context remain separate. Reporting backend hold unchanged.
+
 ### Permanently visible History dates - 2026-11-07
 
 - Owner rejected the collapsible Timeline button and requested dates visible all the time without interfering with text. Removed the disclosure/toggle and enclosing panel. Desktop date navigation and compact labelled markers now stay visible whenever History is open, with small paper-backed labels and the existing progress/current highlight.

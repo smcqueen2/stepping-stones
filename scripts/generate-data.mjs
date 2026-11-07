@@ -14,6 +14,7 @@ import {
 import { pickPreferredTideStation } from './lib/station-selection.mjs';
 import { futureRainWindow, projectRiverReading } from './lib/forecast-window.mjs';
 import { coastalTideTiming } from './lib/tide-timing.mjs';
+import { gaugeSeries, recentLevels } from './lib/recent-levels.mjs';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -63,13 +64,6 @@ async function readConfig() {
   const configPath = path.join(rootDir, 'public/data/config.json');
   const content = await fs.readFile(configPath, 'utf-8');
   return JSON.parse(content);
-}
-
-function toSeries(apiResponse) {
-  return (apiResponse?.data ?? [])
-    .map((point) => ({ time: point.x, value: Number(point.y) }))
-    .filter((point) => Number.isFinite(point.value) && Number.isFinite(Date.parse(point.time)))
-    .sort((a, b) => Date.parse(a.time) - Date.parse(b.time));
 }
 
 function latestParameter(station, expectedType) {
@@ -180,8 +174,8 @@ async function main() {
     ),
   ]);
 
-  const riverSeries = toSeries(riverSeriesResponse);
-  const tideSeries = toSeries(tideSeriesResponse);
+  const riverSeries = gaugeSeries(riverSeriesResponse);
+  const tideSeries = gaugeSeries(tideSeriesResponse);
 
   if (riverSeries.length < 8 || tideSeries.length < 8) {
     throw new Error('Insufficient river/tide data to generate forecast');
@@ -320,6 +314,7 @@ async function main() {
   const live = {
     generatedAt: iso(now),
     tideTiming,
+    recentLevels: recentLevels(riverSeries, tideSeries, iso(now)),
     sourceStations: [
       {
         role: 'river',

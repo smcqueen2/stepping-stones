@@ -21,6 +21,7 @@ export interface DataFreshness {
 export interface LivePayload {
   generatedAt: string;
   tideTiming?: TideTiming;
+  recentLevels?: RecentLevels;
   sourceStations: SourceStation[];
   freshness: DataFreshness;
   current: {
@@ -40,6 +41,14 @@ export interface LivePayload {
     riskScore: number;
     state: StateLabel;
   };
+}
+
+export interface LevelPoint { time: string; value: number }
+export interface RecentLevels {
+  from: string;
+  to: string;
+  river: LevelPoint[];
+  tide: LevelPoint[];
 }
 
 export interface TideTiming {

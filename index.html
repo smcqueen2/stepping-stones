@@ -112,13 +112,15 @@
           </div>
         </section>
         <section class="water-level-card" aria-label="River level and coastal tide times" aria-describedby="water-level-note" data-freshness="loading">
-          <div class="water-level-heading"><h2>River &amp; tide</h2><p id="water-level-age">Checking…</p></div>
+          <h2 class="sr-only">River &amp; tide</h2>
           <dl class="water-levels">
             <div id="water-level-river" class="water-level" data-available="false">
               <dt>River level</dt>
               <dd class="water-level-value"><span id="river-glance-value">—</span><abbr class="water-level-unit" title="Metres at the river gauge">m</abbr></dd>
               <dd id="river-glance-trend" class="water-level-trend">Awaiting readings</dd>
               <dd id="river-glance-source" class="water-level-source">River gauge</dd>
+              <dd id="water-level-age" class="water-level-source">Checking…</dd>
+              <dd id="river-level-graph" class="level-graph" data-available="false"><p class="level-graph-empty">Loading recent levels…</p></dd>
             </div>
             <div id="water-level-tide" class="water-level tide-timing" data-available="false">
               <dt>Coastal tide · estimated</dt>
@@ -126,9 +128,10 @@
               <dd id="tide-glance-high" class="tide-event">High tide time unavailable</dd>
               <dd id="tide-glance-countdown" class="water-level-trend"></dd>
               <dd id="tide-glance-low" class="tide-event tide-low"></dd>
+              <dd id="tide-level-graph" class="level-graph" data-available="false"><p class="level-graph-empty">Loading recent levels…</p></dd>
             </div>
           </dl>
-          <p id="water-level-note" class="water-level-note">River flow also affects the crossing.<br>Ogmore coast estimates · <a href="https://open-meteo.com/" target="_blank" rel="noopener noreferrer">Open-Meteo</a> / <a href="https://doi.org/10.48670/moi-00016" target="_blank" rel="noopener noreferrer">Copernicus Marine</a></p>
+          <p id="water-level-note" class="water-level-note"><a href="https://rivers-and-seas.naturalresources.wales/" target="_blank" rel="noopener noreferrer">NRW gauge history</a> · past 12 hours. Tide times are coastal estimates.<br>River flow also affects the crossing.<br>Coastal estimates · <a href="https://open-meteo.com/" target="_blank" rel="noopener noreferrer">Open-Meteo</a> / <a href="https://doi.org/10.48670/moi-00016" target="_blank" rel="noopener noreferrer">Copernicus Marine</a></p>
         </section>
         </div>
       </section>

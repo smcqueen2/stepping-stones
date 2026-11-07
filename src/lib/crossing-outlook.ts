@@ -1,5 +1,6 @@
 import type { ConfigPayload, ForecastPayload, LivePayload, RiskComponents, StateLabel } from './types';
 import { tideSummary } from './tide-timing';
+import { renderLevelGraphs } from './level-graphs';
 
 export type OutlookData = { live?: LivePayload; forecast?: ForecastPayload; config?: ConfigPayload; loaded?: boolean; updateFailed?: boolean };
 export type OutlookSelection = number | string;
@@ -139,6 +140,7 @@ export function installCrossingOutlook() {
     text('tide-glance-high', tide.high);
     text('tide-glance-countdown', tide.countdown);
     text('tide-glance-low', tide.low);
+    renderLevelGraphs(live, fresh, stale, now, data.config?.freshness.staleAfterMinutes ?? 120, !live && !data.loaded);
   }
   function render(): void {
     const now = Date.now();
