@@ -1,5 +1,12 @@
 # Progress
 
+### Permanently visible History dates - 2026-11-07
+
+- Owner rejected the collapsible Timeline button and requested dates visible all the time without interfering with text. Removed the disclosure/toggle and enclosing panel. Desktop date navigation and compact labelled markers now stay visible whenever History is open, with small paper-backed labels and the existing progress/current highlight.
+- Paintings retain the full chapter width. Responsive text clearance keeps page headings, caption overlays, AI artwork labels, the picker and expanded notes clear of the fixed rail; only text content is inset. Compact layout anchors below the header, bounds all twelve markers within the viewport and retains the larger native jump picker. Narrowest title size adjusted for readability. No new dependency, asset, timer or historical-content change.
+- All 9 existing History timeline/loader tests, TypeScript and final production build pass. Browser verified default width, 1280x720 desktop, 320x568 portrait and 844x390 landscape: all twelve dates visible, no text/rail intersections or horizontal overflow, picker and desktop date jumps/current highlighting, expanded notes and bottom-of-page Today/filled progress. Footer stays below the short-screen rail. No console warnings/errors, viewport reset; local History retained for review.
+- Proofs in parent: history-permanent-timeline-review-2026-11-07.png, history-permanent-timeline-desktop-2026-11-07.png and history-permanent-timeline-mobile-2026-11-07.png. Lazy History 7.10 KB gzip / 1.74 KB CSS; landing unchanged. Owner authorised commit/push; remote/deployment verification belongs to the release record. Generated live/forecast snapshots and private context remain separate; reporting backend hold unchanged. This supersedes the collapsible-rail direction below.
+
 ### Simpler tide guide and floating History timeline - 2026-11-07
 
 - Owner requested a high/low tide guide and time remaining to high tide in place of the home-page tide height. Second tweak clarified as a floating History timeline instead of a dedicated date column.

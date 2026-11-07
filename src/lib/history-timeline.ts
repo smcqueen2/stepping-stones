@@ -78,12 +78,6 @@ export function mountHistoryTimeline(host: HTMLElement) {
   });
 
   const rail = element('aside', 'history-rail');
-  const railPanel = element('details', 'history-rail-panel');
-  // A narrow-screen overlay starts tucked away so it cannot cover the story on arrival.
-  railPanel.open = !window.matchMedia('(max-width: 800px), (max-height: 680px)').matches;
-  const railToggle = element('summary', 'history-rail-toggle');
-  railToggle.append(element('span', 'history-rail-show', 'Timeline'), element('span', 'history-rail-hide', 'Hide timeline'));
-  railPanel.append(railToggle);
   const dates = element('nav', 'history-rail-navigation');
   dates.setAttribute('aria-label', 'History timeline');
   dates.append(element('p', 'history-rail-heading', 'Through time'));
@@ -112,8 +106,7 @@ export function mountHistoryTimeline(host: HTMLElement) {
   });
   marks.append(...compactSteps);
   compact.append(marks);
-  railPanel.append(dates, compact);
-  rail.append(railPanel);
+  rail.append(dates, compact);
 
   const jumpControl = element('div', 'history-jump');
   const jumpLabel = element('label', '', 'Jump to a period');
