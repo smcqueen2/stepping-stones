@@ -13,6 +13,7 @@ import {
 } from './lib/forecast-model.mjs';
 import { pickPreferredTideStation } from './lib/station-selection.mjs';
 import { futureRainWindow, projectRiverReading } from './lib/forecast-window.mjs';
+import { coastalTideTiming } from './lib/tide-timing.mjs';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -44,6 +45,7 @@ const RAIN_LOCATION = {
 
 async function fetchJson(url) {
   const response = await fetch(url, {
+    signal: AbortSignal.timeout(15000),
     headers: {
       'User-Agent': 'stepping-stones-data-generator/1.1',
       Accept: 'application/json',
@@ -223,6 +225,16 @@ async function main() {
 
   const hourlyWindow = futureRainWindow(rainForecast, now);
 
+  let tideTiming;
+  try {
+    // Offshore Ogmore grid cell, not the inland stones. Separate from the regional NRW risk model.
+    const marine = await fetchJson('https://marine-api.open-meteo.com/v1/marine?latitude=51.461&longitude=-3.631&hourly=sea_level_height_msl&past_days=1&forecast_days=3&timezone=GMT&timeformat=unixtime&cell_selection=sea');
+    tideTiming = coastalTideTiming(marine, iso(now));
+    if (!tideTiming) console.warn('Coastal tide timings unavailable: incomplete marine forecast.');
+  } catch (error) {
+    console.warn('Coastal tide timings unavailable; retaining river/gauge forecast.', error);
+  }
+
   const forecastHours = hourlyWindow.map((hour, index, all) => {
     const target = hour.timestamp;
 
@@ -307,6 +319,7 @@ async function main() {
 
   const live = {
     generatedAt: iso(now),
+    tideTiming,
     sourceStations: [
       {
         role: 'river',

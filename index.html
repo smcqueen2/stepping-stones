@@ -111,8 +111,8 @@
             <a href="#report" data-open-dialog>Seen the stones? Share conditions <span aria-hidden="true">↗</span></a>
           </div>
         </section>
-        <section class="water-level-card" aria-label="Latest river and tide readings" aria-describedby="water-level-note" data-freshness="loading">
-          <div class="water-level-heading"><h2>Latest readings</h2><p id="water-level-age">Checking…</p></div>
+        <section class="water-level-card" aria-label="River level and coastal tide times" aria-describedby="water-level-note" data-freshness="loading">
+          <div class="water-level-heading"><h2>River &amp; tide</h2><p id="water-level-age">Checking…</p></div>
           <dl class="water-levels">
             <div id="water-level-river" class="water-level" data-available="false">
               <dt>River level</dt>
@@ -120,14 +120,15 @@
               <dd id="river-glance-trend" class="water-level-trend">Awaiting readings</dd>
               <dd id="river-glance-source" class="water-level-source">River gauge</dd>
             </div>
-            <div id="water-level-tide" class="water-level" data-available="false">
-              <dt>Tide level</dt>
-              <dd class="water-level-value"><span id="tide-glance-value">—</span><abbr class="water-level-unit" title="Metres above Ordnance Datum">m AOD</abbr></dd>
-              <dd id="tide-glance-trend" class="water-level-trend">Awaiting readings</dd>
-              <dd id="tide-glance-source" class="water-level-source">Regional tide gauge</dd>
+            <div id="water-level-tide" class="water-level tide-timing" data-available="false">
+              <dt>Coastal tide · estimated</dt>
+              <dd id="tide-glance-status" class="tide-status">Checking tides…</dd>
+              <dd id="tide-glance-high" class="tide-event">High tide time unavailable</dd>
+              <dd id="tide-glance-countdown" class="water-level-trend"></dd>
+              <dd id="tide-glance-low" class="tide-event tide-low"></dd>
             </div>
           </dl>
-          <p id="water-level-note" class="water-level-note">Gauge levels, not depth at the stones.</p>
+          <p id="water-level-note" class="water-level-note">River flow also affects the crossing.<br>Ogmore coast estimates · <a href="https://open-meteo.com/" target="_blank" rel="noopener noreferrer">Open-Meteo</a> / <a href="https://doi.org/10.48670/moi-00016" target="_blank" rel="noopener noreferrer">Copernicus Marine</a></p>
         </section>
         </div>
       </section>
@@ -200,6 +201,8 @@
         </div>
         <p id="data-freshness" class="muted"></p>
         <p class="muted small">High and low compare with the previous 48 hours of gauge readings, rather than the depth at the stones.</p>
+        <p class="muted small">Home-page tide times are approximate coastal high/low estimates derived from hourly sea-level forecasts, rounded to half an hour. They describe the Ogmore coast, not when the stones will submerge or become passable. Coastal model accuracy is limited, particularly inside estuaries. All tide times use local Welsh time (GMT/BST).</p>
+        <p class="muted small">Tide timing data: <a href="https://open-meteo.com/en/docs/marine-weather-api" target="_blank" rel="noopener noreferrer">Open-Meteo Marine</a>, generated using <a href="https://doi.org/10.48670/moi-00016" target="_blank" rel="noopener noreferrer">E.U. Copernicus Marine Service Information</a>. Timing estimates are our adaptation of data supplied under <a href="https://creativecommons.org/licenses/by/4.0/" target="_blank" rel="noopener noreferrer">CC BY 4.0</a>. The regional NRW gauge still supplies the crossing model's tide input.</p>
       </dialog>
 
       <dialog id="forecast" class="app-dialog forecast-dialog" aria-labelledby="forecast-title">

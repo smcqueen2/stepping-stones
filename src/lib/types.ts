@@ -20,6 +20,7 @@ export interface DataFreshness {
 
 export interface LivePayload {
   generatedAt: string;
+  tideTiming?: TideTiming;
   sourceStations: SourceStation[];
   freshness: DataFreshness;
   current: {
@@ -39,6 +40,17 @@ export interface LivePayload {
     riskScore: number;
     state: StateLabel;
   };
+}
+
+export interface TideTiming {
+  generatedAt: string;
+  source: 'Open-Meteo Marine';
+  location: string;
+  latitude: number;
+  longitude: number;
+  validFrom: string;
+  validTo: string;
+  events: { type: 'high' | 'low'; time: string }[];
 }
 
 export interface ForecastHour {

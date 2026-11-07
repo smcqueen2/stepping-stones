@@ -79,7 +79,7 @@ button:focus-visible, a:focus-visible, summary:focus-visible, input:focus-visibl
 .water-level-heading { display: flex; justify-content: space-between; align-items: baseline; gap: 8px; }
 .water-level-heading h2 { margin: 0; font: 500 10px/1.5 ui-sans-serif, system-ui, sans-serif; letter-spacing: 1.2px; text-transform: uppercase; color: var(--muted); }
 #water-level-age { margin: 0; font-size: 10px; text-align: right; color: var(--muted); }
-.water-levels { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; margin: 13px 0 0; }
+.water-levels { display: grid; grid-template-columns: minmax(70px, .7fr) minmax(0, 1.6fr); gap: 12px; margin: 13px 0 0; }
 .water-level + .water-level { padding-left: 12px; border-left: 1px solid var(--card-border); }
 .water-level dt { font-size: 12px; }
 .water-level dd { margin-left: 0; }
@@ -87,6 +87,10 @@ button:focus-visible, a:focus-visible, summary:focus-visible, input:focus-visibl
 .water-level-unit { font: 400 10px/1.5 ui-sans-serif, system-ui, sans-serif; letter-spacing: 0; color: var(--muted); text-decoration: none; }
 .water-level-trend { margin-block: 4px; font-size: 11px; color: #486f82; }
 .water-level-source { margin-block: 3px 0; font-size: 10px; color: var(--muted); overflow-wrap: anywhere; }
+.tide-status { margin-block: 5px 8px; font: 400 21px/1.15 Georgia, serif; }
+.tide-event { margin-block: 4px; font-size: 12px; font-variant-numeric: tabular-nums; }
+.tide-low { color: var(--muted); font-size: 11px; }
+.tide-timing[data-available="false"] .tide-status { color: var(--muted); }
 .water-level-note { margin: 12px 0 0; padding-top: 10px; border-top: 1px solid var(--card-border); font-size: 10px; color: var(--muted); }
 .water-level[data-available="false"] .water-level-unit { display: none; }
 .water-level[data-available="false"] :is(.water-level-value, .water-level-trend) { color: var(--muted); }
