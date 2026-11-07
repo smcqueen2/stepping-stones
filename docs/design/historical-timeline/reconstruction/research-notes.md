@@ -1,10 +1,10 @@
 # Ogmore Castle in its developed medieval form
 
-Prepared 6 November 2026 for the owner's request for a focused reconstruction using real photographs and historical descriptions. The owner subsequently requested using the latest image in History. V2 is the selected illustration integrated into the application's medieval-castle chapters.
+Prepared 6 November 2026 for the owner's request for a focused reconstruction using real photographs and historical descriptions. Updated 7 November: V3 adds the stepping-stone crossing and is now the selected illustration in the application's medieval-castle chapters. See the [crossing evidence and complete artwork audit](stepping-stones-evidence.md); its medieval date is probable, not an established construction year.
 
-![AI generated - revised artist's impression from the stepping-stones side](ogmore-castle-stepping-stones-view-v2.webp)
+![AI generated - estimated castle and crossing from the stepping-stones side](ogmore-castle-stepping-stones-view-v3.webp)
 
-**Caption:** AI generated - estimated Ogmore Castle, approximately 1250-1300. Lost roofs, parapets, upper rooms and landscape details are estimated.
+**Caption:** AI generated - estimated Ogmore Castle and crossing, approximately 1250-1300. Lost roofs, parapets, upper rooms and the medieval crossing arrangement are estimated.
 
 ## Owner correction: entrance and crossing viewpoint
 
@@ -12,7 +12,7 @@ The owner liked the first painting but identified that the entrance was on the w
 
 The owner supplied three modern photographs: a close view along the entrance bridge, a wider entrance view and a distant view across the river from the stepping-stones side. The first two establish the keep to the left of the entrance when approaching over the bridge; the third is the composition reference. V2 re-renders the castle from that side with a lower viewpoint, keeping the river in front, the inner circuit extending left of the keep and the entrance/ditch bridge and outer bailey to its right. The bridge crosses the castle ditch, not the river. The change is a re-composition using photographs, not a simple horizontal flip of v1.
 
-These are still approximate visual relationships, not a surveyed camera match. The lower camera elevation is an interpretation of a visitor's view from the crossing; the supplied distant photograph is more elevated. The period and uncertainties below continue to apply. The owner requested integration of V2 on 6 November; the local app now uses its WebP in all three medieval-castle chapters, with a visible AI-generated/estimated-period label and matching alt description. Every other History image is also explicitly labelled AI generated. The earlier standalone design previews remain archived snapshots.
+These are still approximate visual relationships, not a surveyed camera match. The lower camera elevation is an interpretation of a visitor's view from the crossing; the supplied distant photograph is more elevated. The period and uncertainties below continue to apply. The owner requested integration of V2 on 6 November; the app then used its WebP in all three medieval-castle chapters, with a visible AI-generated/estimated-period label and matching alt description. V3 now replaces that shared image while preserving this orientation. Every other History image is also explicitly labelled AI generated. The earlier standalone design previews remain archived snapshots.
 
 ## Period and approach
 
@@ -31,7 +31,7 @@ Here, "in its prime" means the developed thirteenth-century stone castle after i
 | Cellar building | GM037 records the late twelfth-century basement, approximately 9.5 by 7.5 m, and suggests a possible timber superstructure. Show a modest roofed timber upper portion above stone. | Strong for basement; function, upper rooms, framing and roof speculative. |
 | Kitchen/service shelter | The guide proposes a kitchen between hall and keep but states the remains are uncertain. The small roof in this area is an interpretive suggestion. | Low. |
 | Excluded later features | The courthouse has a complicated later history; the guide and newer records do not date every alteration alike. GM037 also places the southern range in a later period, whereas the older guide gives an earlier interpretation. Omit these disputed/later structures for this conservative thirteenth-century view. | Deliberate chronological restraint; omission does not prove the ground was empty. |
-| Stones and surroundings | The date and medieval arrangement of the crossing are insufficiently fixed for a precise row. Trees, paths, vegetation and weather are scene-setting estimates. No exact stepping-stone alignment is reconstructed. | Low for exact medieval appearance. |
+| Stones and surroundings | Cadw GM184 gives a probable medieval date with later revisions, without a founding year. V3 shows a plausible row across the Ewenny, guided by the owner's modern photograph; the medieval count and arrangement remain unknown. Trees, paths, vegetation and weather are scene-setting estimates. | Probable medieval origin; low for exact medieval appearance. |
 
 ## Sources consulted
 
@@ -46,7 +46,7 @@ Here, "in its prime" means the developed thirteenth-century stone castle after i
 
 ## Generation provenance
 
-Generated with the **built-in image_gen tool** on 6 November 2026. The first prompt is saved in [image-prompt.md](image-prompt.md); the correction is in [image-prompt-v2.md](image-prompt-v2.md). There are now two generations, one per version. Code performed delivery format conversion only.
+Generated with the **built-in image_gen tool** on 6–7 November 2026. The first prompt is saved in [image-prompt.md](image-prompt.md); the entrance correction is in [image-prompt-v2.md](image-prompt-v2.md), and the crossing edit in [image-prompt-v3.md](image-prompt-v3.md). There are now three generations, one per version. Code performed delivery format conversion only. The V3 inputs, original output and saved master/WebP sizes are recorded in [stepping-stones-evidence.md](stepping-stones-evidence.md).
 
 Reference input order:
 
@@ -81,4 +81,6 @@ The three owner-supplied originals were copied unchanged from their chat attachm
 
 V2 visual inspection confirms river foreground, leftward inner enclosure, rightward gateway/ditch bridge and outer bailey, restored rectangular keep and preserved watercolour treatment. The original v1 inspection was superseded by the owner's entrance correction above. Generated curves, relative dimensions and small architectural details remain approximate. Roof coverings, battlements, shutters, bridge rails and service roofs are visual hypotheses, not discoveries. Exterior lime finishes also remain unresolved; the exposed-stone treatment follows the project's palette rather than proving medieval surfaces were bare.
 
-The current app import uses V2, while retaining the researched chapter/source/context notes. All 51 tests, TypeScript and production build pass. Browser checks confirm the new image loads, all twelve slides have visible AI-generated captions and matching alt descriptions, and the caption fits at 320px without horizontal overflow. No package change. The owner authorised committing and pushing this update on 6 November; GitHub Pages deploys from main.
+At the 6 November checkpoint the app import used V2. All 51 tests, TypeScript and production build passed. Browser checks confirmed that image loaded, all twelve slides had visible AI-generated captions and matching alt descriptions, and the caption fitted at 320px without horizontal overflow. The owner authorised committing and pushing that update; GitHub Pages deploys from main.
+
+On 7 November the owner requested researching the stones' date and correcting the relevant artwork, with commit/push authorised. V3 retains V2's approved geometry and adds the river crossing. It replaces the active import in all three medieval-castle chapters, with estimated-crossing captions, qualified period notes and GM184 source links. All four later castle chapters already depict stones. The full evidence and scope decisions are in [stepping-stones-evidence.md](stepping-stones-evidence.md); V2 remains unchanged as the preceding version.

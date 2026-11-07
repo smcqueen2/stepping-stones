@@ -4,7 +4,7 @@ import '../history.css';
 const paintings: Record<string, string> = {
   dunes: new URL('../../docs/design/historical-timeline/assets/dunes.webp', import.meta.url).href,
   'early-fort': new URL('../../docs/design/historical-timeline/assets/early-fort.webp', import.meta.url).href,
-  'stone-castle': new URL('../../docs/design/historical-timeline/reconstruction/ogmore-castle-stepping-stones-view-v2.webp', import.meta.url).href,
+  'stone-castle': new URL('../../docs/design/historical-timeline/reconstruction/ogmore-castle-stepping-stones-view-v3.webp', import.meta.url).href,
   priory: new URL('../../docs/design/historical-timeline/assets/priory.webp', import.meta.url).href,
   'present-castle': new URL('../../docs/design/historical-timeline/assets/present-castle.webp', import.meta.url).href,
 };

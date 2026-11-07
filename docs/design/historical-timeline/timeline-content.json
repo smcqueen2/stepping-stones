@@ -32,7 +32,7 @@
       "title":"A stronghold beside the ford.",
       "summary":"William de Londres establishes a Norman castle beside a crossing of the Ewenny. Earth banks and timber defences come first; an early stone keep follows. William is recorded here by 1116.",
       "context":"The surviving earthworks explain the first castle's shape. The keep is among the region's earliest Norman stone buildings, although its precise building sequence and attribution need care. Ogmore formed part of a wider landscape of castles that also included Coity and Newcastle.",
-      "dateNote":"Cadw places the beginnings in the early 12th century. William is recorded at Ogmore by 1116.","sources":["castle","coflein","valley"]
+      "dateNote":"Cadw places the beginnings in the early 12th century. William is recorded at Ogmore by 1116. The stones are probably medieval, but cannot be dated specifically to this earliest phase; their omission here does not prove they were absent.","sources":["castle","coflein","valley","stones"]
     },
     {
       "id":"priory","date":"1141","shortDate":"1141","category":"Faith and lordship","image":"priory","artLabel":"AI generated · present-day-inspired Ewenni Priory study",
@@ -42,25 +42,25 @@
       "dateNote":"1141 dates the monastic foundation. The surviving church and enclosure also contain later work.","sources":["priory","prioryHer"]
     },
     {
-      "id":"stone","date":"Early 1200s","shortDate":"Early 1200s","category":"A changing stronghold","image":"stone-castle","artLabel":"AI generated · estimated castle, c.1250–1300",
+      "id":"stone","date":"Early 1200s","shortDate":"Early 1200s","category":"A changing stronghold","image":"stone-castle","artLabel":"AI generated · estimated castle & crossing, c.1250–1300",
       "title":"The castle grows around its keep.",
       "summary":"A stone curtain wall, gateway, bridge and further buildings strengthen the enclosure. The older keep remains at its heart. The inner ditch is designed to take in sea water at high tide.",
       "context":"Cadw's architectural record places this major building phase in the early 13th century. The internal ground was raised and additional steps were needed down to the older cellar. The small castle's surviving banks and ditches still help explain how successive phases fitted together.",
-      "dateNote":"The early 13th century is an architectural phase; the precise construction years remain uncertain.","sources":["listing","castle"]
+      "dateNote":"The early 13th century is an architectural phase; the precise construction years remain uncertain. The illustrated crossing is a medieval interpretation: its founding year and original arrangement are unknown.","sources":["listing","castle","stones"]
     },
     {
-      "id":"lancaster","date":"Late 1200s","shortDate":"Late 1200s","category":"Inheritance and influence","image":"stone-castle","artLabel":"AI generated · estimated castle, c.1250–1300",
+      "id":"lancaster","date":"Late 1200s","shortDate":"Late 1200s","category":"Inheritance and influence","image":"stone-castle","artLabel":"AI generated · estimated castle & crossing, c.1250–1300",
       "title":"An inheritance reaches Lancaster.",
       "summary":"Maud de Chaworth's marriage to Henry of Lancaster links Ogmore to a powerful new family. The castle's role increasingly centres on the administration of its lordship, as well as its defences.",
       "context":"The official Radford guide gives 1297 for the marriage; Cadw and Coflein give 1298. The inheritance joins Ogmore to the Lancaster family's estates. Coflein records the castle's later connection with the Crown in 1399, extending that story beyond the family marriage.",
-      "dateNote":"The sources differ between 1297 and 1298; the timeline uses the broader period.","sources":["radford","listing","coflein"]
+      "dateNote":"The sources differ between 1297 and 1298; the timeline uses the broader period. The illustrated crossing is a medieval interpretation: its founding year and original arrangement are unknown.","sources":["radford","listing","coflein","stones"]
     },
     {
-      "id":"revolt","date":"1402–05","shortDate":"1402–05","category":"Conflict in the valley","image":"stone-castle","artLabel":"AI generated · estimated castle, c.1250–1300",
+      "id":"revolt","date":"1402–05","shortDate":"1402–05","category":"Conflict in the valley","image":"stone-castle","artLabel":"AI generated · estimated castle & crossing, c.1250–1300",
       "title":"The valley is caught in revolt.",
       "summary":"Ogmore Castle suffers serious damage during the years of Owain Glyndŵr's revolt. The surrounding settlement also contracts. This was a working valley of tenants, meadows and mills, as well as a place of military power.",
       "context":"Coflein's fulling-mill record dates damage at the castle to 1402–05. It cites medieval accounts for a mill near the castle in the 1300s, whose exact position is unknown. Heneb records a sharp fall in the settlement's tenants after the rebellion: a glimpse of the upheaval beyond the walls.",
-      "dateNote":"The dated evidence describes a period of castle damage during the revolt.","sources":["mill","valley"]
+      "dateNote":"The dated evidence describes a period of castle damage during the revolt. The shared painting estimates the earlier castle and a plausible medieval crossing, whose founding year and original arrangement are unknown.","sources":["mill","valley","stones"]
     },
     {
       "id":"change","date":"1500s–1600s","shortDate":"1500s–1600s","category":"Two changing landscapes","image":"present-castle","artLabel":"AI generated · present-day-inspired castle study",
