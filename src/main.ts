@@ -5,7 +5,7 @@ import { installCrossingOutlook, type OutlookData } from './lib/crossing-outlook
 import { installNavigation } from './lib/navigation';
 import { installHistoryLoader } from './lib/history-loader';
 import { installCommunityReports } from './lib/community-reports';
-import type { ConfigPayload, ForecastPayload, LivePayload } from './lib/types';
+import type { ConfigPayload, ForecastPayload, LivePayload, MonitoringPayload } from './lib/types';
 
 const forecastClock = new Intl.DateTimeFormat('en-GB', {
   timeZone: 'Europe/London', weekday: 'short', hour: '2-digit', minute: '2-digit', timeZoneName: 'short',
@@ -90,17 +90,22 @@ async function refreshData(): Promise<void> {
       fetchJson<LivePayload>(base + 'live.json', dataRequest.signal),
       fetchJson<ForecastPayload>(base + 'forecast.json', dataRequest.signal),
       fetchJson<ConfigPayload>(base + 'config.json', dataRequest.signal),
+      fetchJson<MonitoringPayload>(base + 'monitoring.json', dataRequest.signal),
     ] as const);
     if (disposed) return;
-    const [live, forecast, config] = results;
+    const [live, forecast, config, monitoring] = results;
     if (live.status === 'fulfilled' && live.value?.freshness && live.value?.current && Array.isArray(live.value?.sourceStations)) data.live = live.value;
     if (forecast.status === 'fulfilled' && Array.isArray(forecast.value?.hours)) data.forecast = forecast.value;
     if (config.status === 'fulfilled' && typeof config.value?.freshness?.staleAfterMinutes === 'number') data.config = config.value;
-    data.updateFailed = results.some(result => result.status === 'rejected');
+    const monitoringValid = monitoring.status === 'fulfilled' && monitoring.value?.schemaVersion === 1
+      && monitoring.value?.gauges && monitoring.value?.floodWarnings;
+    if (monitoringValid && monitoring.status === 'fulfilled') data.monitoring = monitoring.value;
+    data.monitoringUpdateFailed = !monitoringValid;
+    data.updateFailed = results.some(result => result.status === 'rejected') || !monitoringValid;
     renderForecast(data.forecast);
     outlook.setData(data);
   } catch {
-    if (!disposed) outlook.setData({ ...data, updateFailed: true });
+    if (!disposed) outlook.setData({ ...data, updateFailed: true, monitoringUpdateFailed: true });
   } finally {
     window.clearTimeout(requestTimeout);
     dataRequest = undefined;

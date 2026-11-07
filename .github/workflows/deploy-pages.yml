@@ -32,7 +32,16 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      - name: Restore last verified NRW warning response
+        uses: actions/cache@v4
+        with:
+          path: .cache/nrw-warnings.json
+          key: nrw-warnings-v1-${{ github.run_id }}-${{ github.run_attempt }}
+          restore-keys: nrw-warnings-v1-
+
       - name: Generate live data
+        env:
+          NRW_API_KEY: ${{ secrets.NRW_API_KEY }}
         run: npm run generate:data
 
       - name: Build

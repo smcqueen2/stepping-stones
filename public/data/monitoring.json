@@ -1,0 +1,9 @@
+{
+  "schemaVersion": 1,
+  "generatedAt": "1970-01-01T00:00:00.000Z",
+  "gauges": {
+    "ewenny": { "stationId": 4099, "parameterId": 64, "name": "Ewenny at Keepers Lodge", "source": "NRW", "sourceUrl": "https://rivers-and-seas.naturalresources.wales/Station/4099", "unit": "m", "datum": "unspecified", "status": "unavailable" },
+    "downstream": { "stationId": 4115, "parameterId": 112, "name": "Ogmore at Penybont", "source": "NRW", "sourceUrl": "https://rivers-and-seas.naturalresources.wales/Station/4115", "unit": "m", "datum": "unspecified", "status": "unavailable" }
+  },
+  "floodWarnings": { "status": "unavailable", "attemptedAt": "1970-01-01T00:00:00.000Z", "reason": "not-configured" }
+}

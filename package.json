@@ -9,7 +9,7 @@
     "build": "vite build",
     "preview": "vite preview",
     "test:watch": "vitest",
-    "generate:data": "node scripts/generate-data.mjs",
+    "generate:data": "node scripts/generate-all-data.mjs",
     "calibrate:observations": "node scripts/calibrate-observations.mjs",
     "build:with-data": "npm run generate:data && npm run build"
   },

@@ -2,6 +2,7 @@
 import { gaugeSeries, recentLevels } from '../../scripts/lib/recent-levels.mjs';
 import { levelLine, renderLevelGraphs } from '../../src/lib/level-graphs';
 import type { LevelPoint, LivePayload } from '../../src/lib/types';
+import { monitoringFixture } from '../fixtures/monitoring';
 
 const now = Date.parse('2026-11-07T12:00:00Z');
 const iso = (minutes: number) => new Date(now + minutes * 60000).toISOString();
@@ -95,5 +96,14 @@ describe('level graph rendering', () => {
     data.recentLevels!.to = iso(0); data.recentLevels!.from = iso(-360);
     renderLevelGraphs(data, true, false, now);
     expect(document.querySelectorAll('svg')).toHaveLength(0);
+  });
+  it('renders Ewenny independently of unavailable model gauges and never falls back to a different river', () => {
+    const river = monitoringFixture(now).gauges.ewenny;
+    renderLevelGraphs(live(), false, true, now, 120, false, river);
+    expect(document.querySelector('#river-level-graph svg')!.getAttribute('aria-label')).toContain('Ewenny at Keepers Lodge');
+    expect(document.querySelector('#tide-level-graph svg')).toBeNull();
+    renderLevelGraphs(live(), true, false, now, 120, false, null);
+    expect(document.querySelector('#river-level-graph svg')).toBeNull();
+    expect(document.querySelector('#tide-level-graph svg')).not.toBeNull();
   });
 });

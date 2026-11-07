@@ -44,6 +44,43 @@ export interface LivePayload {
 }
 
 export interface LevelPoint { time: string; value: number }
+export interface LocalGauge {
+  stationId: number;
+  parameterId: number;
+  name: string;
+  source: 'NRW';
+  sourceUrl: string;
+  unit: 'm';
+  datum: 'unspecified';
+  status: 'available' | 'unavailable';
+  observedAt?: string;
+  value?: number;
+  trendMPerHour?: number | null;
+  history?: { from: string; to: string; points: LevelPoint[] };
+}
+export interface FloodWarning {
+  areaId: string;
+  areaName: string;
+  scope: string;
+  severity: 1 | 2 | 3 | 4;
+  severityName: string;
+  description: string;
+  message: string;
+  tidal: boolean;
+  raisedAt: string;
+  severityChangedAt: string;
+  updatedAt: string;
+  sourceUrl: string;
+}
+export interface WarningSnapshot { checkedAt: string; warnings: FloodWarning[] }
+export type FloodWarnings = ({ status: 'available'; attemptedAt: string } & WarningSnapshot)
+  | { status: 'unavailable'; attemptedAt: string; reason: string; lastKnown?: WarningSnapshot };
+export interface MonitoringPayload {
+  schemaVersion: 1;
+  generatedAt: string;
+  gauges: { ewenny: LocalGauge; downstream: LocalGauge };
+  floodWarnings: FloodWarnings;
+}
 export interface RecentLevels {
   from: string;
   to: string;

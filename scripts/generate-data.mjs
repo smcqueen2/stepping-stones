@@ -118,7 +118,7 @@ function rainInfluence(rainfallMm, probabilityPct, mmForHighRisk) {
   return clamp((rainfallMm / mmForHighRisk) * 0.7 + (probabilityPct / 100) * 0.3);
 }
 
-async function main() {
+export async function generateModelData() {
   const config = await readConfig();
 
   const now = nowUtc();
@@ -369,7 +369,9 @@ async function main() {
   console.log(`Generated live + forecast data in ${dataOutDir}`);
 }
 
-main().catch((error) => {
-  console.error('Data generation failed:', error);
-  process.exitCode = 1;
-});
+if (process.argv[1] && path.resolve(process.argv[1]) === __filename) {
+  generateModelData().catch((error) => {
+    console.error('Data generation failed:', error);
+    process.exitCode = 1;
+  });
+}

@@ -1,0 +1,6 @@
+[
+  { "id": "102FWB402A", "name": "Tidal area at Ogmore Castle", "scope": "local" },
+  { "id": "102FWB108A", "name": "River Ewenny at Ewenny Village", "scope": "local" },
+  { "id": "102WABF20", "name": "Rivers Llynfi and Ogmore", "scope": "catchment" },
+  { "id": "102WABT04", "name": "Swansea Bay and the Gower coast", "scope": "coast" }
+]

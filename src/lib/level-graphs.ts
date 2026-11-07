@@ -1,4 +1,5 @@
-import type { LivePayload } from './types';
+import type { LivePayload, LocalGauge } from './types';
+import { localGaugeStatus } from './local-monitoring';
 
 const ns = 'http://www.w3.org/2000/svg';
 const minute = 60000;
@@ -41,27 +42,30 @@ export function levelLine(points: unknown, from: number, to: number, minimumRang
   return { paths, low, high, latest: readings[readings.length - 1], count: readings.length };
 }
 
-export function renderLevelGraphs(live: LivePayload | undefined, fresh: boolean, stale: boolean, now: number, staleAfter = 120, loading = !live) {
-  const history = live?.recentLevels;
-  const from = Date.parse(history?.from ?? '');
-  const to = Date.parse(history?.to ?? '');
+export function renderLevelGraphs(live: LivePayload | undefined, fresh: boolean, stale: boolean, now: number, staleAfter = 120, loading = !live, localRiver?: LocalGauge | null) {
   for (const role of ['river', 'tide'] as const) {
     const host = document.getElementById(`${role}-level-graph`);
     if (!host) continue;
     host.replaceChildren();
-    const chart = fresh && to - from === 12 * 60 * minute && to <= now + 10 * minute && now - to <= staleAfter * minute
-      ? levelLine(history?.[role], from, to, role === 'river' ? .1 : 2) : undefined;
+    const local = role === 'river' && localRiver !== undefined;
+    const status = local ? localGaugeStatus(localRiver ?? undefined, 'ewenny', now, staleAfter) : { available: fresh, stale };
+    const history = local ? localRiver?.history : live?.recentLevels;
+    const from = Date.parse(history?.from ?? '');
+    const to = Date.parse(history?.to ?? '');
+    const points = local ? localRiver?.history?.points : live?.recentLevels?.[role];
+    const chart = status.available && to - from === 12 * 60 * minute && to <= now + 10 * minute && now - to <= staleAfter * minute
+      ? levelLine(points, from, to, role === 'river' ? .1 : 2) : undefined;
     if (!chart || now - chart.latest.at > staleAfter * minute || chart.latest.at > now + 10 * minute) {
       host.dataset.available = 'false';
       const message = document.createElement('p');
       message.className = 'level-graph-empty';
-      message.textContent = stale ? 'History out of date' : loading ? 'Loading recent levels…' : 'History unavailable';
+      message.textContent = status.stale ? 'History out of date' : loading ? 'Loading recent levels…' : 'History unavailable';
       host.append(message);
       continue;
     }
     host.dataset.available = 'true';
     const source = live?.sourceStations.find(station => station?.role === role);
-    const name = (typeof source?.stationTitle === 'string' ? source.stationTitle.trim() : '') || (role === 'river' ? 'River gauge' : 'Regional tide gauge');
+    const name = (local ? localRiver?.name : typeof source?.stationTitle === 'string' ? source.stationTitle.trim() : '') || (role === 'river' ? 'River gauge' : 'Regional tide gauge');
     const svg = document.createElementNS(ns, 'svg');
     svg.setAttribute('viewBox', '0 0 200 56');
     svg.setAttribute('preserveAspectRatio', 'none');

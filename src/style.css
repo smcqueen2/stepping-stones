@@ -51,7 +51,7 @@ button:focus-visible, a:focus-visible, summary:focus-visible, input:focus-visibl
 .about-social-links a { display: inline-flex; align-items: center; gap: 9px; min-height: 44px; padding: 9px 14px; border: 1px solid var(--card-border); border-radius: 5px; background: var(--bg); font-size: 14px; line-height: 1.5; text-decoration: none; }
 .about-social-links a:hover { border-color: var(--ink); }
 .about-social-links svg { flex-shrink: 0; width: 20px; height: 20px; fill: currentColor; }
-.scene-stage { position: relative; }
+.scene-stage { position: relative; container-type: inline-size; }
 .hero-art { position: relative; isolation: isolate; aspect-ratio: 1672 / 941; overflow: hidden; background: rgb(calc(238 * var(--scene-sky-brightness, 1)) calc(242 * var(--scene-sky-brightness, 1)) calc(246 * var(--scene-sky-brightness, 1))); transition: background-color 1200ms ease; }
 .hero-layer { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: fill; pointer-events: none; user-select: none; }
 .hero-layer.snow-art { opacity: 0; transition: opacity 1100ms ease; }
@@ -67,6 +67,19 @@ button:focus-visible, a:focus-visible, summary:focus-visible, input:focus-visibl
 #outlook-description { margin: 10px 0 0; font-size: 14px; line-height: 1.5; }
 .outlook-context, .outlook-as-of { font-size: 11px; color: var(--muted); margin: 8px 0 0; }
 .outlook-context:empty, .outlook-as-of:empty { display: none; }
+.nrw-warning { margin-top: 12px; padding: 9px 0 0 10px; border-top: 1px solid var(--card-border); border-left: 2px solid var(--muted); font-size: 11px; line-height: 1.45; }
+.nrw-warning strong { font-weight: 600; }
+.nrw-warning p { margin: 5px 0; }
+.nrw-warning-footer { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 0 8px; font-size: 10px; color: var(--muted); }
+.nrw-warning-footer a { display: inline-flex; align-items: center; min-height: 32px; }
+.nrw-warning[data-tone="caution"] { border-left-color: var(--warn); }
+.nrw-warning[data-tone="caution"] strong { color: var(--warn); }
+.nrw-warning:is([data-tone="danger"], [data-tone="severe"]) { border-left: 4px solid var(--bad); padding: 10px; background: #f7e9e1; }
+.nrw-warning:is([data-tone="danger"], [data-tone="severe"]) strong { color: var(--bad); }
+.nrw-warning[data-tone="severe"] { box-shadow: inset 0 0 0 1px var(--bad); }
+.nrw-warning-sources { margin-block: 18px; }
+.nrw-warning-sources summary { cursor: pointer; padding-block: 10px; }
+.nrw-message { white-space: pre-line; overflow-wrap: anywhere; }
 .outlook-times { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 17px; }
 .outlook-times button, .scene-button { font-size: 11px; border: 1px solid var(--card-border); border-radius: 25px; padding: 6px 12px; background: transparent; }
 .outlook-times button[aria-pressed="true"], .scene-button[aria-pressed="true"] { background: var(--ink); color: var(--bg); border-color: var(--ink); }
@@ -103,6 +116,11 @@ button:focus-visible, a:focus-visible, summary:focus-visible, input:focus-visibl
 .state-caution { color: var(--warn); }
 .state-bad { color: var(--bad); }
 .state-pending { color: var(--muted); }
+/* Keep the full advice readable when the framed painting cannot contain a taller card. */
+@container (max-width: 1000px) {
+  .outlook-card { position: relative; left: auto; bottom: auto; width: auto; max-width: none; margin: -16px 18px 0; }
+  .water-level-card { position: relative; right: auto; bottom: auto; width: auto; margin: 12px 18px 0; }
+}
 .scene-settings { position: absolute; right: 3%; top: 4%; z-index: 3; }
 .scene-settings summary { font-size: 11px; padding: 8px 12px; background: var(--card); border-radius: 25px; box-shadow: 0 3px 18px #17392b15; }
 .scene-settings-panel { background: var(--card); padding: 18px; margin-top: 7px; border-radius: 5px; box-shadow: 0 8px 24px #17392b24; width: 330px; max-width: calc(100vw - 32px); max-height: calc(100dvh - 200px); overflow-y: auto; overscroll-behavior: contain; position: absolute; right: 0; }
@@ -185,6 +203,8 @@ button:focus-visible, a:focus-visible, summary:focus-visible, input:focus-visibl
   .water-level-trend { font-size: 12px; }
   #outlook-description { font-size: 14px; }
   .outlook-context, .outlook-as-of, .outlook-disclaimer { font-size: 12px; }
+  .nrw-warning { font-size: 12px; }
+  .nrw-warning-footer a { min-height: 44px; font-size: 12px; }
   .outlook-times { margin-top: 13px; gap: 8px; }
   .outlook-times button, .scene-button { min-height: 44px; font-size: 13px; }
   .outlook-links { margin-top: 8px; font-size: 13px; }

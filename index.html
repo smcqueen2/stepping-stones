@@ -103,6 +103,12 @@
             <button type="button" data-outlook-minutes="180" aria-pressed="false" disabled>+3 hours</button>
           </div>
           <p id="outlook-as-of" class="outlook-as-of"></p>
+          <p id="outlook-model-result" class="outlook-context">Estimate uses Bridgend and regional tide readings.</p>
+          <div id="nrw-warning" class="nrw-warning" data-tone="unknown" role="status" aria-live="polite" aria-atomic="true">
+            <strong id="nrw-warning-title">Checking official NRW warnings…</strong>
+            <p id="nrw-warning-detail"></p>
+            <div class="nrw-warning-footer"><span id="nrw-warning-checked"></span><a id="nrw-warning-link" href="https://flood-warning.naturalresources.wales/Detail/102FWB402A" target="_blank" rel="noopener noreferrer">Check NRW ↗</a></div>
+          </div>
           <p class="outlook-links"><a href="#live" data-open-dialog>Readings</a><a href="#forecast" data-open-dialog>Full forecast ↗</a></p>
           <p class="outlook-disclaimer">Illustrated prediction. Always assess on site.</p>
           <p id="outlook-art-status" class="outlook-context" role="status"></p>
@@ -115,10 +121,10 @@
           <h2 class="sr-only">River &amp; tide</h2>
           <dl class="water-levels">
             <div id="water-level-river" class="water-level" data-available="false">
-              <dt>River level</dt>
+              <dt>River Ewenny</dt>
               <dd class="water-level-value"><span id="river-glance-value">—</span><abbr class="water-level-unit" title="Metres at the river gauge">m</abbr></dd>
               <dd id="river-glance-trend" class="water-level-trend">Awaiting readings</dd>
-              <dd id="river-glance-source" class="water-level-source">River gauge</dd>
+              <dd id="river-glance-source" class="water-level-source">Keepers Lodge · River Ewenny</dd>
               <dd id="water-level-age" class="water-level-source">Checking…</dd>
               <dd id="river-level-graph" class="level-graph" data-available="false"><p class="level-graph-empty">Loading recent levels…</p></dd>
             </div>
@@ -190,9 +196,24 @@
             <h3>Current assessment</h3>
             <p id="live-state" class="state state-pending">Loading…</p>
             <p id="live-reason" class="muted"></p>
+            <p id="live-model-result" class="muted small"></p>
           </article>
           <article class="card">
-            <h3>River level (Ogmore)</h3>
+            <h3>River Ewenny · Keepers Lodge</h3>
+            <p id="ewenny-value" class="metric">—</p>
+            <p id="ewenny-trend" class="muted"></p>
+            <p id="ewenny-observed" class="muted small">Reading unavailable</p>
+            <a href="https://rivers-and-seas.naturalresources.wales/Station/4099" target="_blank" rel="noopener noreferrer">NRW station 4099 ↗</a>
+          </article>
+          <article class="card">
+            <h3>Tidal river · Penybont</h3>
+            <p id="downstream-value" class="metric">—</p>
+            <p id="downstream-trend" class="muted"></p>
+            <p id="downstream-observed" class="muted small">Reading unavailable</p>
+            <a href="https://rivers-and-seas.naturalresources.wales/Station/4115" target="_blank" rel="noopener noreferrer">NRW station 4115 ↗</a>
+          </article>
+          <article class="card">
+            <h3>Model river · Bridgend</h3>
             <p id="river-value" class="metric">--</p>
             <p id="river-trend" class="muted">Trend: --</p>
           </article>
@@ -203,6 +224,19 @@
           </article>
         </div>
         <p id="data-freshness" class="muted"></p>
+        <p class="muted small">Local readings are metres at each station, with no datum supplied by this feed. They are separate measurements, not depth over the stones. Penybont measures a tidal river, not coastal sea level. The crossing model still uses Bridgend and the regional coastal gauge; its calibration has not been transferred to the new stations.</p>
+        <details class="nrw-warning-sources">
+          <summary>Official NRW warnings &amp; monitored areas</summary>
+          <div id="nrw-warning-messages"></div>
+          <p class="muted small">We check two local warning areas and two broader alert areas. A wider-area alert does not establish flooding at the stones. Current warnings remain relevant when you view a future model estimate. The absence of a warning does not mean the crossing is safe.</p>
+          <ul>
+            <li><a href="https://flood-warning.naturalresources.wales/Detail/102FWB402A" target="_blank" rel="noopener noreferrer">Tidal area at Ogmore Castle</a></li>
+            <li><a href="https://flood-warning.naturalresources.wales/Detail/102FWB108A" target="_blank" rel="noopener noreferrer">River Ewenny at Ewenny Village · includes Ogmore Castle</a></li>
+            <li><a href="https://flood-warning.naturalresources.wales/Detail/102WABF20" target="_blank" rel="noopener noreferrer">Rivers Llynfi and Ogmore · wider catchment</a></li>
+            <li><a href="https://flood-warning.naturalresources.wales/Detail/102WABT04" target="_blank" rel="noopener noreferrer">Swansea Bay and the Gower coast · wider coast</a></li>
+          </ul>
+          <p class="muted small">Contains Natural Resources Wales information © Natural Resources Wales and Database Right. All rights Reserved. Reused under the Open Government Licence.</p>
+        </details>
         <p class="muted small">High and low compare with the previous 48 hours of gauge readings, rather than the depth at the stones.</p>
         <p class="muted small">Home-page tide times are approximate coastal high/low estimates derived from hourly sea-level forecasts, rounded to half an hour. They describe the Ogmore coast, not when the stones will submerge or become passable. Coastal model accuracy is limited, particularly inside estuaries. All tide times use local Welsh time (GMT/BST).</p>
         <p class="muted small">Tide timing data: <a href="https://open-meteo.com/en/docs/marine-weather-api" target="_blank" rel="noopener noreferrer">Open-Meteo Marine</a>, generated using <a href="https://doi.org/10.48670/moi-00016" target="_blank" rel="noopener noreferrer">E.U. Copernicus Marine Service Information</a>. Timing estimates are our adaptation of data supplied under <a href="https://creativecommons.org/licenses/by/4.0/" target="_blank" rel="noopener noreferrer">CC BY 4.0</a>. The regional NRW gauge still supplies the crossing model's tide input.</p>
@@ -210,6 +244,7 @@
 
       <dialog id="forecast" class="app-dialog forecast-dialog" aria-labelledby="forecast-title">
         <div class="dialog-heading"><h2 id="forecast-title">Forecast</h2><button type="button" data-close-dialog aria-label="Close forecast">Close</button></div>
+        <p class="muted small">These are environmental model estimates. Check the current NRW warning advice on the crossing page before making a decision.</p>
         <p>
           Forecast blends tide cycle projection, expected rainfall, and river trend to estimate
           likely crossing conditions through the day.

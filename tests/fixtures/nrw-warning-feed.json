@@ -1,0 +1,15 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "geometry": { "type": "Point", "coordinates": [-3.6104, 51.4800] },
+      "properties": {
+        "FWACODE": "102FWB402A", "AREA": "South West", "DESCRIPTION": "Tidal area at Ogmore Castle",
+        "TIDAL": "True", "SEVERITY": "Flood Warning", "SEVERITYVALUE": 2,
+        "TIMERAISED": "2026-11-06T09:00:00Z", "SEVERITY_CHANGED": "2026-11-06T09:00:00Z", "RIM_CHANGED": "2026-11-07T10:00:00Z",
+        "RIM_ENGLISH": "TEST FIXTURE ONLY. Flooding is expected in the warning area.", "RIM_WELSH": "TEST FIXTURE ONLY"
+      }
+    }
+  ]
+}

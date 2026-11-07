@@ -1,6 +1,7 @@
 // @vitest-environment jsdom
 import { crossingReason, installCrossingOutlook, selectOutlook, waterAppearance, type OutlookData } from '../../src/lib/crossing-outlook';
 import type { ForecastHour, LivePayload } from '../../src/lib/types';
+import { monitoringFixture, warningFixture } from '../fixtures/monitoring';
 
 const now = Date.parse('2026-10-24T16:40:00Z');
 const iso = (minutes: number) => new Date(now + minutes * 60_000).toISOString();
@@ -21,7 +22,7 @@ function fixture(): OutlookData {
     riskComponents: { tide: risk, river: risk, rain: risk }, riskScore: risk,
     state: risk < .45 ? 'Likely Passable' : risk < .7 ? 'Caution' : 'Likely Unpassable',
   });
-  return { live, config: { freshness: { staleAfterMinutes: 120, severeStaleAfterMinutes: 360 },
+  return { live, monitoring: monitoringFixture(now), config: { freshness: { staleAfterMinutes: 120, severeStaleAfterMinutes: 360 },
     stateThresholds: { likelyPassableMax: .45, cautionMax: .7 }, weights,
     rainScaling: { millimetresForHighRisk: 5 }, messaging: { disclaimer: '', staleWarning: '' } },
     forecast: { generatedAt: iso(-5), horizonHours: 24,
@@ -108,7 +109,8 @@ describe('forecast overlay controls', () => {
     vi.useFakeTimers(); vi.setSystemTime(now);
     vi.spyOn(document, 'hidden', 'get').mockReturnValue(false);
     document.body.innerHTML = `<div class="hero-art"><img id="river-high" data-src="/river-high.webp"></div>
-      <h1 id="outlook-title"><span id="outlook-state"></span></h1><p id="outlook-description"></p><span id="outlook-horizon"></span>
+      <h1 id="outlook-title"><span id="outlook-state"></span></h1><p id="outlook-description"></p><span id="outlook-horizon"></span><p id="outlook-model-result"></p>
+      <div id="nrw-warning"><strong id="nrw-warning-title"></strong><p id="nrw-warning-detail"></p></div>
       <section class="water-level-card"><p id="water-level-age"></p>
         <div id="water-level-river"><span id="river-glance-value"></span><span id="river-glance-trend"></span><span id="river-glance-source"></span></div>
         <div id="water-level-tide"><span id="tide-glance-status"></span><span id="tide-glance-high"></span><span id="tide-glance-countdown"></span><span id="tide-glance-low"></span></div></section>
@@ -130,17 +132,17 @@ describe('forecast overlay controls', () => {
       { role: 'tide', stationId: 72839, stationTitle: 'Newport tide gauge', parameterId: 10254, source: 'NRW' },
     ];
     controller.setData(data);
-    expect(document.getElementById('river-glance-value')!.textContent).toBe('0.80');
+    expect(document.getElementById('river-glance-value')!.textContent).toBe('0.27');
     expect(document.getElementById('tide-glance-status')!.textContent).toBe('Coming in');
     expect(document.getElementById('tide-glance-high')!.textContent).toBe('High tide ~21:00');
     expect(document.getElementById('tide-glance-countdown')!.textContent).toBe('About 3h 30m until high tide');
     expect(document.getElementById('river-glance-trend')!.textContent).toBe('↑ Recent rise');
-    expect(document.getElementById('river-glance-source')!.textContent).toBe('Bridgend gauge');
+    expect(document.getElementById('river-glance-source')!.textContent).toBe('Keepers Lodge · River Ewenny');
     expect(document.getElementById('tide-value')!.textContent).toBe('-1.200 mAOD');
-    expect(document.getElementById('water-level-age')!.textContent).toBe('Gauges · 10 min old');
+    expect(document.getElementById('water-level-age')!.textContent).toBe('Ewenny · 10 min old');
     click(180);
     expect(state().textContent).toBe('Likely Unpassable');
-    expect(document.getElementById('river-glance-value')!.textContent).toBe('0.80');
+    expect(document.getElementById('river-glance-value')!.textContent).toBe('0.27');
     expect(document.getElementById('tide-glance-high')!.textContent).toBe('High tide ~21:00');
     data.live!.sourceStations[1].stationTitle = 'Fallback coastal gauge';
     controller.setData(data);
@@ -149,11 +151,13 @@ describe('forecast overlay controls', () => {
   it('accepts zero and negative gauge values and validates each reading and trend independently', () => {
     const data = fixture();
     Object.assign(data.live!.current, { riverLevelM: 0, tideLevelMAOD: -4.2, riverTrendMPerHour: -.1, tideTrendMPerHour: .001 });
+    Object.assign(data.monitoring!.gauges.ewenny, { value: 0, trendMPerHour: -.1 });
     controller.setData(data);
     expect(document.getElementById('river-glance-value')!.textContent).toBe('0.00');
     expect(document.getElementById('tide-value')!.textContent).toBe('-4.200 mAOD');
     expect(document.getElementById('river-glance-trend')!.textContent).toBe('↓ Recent fall');
     Object.assign(data.live!.current, { tideLevelMAOD: NaN, riverTrendMPerHour: NaN });
+    data.monitoring!.gauges.ewenny.trendMPerHour = NaN;
     controller.setData(data);
     expect(document.getElementById('river-glance-value')!.textContent).toBe('0.00');
     expect(document.getElementById('river-glance-trend')!.textContent).toBe('Trend unavailable');
@@ -166,22 +170,26 @@ describe('forecast overlay controls', () => {
     expect(document.getElementById('tide-glance-countdown')!.textContent).toBe('');
     expect(document.getElementById('water-level-tide')!.dataset.available).toBe('false');
   });
-  it('clears previous values when timestamps are invalid, explicitly stale or missing', () => {
+  it('clears local values on invalid, stale or missing local readings without coupling them to model freshness', () => {
     const data = fixture();
     data.live!.generatedAt = iso(11);
     controller.setData(data);
+    expect(document.getElementById('river-glance-value')!.textContent).toBe('0.27');
+    data.monitoring!.gauges.ewenny.observedAt = iso(11);
+    controller.setData(data);
     expect(document.getElementById('river-glance-value')!.textContent).toBe('—');
-    expect(document.getElementById('water-level-age')!.textContent).toBe('Gauge data unavailable');
+    expect(document.getElementById('water-level-age')!.textContent).toBe('Ewenny reading unavailable');
     data.live!.generatedAt = iso(-5);
     data.live!.freshness.stale = true;
+    data.monitoring!.gauges.ewenny.observedAt = iso(-180);
     controller.setData(data);
-    expect(document.getElementById('water-level-age')!.textContent).toBe('Gauge data out of date');
+    expect(document.getElementById('water-level-age')!.textContent).toBe('Ewenny reading out of date');
     expect(document.getElementById('tide-glance-status')!.textContent).toBe('Coming in');
     expect(document.querySelector<HTMLElement>('.water-level-card')!.dataset.freshness).toBe('stale');
     controller.setData({});
     expect(document.getElementById('tide-glance-status')!.textContent).toBe('Times unavailable');
     expect(document.getElementById('tide-glance-countdown')!.textContent).toBe('');
-    expect(document.getElementById('water-level-age')!.textContent).toBe('Gauge data unavailable');
+    expect(document.getElementById('water-level-age')!.textContent).toBe('Ewenny reading unavailable');
   });
   it('updates the countdown on the existing minute timer and expires timing data independently', async () => {
     await vi.advanceTimersByTimeAsync(25 * 60000);
@@ -189,7 +197,7 @@ describe('forecast overlay controls', () => {
     const data = fixture();
     data.live!.tideTiming!.generatedAt = iso(-400);
     controller.setData(data);
-    expect(document.getElementById('river-glance-value')!.textContent).toBe('0.80');
+    expect(document.getElementById('river-glance-value')!.textContent).toBe('0.27');
     expect(document.getElementById('tide-glance-status')!.textContent).toBe('Times unavailable');
     expect(document.getElementById('tide-glance-high')!.textContent).toBe('High tide time unavailable');
     expect(document.getElementById('tide-glance-low')!.textContent).toBe('');
@@ -233,9 +241,47 @@ describe('forecast overlay controls', () => {
     expect(state().classList.contains('state-good')).toBe(false);
     expect(document.getElementById('river-glance-value')!.textContent).toBe('—');
     expect(document.getElementById('tide-glance-status')!.textContent).toBe('Coming in');
-    expect(document.getElementById('water-level-age')!.textContent).toBe('Gauge data out of date');
+    expect(document.getElementById('water-level-age')!.textContent).toBe('Ewenny reading out of date');
     expect(document.querySelector<HTMLButtonElement>('[data-outlook-minutes="180"]')!.disabled).toBe(true);
     controller.dispose();
     expect(vi.getTimerCount()).toBe(0);
+  });
+  it.each([1, 2] as const)('prioritises NRW severity %i for Now and future views without changing model water coverage', severity => {
+    const data = fixture();
+    const warning = warningFixture(now, severity);
+    data.monitoring!.floodWarnings = { status: 'available', attemptedAt: iso(-1), checkedAt: iso(-1), warnings: [warning] };
+    controller.setData(data);
+    expect(state().textContent).toBe('Do not cross');
+    expect(state().classList.contains('state-bad')).toBe(true);
+    expect(document.querySelector<HTMLElement>('.hero-art')!.dataset.riverCoverage).toBe('0.0000');
+    expect(document.getElementById('outlook-model-result')!.textContent).toContain('Model estimate: Likely Passable');
+    expect(data.live!.current.riskScore).toBe(.3);
+    click(60);
+    expect(state().textContent).toBe('Do not cross');
+    expect(document.getElementById('outlook-model-result')!.textContent).toContain('Model estimate: Caution');
+    const water = waterAppearance(.55, 'Caution');
+    expect(document.querySelector<HTMLElement>('.hero-art')!.dataset.riverCoverage).toBe(water.coverage.toFixed(4));
+  });
+  it('can display a warning and fresh local readings even when the environmental model is absent', () => {
+    const monitoring = monitoringFixture(now);
+    monitoring.floodWarnings = { status: 'available', attemptedAt: iso(-1), checkedAt: iso(-1), warnings: [warningFixture(now)] };
+    controller.setData({ monitoring });
+    expect(state().textContent).toBe('Do not cross');
+    expect(document.getElementById('river-glance-value')!.textContent).toBe('0.27');
+    expect(document.querySelector<HTMLElement>('.hero-art')!.dataset.riverCoverage).toBe('0.5000');
+  });
+  it('holds the last known warning during a failed refresh and clears it only after a verified clean response', () => {
+    const data = fixture();
+    data.monitoring!.floodWarnings = { status: 'available', attemptedAt: iso(-1), checkedAt: iso(-1), warnings: [warningFixture(now)] };
+    controller.setData(data);
+    controller.setData({ ...data, monitoringUpdateFailed: true });
+    expect(state().textContent).toBe('Do not cross');
+    expect(document.getElementById('nrw-warning-title')!.textContent).toContain('Last known');
+    expect(document.getElementById('outlook-description')!.textContent).toContain('unverified');
+    data.monitoring = monitoringFixture(now);
+    if (data.monitoring.floodWarnings.status === 'available') data.monitoring.floodWarnings.checkedAt = iso(0);
+    controller.setData(data);
+    expect(state().textContent).toBe('Likely Passable');
+    expect(document.getElementById('nrw-warning-title')!.textContent).toBe('No active NRW warnings');
   });
 });

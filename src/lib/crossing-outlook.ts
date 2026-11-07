@@ -1,8 +1,10 @@
-import type { ConfigPayload, ForecastPayload, LivePayload, RiskComponents, StateLabel } from './types';
+import type { ConfigPayload, ForecastPayload, LivePayload, MonitoringPayload, RiskComponents, StateLabel } from './types';
 import { tideSummary } from './tide-timing';
 import { renderLevelGraphs } from './level-graphs';
+import { localGaugeStatus } from './local-monitoring';
+import { applyWarningAdvice, floodWarningSummary, renderFloodWarnings, retainWarningState } from './flood-warnings';
 
-export type OutlookData = { live?: LivePayload; forecast?: ForecastPayload; config?: ConfigPayload; loaded?: boolean; updateFailed?: boolean };
+export type OutlookData = { live?: LivePayload; forecast?: ForecastPayload; config?: ConfigPayload; monitoring?: MonitoringPayload; loaded?: boolean; updateFailed?: boolean; monitoringUpdateFailed?: boolean };
 export type OutlookSelection = number | string;
 type Outlook = {
   available: true; score: number; state: StateLabel; at: number; river: number; tide: number; ageMinutes: number; components?: RiskComponents;
@@ -97,6 +99,7 @@ export function getSceneCrossingVisual() { return activeVisual; }
 
 export function installCrossingOutlook() {
   let data: OutlookData = {};
+  let warningData: MonitoringPayload['floodWarnings'] | undefined;
   let selection: OutlookSelection = 0;
   let disposed = false;
   let timer: number | undefined;
@@ -116,22 +119,22 @@ export function installCrossingOutlook() {
     const age = live ? readingAge(live, now) : Infinity;
     const stale = Boolean(live && (live.freshness.stale || Number.isFinite(age) && age > (data.config?.freshness.staleAfterMinutes ?? 120)));
     const fresh = Boolean(live && Number.isFinite(age) && !stale);
+    const localRiver = data.monitoring?.gauges?.ewenny;
+    const riverStatus = localGaugeStatus(localRiver, 'ewenny', now, data.config?.freshness.staleAfterMinutes ?? 120);
     const card = document.querySelector<HTMLElement>('.water-level-card');
-    if (card) card.dataset.freshness = fresh ? 'fresh' : stale ? 'stale' : live || data.loaded ? 'unavailable' : 'loading';
-    text('water-level-age', fresh ? `Gauges · ${age} min old` : stale ? 'Gauge data out of date' : live || data.loaded ? 'Gauge data unavailable' : 'Checking…');
+    if (card) card.dataset.freshness = riverStatus.available ? 'fresh' : riverStatus.stale ? 'stale' : data.loaded ? 'unavailable' : 'loading';
+    text('water-level-age', riverStatus.available ? `Ewenny · ${riverStatus.ageMinutes} min old` : riverStatus.stale ? 'Ewenny reading out of date' : data.loaded ? 'Ewenny reading unavailable' : 'Checking…');
     {
       const role = 'river';
-      const value = live?.current.riverLevelM;
-      const trend = live?.current.riverTrendMPerHour;
-      const available = fresh && finite(value);
+      const value = localRiver?.value;
+      const trend = localRiver?.trendMPerHour;
+      const available = riverStatus.available && finite(value);
       const metric = document.getElementById(`water-level-${role}`);
       if (metric) metric.dataset.available = String(available);
       text(`${role}-glance-value`, available ? value.toFixed(2) : '—');
-      text(`${role}-glance-trend`, !available ? stale ? 'Out of date' : live || data.loaded ? 'Unavailable' : 'Awaiting readings'
+      text(`${role}-glance-trend`, !available ? riverStatus.stale ? 'Out of date' : data.loaded ? 'Unavailable' : 'Awaiting readings'
         : !finite(trend) ? 'Trend unavailable' : Math.abs(trend) < .005 ? '→ Little change' : trend > 0 ? '↑ Recent rise' : '↓ Recent fall');
-      const station = live?.sourceStations.find(source => source?.role === role);
-      const name = typeof station?.stationTitle === 'string' ? station.stationTitle.trim() : '';
-      text(`${role}-glance-source`, station?.stationId === 4083 ? 'Bridgend gauge' : name || 'River gauge');
+      text(`${role}-glance-source`, 'Keepers Lodge · River Ewenny');
     }
     const tide = tideSummary(live?.tideTiming, now);
     const tideMetric = document.getElementById('water-level-tide');
@@ -140,16 +143,30 @@ export function installCrossingOutlook() {
     text('tide-glance-high', tide.high);
     text('tide-glance-countdown', tide.countdown);
     text('tide-glance-low', tide.low);
-    renderLevelGraphs(live, fresh, stale, now, data.config?.freshness.staleAfterMinutes ?? 120, !live && !data.loaded);
+    renderLevelGraphs(live, fresh, stale, now, data.config?.freshness.staleAfterMinutes ?? 120, !data.loaded, localRiver ?? null);
+    for (const role of ['ewenny', 'downstream'] as const) {
+      const gauge = data.monitoring?.gauges?.[role];
+      const status = localGaugeStatus(gauge, role, now, data.config?.freshness.staleAfterMinutes ?? 120);
+      text(`${role}-value`, status.available && finite(gauge?.value) ? `${gauge.value.toFixed(3)} m` : '—');
+      text(`${role}-observed`, status.available ? `Observed ${fullClock.format(Date.parse(gauge!.observedAt!))}` : status.stale ? 'Reading out of date' : 'Reading unavailable');
+      const trend = gauge?.trendMPerHour;
+      text(`${role}-trend`, !status.available || !finite(trend) ? 'Trend unavailable' : Math.abs(trend) < .005 ? 'Little change' : `Recent ${trend > 0 ? 'rise' : 'fall'} (${trend >= 0 ? '+' : ''}${trend.toFixed(3)} m/h)`);
+    }
   }
   function render(): void {
     const now = Date.now();
     renderWaterLevels(now);
     const outlook = selectOutlook(data, selection, now);
     const current = selectOutlook(data, 0, now);
+    warningData = retainWarningState(data.monitoring?.floodWarnings, warningData, now);
+    const warning = floodWarningSummary(warningData, now, data.monitoringUpdateFailed);
+    const advice = applyWarningAdvice(outlook, warning);
+    const currentAdvice = applyWarningAdvice(current, warning);
+    renderFloodWarnings(warning);
     activeVisual = waterAppearance(outlook.available ? outlook.score : undefined, outlook.available ? outlook.state : undefined);
-    label('outlook-state', outlook.state, outlook.available ? outlook.state : undefined);
-    text('outlook-description', outlook.available ? crossingReason(outlook.components, data.config?.weights) : outlook.detail);
+    label('outlook-state', advice?.state ?? outlook.state, advice?.style ?? (outlook.available ? outlook.state : undefined));
+    text('outlook-description', advice?.detail ?? (outlook.available ? crossingReason(outlook.components, data.config?.weights) : outlook.detail));
+    text('outlook-model-result', advice ? `Model estimate: ${outlook.state}. NRW advice takes priority.` : 'Estimate uses Bridgend and regional tide readings.');
     text('outlook-horizon', selection === 0 ? 'Now' : outlook.available ? clock.format(outlook.at) : typeof selection === 'number' ? `+${selection / 60} hours` : 'Selected time');
     const generated = Date.parse(data.live?.generatedAt ?? '');
     text('outlook-as-of', data.updateFailed ? 'Data update delayed.' : '');
@@ -168,8 +185,9 @@ export function installCrossingOutlook() {
       button.disabled = !selectOutlook(data, button.dataset.forecastTime!, now).available;
       button.setAttribute('aria-pressed', String(selection === button.dataset.forecastTime));
     });
-    label('live-state', current.state, current.available ? current.state : undefined);
-    text('live-reason', current.available ? crossingReason(current.components, data.config?.weights) : current.detail);
+    label('live-state', currentAdvice?.state ?? current.state, currentAdvice?.style ?? (current.available ? current.state : undefined));
+    text('live-reason', currentAdvice?.detail ?? (current.available ? crossingReason(current.components, data.config?.weights) : current.detail));
+    text('live-model-result', `Environmental model: ${current.state}. Local Ewenny and Penybont readings are shown separately while their relationship to the stones is established.`);
     text('data-freshness', current.available ? `Readings ${current.ageMinutes} minutes old. Sources: ${data.live!.sourceStations.map(station => station.stationTitle).join(', ')}.` : current.detail);
     text('outlook-freshness', current.available ? `Readings ${current.ageMinutes} min old.` : current.state);
     if (data.live) {

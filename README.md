@@ -110,13 +110,15 @@ The grass also gains a blanket of settled snow, with irregular patches resting o
 
 The weather feature reuses OGL and adds no npm package. Compared with lighting alone, it adds about 2.6 KB compressed JavaScript and 0.25 KB CSS. tsParticles' [snow preset](https://particles.js.org/demos/recipes/snow) was considered; the existing renderer lets this illustration keep its single draw pass and existing pause/resume lifecycle.
 
-The single-scene implementation, page navigation, condition-report preview, water-reading overlay and night-sky decoration add no npm package. Main JavaScript is about 11.3 KB gzip, lazy animation 12.0 KB and initial CSS 4.8 KB. Snow and high-water images are decoded on demand and reused as renderer textures; the moon uses its own small on-demand image element.
+The single-scene implementation, page navigation, condition-report preview, water-reading overlay, night-sky decoration and local monitoring/warning integration add no npm package. Main JavaScript is about 15.43 KB gzip, lazy animation 12.0 KB and initial CSS 5.25 KB. Snow and high-water images are decoded on demand and reused as renderer textures; the moon uses its own small on-demand image element.
 
 ## Data pipeline
 
 Runtime is frontend-only, with live JSON generated server-side in GitHub Actions. The workflow requests a 15-minute schedule; actual scheduled starts can be delayed:
 
-- NRW river station: `4083` (`Ogmore at Bridgend`, parameter `110`)
+- Preferred displayed river: `4099` (`Ewenny at Keepers Lodge`, parameter `64`, m)
+- Separate downstream tidal river: `4115` (`Ogmore at Penybont`, parameter `112`, m)
+- Existing model river station: `4083` (`Ogmore at Bridgend`, parameter `110`); calibration unchanged
 - NRW tide station primary: `72839` (`Newport`, parameter `10254`)
 - NRW tide fallbacks: `72639` then `72439`
 - Rainfall forecast: Open-Meteo hourly forecast for Ogmore area
@@ -128,6 +130,13 @@ Generated files:
 - `public/data/live.json`
 - `public/data/forecast.json`
 - `public/data/config.json`
+- `public/data/monitoring.json` — independent local station readings and official NRW warning status
+
+Keepers Lodge now supplies the home-page river number/graph. Penybont is a separate tidal-river measurement in Readings. Neither local gauge's metres/datum is substituted into the model, coastal mAOD gauge or estimated high/low guide. Fresh local readings remain visible when the model is unavailable. The home page identifies the model's existing Bridgend/regional inputs.
+
+Official NRW warnings use the supported v3 API, filtered to two local warning areas and two explicitly labelled wider alert areas. A warning/severe warning makes the advice **Do not cross**; an alert sets at least **Caution**. Model scores, future estimates and water illustration are preserved separately. Successful fresh empty feeds, withdrawals, unavailable data and last-known warnings are handled distinctly. Warning verification expires after 45 minutes and never turns a failed request into “no warnings”.
+
+**One-time setup:** subscribe to NRW's free Live Flood Warnings & Alerts API product and add its subscription key as the repository Actions secret **`NRW_API_KEY`**, then run the Pages workflow. Until configured, local gauges work and official warning status is explicitly unavailable. The key never enters frontend code or public JSON. Full setup, curated area sources, failure/cache behaviour, tests and remaining live-authentication/calibration limits: [NRW monitoring notes](docs/nrw-monitoring.md).
 
 ## Forecast model defaults
 

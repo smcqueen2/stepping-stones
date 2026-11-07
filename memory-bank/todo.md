@@ -2,6 +2,10 @@
 
 Recorded from user feedback on 2026-10-22. Updated 2026-11-06.
 
+- [x] Integrate local NRW Keepers Lodge/Penybont readings and official warning states using the accepted staged plan. Local displays improve now; existing model inputs are retained. See `docs/nrw-monitoring.md` for evidence, warning behaviour and validation.
+- [ ] Owner setup: obtain a free NRW Live Flood Warnings & Alerts subscription key, add repository Actions secret `NRW_API_KEY`, rerun Pages and perform the authenticated v3 smoke test. Until then official warning status is explicitly unavailable. Owner confirms no key yet.
+- [ ] Establish timestamped crossing observations and validate station-specific relationships before changing the model to use Keepers Lodge/Penybont. No arbitrary numerical thresholds or datum transfer; report backend preparation remains on hold.
+
 - [x] Add visible dots at all five observation-slider positions. CSS-only track markers retain native drag/keyboard/44px input behaviour; five existing reporting/UI checks, production build and desktop/320px browser review pass. Owner explicitly authorised commit/push.
 
 - [x] Show all twelve History dates beside their dots on the compact timeline and remove the single bottom date. Preserve active tracking/picker/desktop navigation; portrait and short landscape fit checked, with 9 History tests, TypeScript/build passing. Owner explicitly authorised commit/push on 6 November.
