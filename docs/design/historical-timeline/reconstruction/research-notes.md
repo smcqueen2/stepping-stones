@@ -2,6 +2,8 @@
 
 Prepared 6 November 2026 for the owner's request for a focused reconstruction using real photographs and historical descriptions. Updated 7 November: V3 adds the stepping-stone crossing and is now the selected illustration in the application's medieval-castle chapters. See the [crossing evidence and complete artwork audit](stepping-stones-evidence.md); its medieval date is probable, not an established construction year.
 
+The owner's later request on 7 November adds an [imagined revolt-aftermath companion](revolt-aftermath-notes.md) for **The valley is caught in revolt.** That chapter now has its own damaged image; the two earlier medieval chapters retain intact V3. The damage pattern is explicitly speculative, and both paintings preserve the river crossing.
+
 ![AI generated - estimated castle and crossing from the stepping-stones side](ogmore-castle-stepping-stones-view-v3.webp)
 
 **Caption:** AI generated - estimated Ogmore Castle and crossing, approximately 1250-1300. Lost roofs, parapets, upper rooms and the medieval crossing arrangement are estimated.

@@ -1,5 +1,12 @@
 # Progress
 
+### Damaged castle for the revolt chapter - 2026-11-07
+
+- Owner requested a damaged version of the existing castle painting for **The valley is caught in revolt.** Built-in imagegen made one targeted edit of intact V3: broken keep/parapet, partly collapsed hall roof, a curtain-wall breach/rubble and damaged timber, preserving viewpoint, entrance/ditch bridge, stepping stones, daylight and watercolour. The two earlier medieval chapters retain intact V3; only 1402–05 uses the new `damaged-castle` key.
+- Coflein NPRN 414237 was rechecked: serious damage in 1402–05 and later fifteenth-century repairs, without a precise destruction pattern. Specific visual damage remains speculative; caption/alt say **AI generated · imagined castle damage, 1402–05** and expanded notes explain the uncertainty. Existing date, narrative and sources remain. Exact prompt/evidence/provenance in `docs/design/historical-timeline/reconstruction/revolt-aftermath-notes.md`.
+- Saved unchanged 1671×941 PNG master (3,126,622 bytes), same-size website WebP (480,450 bytes), and archive-builder preview 1024×577 / 147,050 bytes. Pillow only converted/resized delivery assets. Original V3/earlier generations and archived exports remain unchanged. Isolated existing archive-builder run succeeds at 899,483 bytes / 12 milestones / 6 paintings. Runtime History remains lazy; six active paintings total about 1.40 MB, lazy module 7.31 KB gzip; landing bundle/dependencies unchanged.
+- All 9 History timeline/loader tests, TypeScript and production build pass. Browser verified default, 1280×720 and 320×568: correct unique chapter image, earlier two intact, visible damage/crossing, all 12 AI labels/dates, caveat/source expansion, no overflow or console warnings/errors. Viewport reset and revolt chapter left for inspection. Proofs in parent `revolt-aftermath-review/review.png`, `desktop.png` and `mobile.png`. The owner subsequently authorised commit/push; release proof belongs to the handover. Existing generated data/private context/tide-source research remain separate; NRW key setup and report-backend hold unchanged.
+
 ### Local NRW readings and official warning integration - 2026-11-07
 
 - Owner accepted the staged plan and authorised implementation, commit and push: prefer the Ewenny reading on the home page, add Penybont in Readings, preserve the existing numerical model until calibration is justified, and give relevant official warnings precautionary priority. Owner confirms no NRW API key yet. Reporting backend hold remains unchanged.

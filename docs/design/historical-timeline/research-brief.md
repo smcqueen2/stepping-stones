@@ -87,6 +87,8 @@ A focused, photograph-and-plan-led study of the developed medieval castle was pr
 
 Four companion paintings were generated using the **built-in image_gen tool**, with the existing `scene-low.webp` as a style reference. Exact prompts are in [image-prompts.json](image-prompts.json), with original generated paths in [generated-assets.json](generated-assets.json).
 
+The owner's subsequent 7 November request gives the 1402–05 revolt chapter a [damaged companion painting](reconstruction/revolt-aftermath-notes.md), edited directly from intact V3. Coflein's damage/repair account was rechecked; the specific visual damage remains an artist's hypothesis. Other chapters retain their existing paintings, and the stepping stones remain visible in the new scene.
+
 The selected preview assets are saved in this workspace:
 
 - `assets/early-fort.webp`

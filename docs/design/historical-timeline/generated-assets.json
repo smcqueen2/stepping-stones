@@ -26,5 +26,13 @@
     "preview": "assets/dunes.webp",
     "tool": "built-in image_gen",
     "originalStorage": "Local generated-image master; compressed preview archived here."
+  },
+  {
+    "key": "damaged-castle",
+    "originalFile": "exec-2aa0c22a-c838-417e-9674-6a030c3f7551.png",
+    "preview": "assets/damaged-castle.webp",
+    "tool": "built-in image_gen",
+    "prompt": "reconstruction/revolt-aftermath-notes.md",
+    "originalStorage": "Versioned master and website WebP in reconstruction/ogmore-castle-revolt-aftermath-v1.*; archive preview is resized/compressed delivery only."
   }
 ]

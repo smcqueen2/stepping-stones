@@ -27,10 +27,11 @@ The earliest timber-fort illustration is retained with an explicit note that the
 | Before 1100; 1806–09; 2020–23 | `assets/dunes.webp` | Wider dune landscape, not this river crossing; unchanged. |
 | Early 1100s | `assets/early-fort.webp` | Earth-and-timber interpretation; stones not securely datable to this phase. Date note explains uncertainty. |
 | 1141 | `assets/priory.webp` | Ewenni Priory, not the castle crossing; unchanged. |
-| Early 1200s; late 1200s; 1402–05 | `reconstruction/ogmore-castle-stepping-stones-view-v3.webp` | Updated shared c.1250–1300 reconstruction with a visible plausible medieval row; AI/estimated caption and Cadw link in every chapter. The 1402–05 note identifies reuse of the earlier reconstruction. |
+| Early 1200s; late 1200s | `reconstruction/ogmore-castle-stepping-stones-view-v3.webp` | Shared c.1250–1300 reconstruction with a visible plausible medieval row; AI/estimated caption and Cadw link in both chapters. |
+| 1402–05 | `reconstruction/ogmore-castle-revolt-aftermath-v1.webp` | [Imagined damage companion](revolt-aftermath-notes.md), edited from intact V3 at the owner's subsequent request. The crossing remains clearly visible; caption/date note distinguish artistic damage from recorded history. |
 | 1500s–1600s; 1803; 1928; Today | `assets/present-castle.webp` | All four already show a complete crossing in the existing present-day-inspired castle study; unchanged, retaining its AI label. It is not claimed as the exact historical appearance for those milestone years. |
 
-The application consumes the shared image by key, so the V3 import updates all three medieval-castle chapters together. All twelve History chapters continue to identify their illustrations as AI generated.
+The application initially used V3 for all three medieval-castle chapters. The owner's subsequent revolt-scene request gives 1402–05 its own damaged companion while retaining intact V3 for the earlier two. Both paintings show the crossing. All twelve History chapters continue to identify their illustrations as AI generated.
 
 ## Generation and saved files
 

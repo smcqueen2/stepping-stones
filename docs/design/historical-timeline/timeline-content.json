@@ -56,11 +56,11 @@
       "dateNote":"The sources differ between 1297 and 1298; the timeline uses the broader period. The illustrated crossing is a medieval interpretation: its founding year and original arrangement are unknown.","sources":["radford","listing","coflein","stones"]
     },
     {
-      "id":"revolt","date":"1402–05","shortDate":"1402–05","category":"Conflict in the valley","image":"stone-castle","artLabel":"AI generated · estimated castle & crossing, c.1250–1300",
+      "id":"revolt","date":"1402–05","shortDate":"1402–05","category":"Conflict in the valley","image":"damaged-castle","artLabel":"AI generated · imagined castle damage, 1402–05",
       "title":"The valley is caught in revolt.",
       "summary":"Ogmore Castle suffers serious damage during the years of Owain Glyndŵr's revolt. The surrounding settlement also contracts. This was a working valley of tenants, meadows and mills, as well as a place of military power.",
       "context":"Coflein's fulling-mill record dates damage at the castle to 1402–05. It cites medieval accounts for a mill near the castle in the 1300s, whose exact position is unknown. Heneb records a sharp fall in the settlement's tenants after the rebellion: a glimpse of the upheaval beyond the walls.",
-      "dateNote":"The dated evidence describes a period of castle damage during the revolt. The shared painting estimates the earlier castle and a plausible medieval crossing, whose founding year and original arrangement are unknown.","sources":["mill","valley","stones"]
+      "dateNote":"The dated evidence describes castle damage during the revolt. This scene imagines the aftermath; individual damaged walls and roofs are speculative. The crossing's founding year and medieval arrangement are unknown.","sources":["mill","valley","stones"]
     },
     {
       "id":"change","date":"1500s–1600s","shortDate":"1500s–1600s","category":"Two changing landscapes","image":"present-castle","artLabel":"AI generated · present-day-inspired castle study",
