@@ -1,5 +1,11 @@
 # Progress
 
+### History back-to-top arrow - 2026-11-08
+
+- Owner requested a simple up-arrow control on History and commit/push. Added a small fixed circular button at the lower right, visible after scrolling 300px. It returns to the top of History without changing routes, focuses the page heading, uses smooth scrolling or an immediate return for reduced motion, and has a 44px target, accessible name and existing focus styling.
+- Reuses the existing coalesced scroll/visibility lifecycle and delegated events; hidden with the History page and removed on disposal. Compact timeline height leaves space above the button on short screens. No dependency or landing-page asset added.
+- All 15 History timeline/loader/navigation tests, TypeScript and production build pass. Browser inventory reported local browser use disabled in Work settings, so no visual/screenshot or physical-phone verification was possible this turn. Existing private context, generated data and tide-source research are excluded from staging. Prior Worker preparation is saved separately as `09b672d`; it does not activate Cloudflare. Remote/deployment proof belongs to the release handover.
+
 ### Cloudflare quarter-hour data Worker preparation - 2026-11-08
 
 - Owner plans to sign up for a Workers service and requested code preparation for a job every fifteen minutes. Interpreted "cloud front" as Cloudflare Workers following the previous hosting discussion; stated that assumption and requested optional confirmation. No account resource, login, deployment, repository variable or secret was created or changed. Owner subsequently requested commit/push alongside the History back-to-top tweak; account activation remains manual. Community-observation backend remains on hold.

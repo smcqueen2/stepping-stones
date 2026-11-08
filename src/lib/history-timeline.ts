@@ -132,7 +132,13 @@ export function mountHistoryTimeline(host: HTMLElement) {
     sourceLinks(content.legend.sources),
   );
   legend.append(legendCopy);
-  root.append(rail, jumpControl, chapters, legend);
+  const backToTop = element('button', 'history-back-to-top');
+  backToTop.type = 'button';
+  backToTop.hidden = true;
+  backToTop.setAttribute('aria-label', 'Back to top of history');
+  backToTop.title = 'Back to top';
+  backToTop.innerHTML = '<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="m6 12 6-6 6 6M12 6v12"/></svg>';
+  root.append(rail, jumpControl, backToTop, chapters, legend);
   host.replaceChildren(root);
   let current = -1;
   let frame: number | undefined;
@@ -154,6 +160,7 @@ export function mountHistoryTimeline(host: HTMLElement) {
   function update() {
     frame = undefined;
     if (disposed || document.hidden || page?.hidden) return;
+    backToTop.hidden = window.scrollY < 300;
     const line = Math.min(window.innerHeight * .38, 280);
     const tops = articles.map(article => article.getBoundingClientRect().top);
     let index = 0;
@@ -174,6 +181,11 @@ export function mountHistoryTimeline(host: HTMLElement) {
     schedule();
   }
   function click(event: MouseEvent) {
+    if ((event.target as Element).closest('.history-back-to-top')) {
+      window.scrollTo({ top: 0, behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'instant' : 'smooth' });
+      page?.querySelector('h1')?.focus({ preventScroll: true });
+      return;
+    }
     const button = (event.target as Element).closest<HTMLButtonElement>('button[data-history-index]');
     if (button) select(Number(button.dataset.historyIndex));
   }
