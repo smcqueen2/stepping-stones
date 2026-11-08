@@ -2,6 +2,8 @@
 
 Recorded from user feedback on 2026-10-22. Updated 2026-11-08.
 
+- [x] Replace the History dropdown with clickable timeline dots/dates at all screen sizes, requested 8 November. Shared accessible buttons, 24px minimum compact targets, keyboard/reduced-motion support and current-date tracking. Short-window rail overflow keeps targets usable and reveals the active date. All 15 History/navigation tests, TypeScript and build pass; visual preview unavailable. Owner subsequently authorised commit/push; supersedes the native picker in earlier checkpoints.
+
 - [x] Add a simple History back-to-top arrow, requested 8 November with commit/push. Small fixed 44px control appears after scrolling, returns/focuses the History heading and honours reduced motion. Timeline retains clearance on short screens. All 15 History/loader/navigation tests, TypeScript and production build pass; browser preview unavailable because Work settings disable local browser use.
 
 - [x] Prepare a Cloudflare Workers environmental-data job every 15 minutes, requested 8 November. Shared builders, isolated Worker/KV/Cron package, optional Pages client/cutover, failure handling and setup guide are ready. All 156 tests, TypeScript, both frontend builds, Worker bundling and actual local scheduled refresh pass. Owner subsequently requested commit/push alongside the History back-to-top tweak; no account setup or Worker deployment performed. Assumed Cloudflare from the owner's "cloud front" wording; optional service confirmation pending.

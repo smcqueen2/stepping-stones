@@ -42,6 +42,7 @@ afterEach(() => { dispose(); vi.restoreAllMocks(); vi.unstubAllGlobals(); docume
 it('renders all chapters in normal reading order with their artwork, AI labels, notes and sources', () => {
   expect(articles).toHaveLength(12);
   expect(host.querySelector('.history-track, .history-controls')).toBeNull();
+  expect(host.querySelector('select')).toBeNull();
   content.milestones.forEach((milestone, index) => {
     const article = articles[index];
     expect(article.hasAttribute('aria-hidden')).toBe(false);
@@ -65,8 +66,7 @@ it('follows actual scroll position in both directions without changing focus or 
   expect(active()).toBe(dates()[0]);
   scrollTo(800 * 5 + 40);
   expect(active()).toBe(dates()[5]);
-  expect(host.querySelector<HTMLSelectElement>('select')!.value).toBe('5');
-  expect(host.querySelector('.history-rail-mark[data-current="true"] .history-rail-date')!.textContent).toBe(content.milestones[5].shortDate);
+  expect(active()!.querySelector('.history-rail-date')!.textContent).toBe(content.milestones[5].shortDate);
   expect(Number(host.querySelector<HTMLElement>('.history-timeline')!.style.getPropertyValue('--history-progress'))).toBeGreaterThan(5 / 11);
   expect(document.activeElement).toBe(focused);
   scrollTo(800);
@@ -76,15 +76,14 @@ it('follows actual scroll position in both directions without changing focus or 
   expect(host.querySelector<HTMLElement>('.history-timeline')!.style.getPropertyValue('--history-progress')).toBe('1');
 });
 
-it('jumps by timeline or picker, preserves source notes and honours reduced motion', () => {
+it('jumps from timeline dots and date labels, preserves source notes and honours reduced motion', () => {
   dates()[9].click();
   expect(articles[9].scrollIntoView).toHaveBeenCalledWith({ behavior: 'smooth', block: 'start' });
   expect(document.activeElement).toBe(articles[9].querySelector('h2'));
   draw();
   expect(active()).toBe(dates()[9]);
   reducedMotion = true;
-  const jump = host.querySelector<HTMLSelectElement>('select')!;
-  jump.value = '3'; jump.dispatchEvent(new Event('change'));
+  dates()[3].querySelector('.history-rail-dot')!.dispatchEvent(new MouseEvent('click', { bubbles: true }));
   expect(articles[3].scrollIntoView).toHaveBeenCalledWith({ behavior: 'instant', block: 'start' });
   draw();
   expect(active()).toBe(dates()[3]);

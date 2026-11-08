@@ -1,5 +1,11 @@
 # Progress
 
+### Clickable History dots on every screen - 2026-11-08
+
+- Owner requested removing the History dropdown in favour of jumping via each timeline dot. Removed the picker and duplicate decorative compact rail; the same accessible date/dot buttons now serve every viewport. Both labels and dots jump to the chapter heading, preserve the History route/source notes and honour reduced motion. Existing keyboard Arrow/Home/End controls and scroll-following current/past states remain.
+- Compact targets are at least 24px high with date/text clearance, while the rail and back-to-top arrow remain fixed. Very short windows can scroll the rail independently rather than compress touch targets; active-period changes/resizes reveal the current date without changing document focus. Decorative lines do not intercept taps. No new package.
+- Updated the existing picker-dependent tests and README. All 15 History timeline/loader/navigation checks, TypeScript and production build pass. Browser access remains disabled in Work settings, so no visual or physical-phone preview was possible. Owner subsequently requested commit/push; the validated implementation is unchanged during release. Generated data/private context/tide-source research remain excluded; remote/deployment proof belongs to the release handover.
+
 ### History back-to-top arrow - 2026-11-08
 
 - Owner requested a simple up-arrow control on History and commit/push. Added a small fixed circular button at the lower right, visible after scrolling 300px. It returns to the top of History without changing routes, focuses the page heading, uses smooth scrolling or an immediate return for reduced motion, and has a 44px target, accessible name and existing focus styling.

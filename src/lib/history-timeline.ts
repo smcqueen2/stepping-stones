@@ -96,31 +96,9 @@ export function mountHistoryTimeline(host: HTMLElement) {
     dateList.append(item);
     return button;
   });
+  dateList.style.setProperty('--history-period-count', String(dateButtons.length));
   dates.append(dateList);
-  // Small-screen dates label every marker; the picker provides larger jump controls.
-  const compact = element('div', 'history-rail-compact');
-  compact.setAttribute('aria-hidden', 'true');
-  const marks = element('div', 'history-rail-marks');
-  const compactSteps = content.milestones.map(milestone => {
-    const step = element('span', 'history-rail-mark');
-    step.append(element('span', 'history-rail-date', milestone.shortDate), element('span', 'history-rail-dot'));
-    return step;
-  });
-  marks.append(...compactSteps);
-  compact.append(marks);
-  rail.append(dates, compact);
-
-  const jumpControl = element('div', 'history-jump');
-  const jumpLabel = element('label', '', 'Jump to a period');
-  const jump = element('select');
-  jump.id = 'history-period-picker';
-  jumpLabel.htmlFor = jump.id;
-  content.milestones.forEach((milestone, index) => {
-    const option = element('option', '', `${milestone.shortDate} · ${milestone.title}`);
-    option.value = String(index);
-    jump.append(option);
-  });
-  jumpControl.append(jumpLabel, jump);
+  rail.append(dates);
   const legend = element('details', 'history-notes history-legend');
   legend.append(element('summary', '', 'Beside the history: a local legend'));
   const legendCopy = element('div', 'history-note-copy');
@@ -138,23 +116,29 @@ export function mountHistoryTimeline(host: HTMLElement) {
   backToTop.setAttribute('aria-label', 'Back to top of history');
   backToTop.title = 'Back to top';
   backToTop.innerHTML = '<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="m6 12 6-6 6 6M12 6v12"/></svg>';
-  root.append(rail, jumpControl, backToTop, chapters, legend);
+  root.append(rail, backToTop, chapters, legend);
   host.replaceChildren(root);
   let current = -1;
   let frame: number | undefined;
   let disposed = false;
 
   function markCurrent(index: number) {
-    if (index === current) return;
-    current = index;
-    dateButtons.forEach((button, i) => {
-      if (i === index) button.setAttribute('aria-current', 'location');
-      else button.removeAttribute('aria-current');
-      button.dataset.past = String(i < index);
-      compactSteps[i].dataset.current = String(i === index);
-      compactSteps[i].dataset.past = String(i < index);
-    });
-    if (document.activeElement !== jump) jump.value = String(index);
+    if (index !== current) {
+      current = index;
+      dateButtons.forEach((button, i) => {
+        if (i === index) button.setAttribute('aria-current', 'location');
+        else button.removeAttribute('aria-current');
+        button.dataset.past = String(i < index);
+      });
+    }
+    // On very short screens the rail scrolls independently, keeping the current date visible.
+    if (dates.scrollHeight > dates.clientHeight) {
+      const button = dateButtons[index];
+      if (button.offsetTop < dates.scrollTop) dates.scrollTop = button.offsetTop;
+      else if (button.offsetTop + button.offsetHeight > dates.scrollTop + dates.clientHeight) {
+        dates.scrollTop = button.offsetTop + button.offsetHeight - dates.clientHeight;
+      }
+    }
   }
 
   function update() {
@@ -189,7 +173,6 @@ export function mountHistoryTimeline(host: HTMLElement) {
     const button = (event.target as Element).closest<HTMLButtonElement>('button[data-history-index]');
     if (button) select(Number(button.dataset.historyIndex));
   }
-  function change() { select(Number(jump.value)); }
   function keydown(event: KeyboardEvent) {
     const target = event.target;
     if (!(target instanceof HTMLButtonElement) || target.dataset.historyIndex === undefined || event.altKey || event.ctrlKey || event.metaKey || event.shiftKey) return;
@@ -205,7 +188,6 @@ export function mountHistoryTimeline(host: HTMLElement) {
   root.addEventListener('click', click);
   root.addEventListener('keydown', keydown);
   root.addEventListener('toggle', schedule, true);
-  jump.addEventListener('change', change);
   window.addEventListener('scroll', schedule, { passive: true });
   window.addEventListener('resize', schedule);
   document.addEventListener('visibilitychange', schedule);
@@ -223,7 +205,6 @@ export function mountHistoryTimeline(host: HTMLElement) {
     root.removeEventListener('click', click);
     root.removeEventListener('keydown', keydown);
     root.removeEventListener('toggle', schedule, true);
-    jump.removeEventListener('change', change);
     root.remove();
   };
 }
