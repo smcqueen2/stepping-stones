@@ -1,0 +1,12 @@
+{
+  "stationId": 4099,
+  "parameterId": 64,
+  "unit": "m",
+  "datum": "unspecified",
+  "period": "all-year",
+  "low": 0.203,
+  "high": 0.538,
+  "source": "NRW",
+  "sourceUrl": "https://rivers-and-seas.naturalresources.wales/Station/4099?parameterType=1",
+  "checkedOn": "2026-11-08"
+}

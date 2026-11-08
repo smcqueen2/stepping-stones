@@ -2,6 +2,8 @@
 
 Recorded from user feedback on 2026-10-22. Updated 2026-11-08.
 
+- [x] Add high/low reference watermarks to the river mini-graph, requested 8 November with commit/push. Owner explicitly chose official NRW all-year typical levels (Keepers Lodge low 0.203 m / high 0.538 m). Shared scale, clear scope/source/review date, narrow-screen labels and stale-data removal; no monthly-normal or crossing-safety interpretation. All 161 tests, TypeScript and build pass. Snapshot/evidence and manual update procedure are in `docs/river-reference-levels.md`; visual preview unavailable.
+
 - [x] Replace the History dropdown with clickable timeline dots/dates at all screen sizes, requested 8 November. Shared accessible buttons, 24px minimum compact targets, keyboard/reduced-motion support and current-date tracking. Short-window rail overflow keeps targets usable and reveals the active date. All 15 History/navigation tests, TypeScript and build pass; visual preview unavailable. Owner subsequently authorised commit/push; supersedes the native picker in earlier checkpoints.
 
 - [x] Add a simple History back-to-top arrow, requested 8 November with commit/push. Small fixed 44px control appears after scrolling, returns/focuses the History heading and honours reduced motion. Timeline retains clearance on short screens. All 15 History/loader/navigation tests, TypeScript and production build pass; browser preview unavailable because Work settings disable local browser use.

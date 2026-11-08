@@ -51,6 +51,32 @@ describe('small line geometry', () => {
     }
     expect(levelLine([point(-15, .4), point(0, .5)], now, now - 1, .1)).toBeUndefined();
   });
+  it('plots reference levels and observations on the same scale without calling the references observed extrema', () => {
+    const graph = levelLine([point(-15, .27), point(0, .28)], now - 720 * 60000, now, .1, { low: .203, high: .538 })!;
+    expect(graph.low).toBe(.27); expect(graph.high).toBe(.28);
+    expect(graph.reference).toMatchObject({ low: .203, high: .538 });
+    expect(graph.reference!.lowY).toBeCloseTo(64); expect(graph.reference!.highY).toBeCloseTo(12);
+    const values = [...graph.paths[0].matchAll(/,([\d.]+)/g)].map(match => Number(match[1]));
+    expect(values.every(y => y > 12 && y < 64)).toBe(true);
+  });
+  it('keeps readings outside the reference band visible rather than clamping them onto it', () => {
+    for (const values of [[.8, 1.2], [.1, .15]]) {
+      const graph = levelLine(values.map((value, index) => point(-15 + index * 15, value)), now - 720 * 60000, now, .1, { low: .203, high: .538 })!;
+      const plotted = [...graph.paths[0].matchAll(/,([\d.]+)/g)].map(match => Number(match[1]));
+      expect(plotted.every(y => y >= 12 && y <= 64)).toBe(true);
+      expect(graph.reference!.highY).toBeGreaterThanOrEqual(12);
+      expect(graph.reference!.lowY).toBeLessThanOrEqual(64);
+      expect(plotted.every(y => values[0] > .538 ? y < graph.reference!.highY : y > graph.reference!.lowY)).toBe(true);
+    }
+  });
+  it('ignores invalid reference ranges without losing the observed line', () => {
+    const points = [point(-15, .27), point(0, .28)];
+    const plain = levelLine(points, now - 720 * 60000, now, .1)!;
+    for (const range of [{ low: NaN, high: 1 }, { low: .2, high: Infinity }, { low: .5, high: .2 }, { low: .2, high: .2 }]) {
+      const graph = levelLine(points, now - 720 * 60000, now, .1, range)!;
+      expect(graph.reference).toBeUndefined(); expect(graph.paths).toEqual(plain.paths);
+    }
+  });
 });
 
 describe('level graph rendering', () => {
@@ -105,5 +131,34 @@ describe('level graph rendering', () => {
     renderLevelGraphs(live(), true, false, now, 120, false, null);
     expect(document.querySelector('#river-level-graph svg')).toBeNull();
     expect(document.querySelector('#tide-level-graph svg')).not.toBeNull();
+  });
+  it('adds the official year-round range only to the matching local river, with provenance and readable labels', () => {
+    const river = monitoringFixture(now).gauges.ewenny;
+    renderLevelGraphs(live(), true, false, now, 120, false, river);
+    expect(document.querySelectorAll('#river-level-graph line.level-graph-reference')).toHaveLength(2);
+    expect(document.querySelectorAll('#tide-level-graph .level-graph-reference')).toHaveLength(0);
+    expect([...document.querySelectorAll('#river-level-graph .level-graph-reference-label')].map(label => label.textContent))
+      .toEqual(['Typical high 0.538m', 'Typical low 0.203m']);
+    const description = document.querySelector('#river-level-graph svg')!.getAttribute('aria-label')!;
+    expect(description).toContain('Observed range 0.260 to 0.270');
+    expect(description).toContain('NRW year-round typical low 0.203 and high 0.538');
+    expect(description).toContain('not monthly averages or crossing-safety thresholds');
+    expect(document.querySelector<HTMLAnchorElement>('#river-level-graph a')!.href)
+      .toBe('https://rivers-and-seas.naturalresources.wales/Station/4099?parameterType=1');
+    expect(document.querySelector('#river-level-graph .level-graph-source')!.textContent).toContain('all year');
+    expect(river.value).toBe(.27);
+  });
+  it('clears references on stale local readings and does not lend them to the old model station', () => {
+    const river = monitoringFixture(now).gauges.ewenny;
+    renderLevelGraphs(live(), true, false, now, 120, false, river);
+    river.observedAt = iso(-150);
+    renderLevelGraphs(live(), true, false, now, 120, false, river);
+    expect(document.querySelector('#river-level-graph svg')).toBeNull();
+    expect(document.querySelector('#river-level-graph .level-graph-reference-label')).toBeNull();
+    expect(document.querySelector('#river-level-graph')!.getAttribute('data-reference')).toBeNull();
+    renderLevelGraphs(live(), true, false, now);
+    expect(document.querySelector('#river-level-graph svg')).not.toBeNull();
+    expect(document.querySelector('#river-level-graph .level-graph-reference')).toBeNull();
+    expect(document.querySelector('#tide-level-graph svg')!.getAttribute('viewBox')).toBe('0 0 200 56');
   });
 });
