@@ -5,17 +5,12 @@ import { installCrossingOutlook, type OutlookData } from './lib/crossing-outlook
 import { installNavigation } from './lib/navigation';
 import { installHistoryLoader } from './lib/history-loader';
 import { installCommunityReports } from './lib/community-reports';
-import type { ConfigPayload, ForecastPayload, LivePayload, MonitoringPayload } from './lib/types';
+import type { ForecastPayload } from './lib/types';
+import { loadData } from './lib/data-source';
 
 const forecastClock = new Intl.DateTimeFormat('en-GB', {
   timeZone: 'Europe/London', weekday: 'short', hour: '2-digit', minute: '2-digit', timeZoneName: 'short',
 });
-
-async function fetchJson<T>(url: string, signal: AbortSignal): Promise<T> {
-  const response = await fetch(url, { cache: 'no-store', signal });
-  if (!response.ok) throw new Error('Data request failed: ' + response.status);
-  return await response.json() as T;
-}
 
 function renderForecast(payload?: ForecastPayload): void {
   const timeline = document.getElementById('forecast-timeline');
@@ -86,14 +81,9 @@ async function refreshData(): Promise<void> {
   requestTimeout = window.setTimeout(() => dataRequest?.abort(), 10_000);
   const base = import.meta.env.BASE_URL + 'data/';
   try {
-    const results = await Promise.allSettled([
-      fetchJson<LivePayload>(base + 'live.json', dataRequest.signal),
-      fetchJson<ForecastPayload>(base + 'forecast.json', dataRequest.signal),
-      fetchJson<ConfigPayload>(base + 'config.json', dataRequest.signal),
-      fetchJson<MonitoringPayload>(base + 'monitoring.json', dataRequest.signal),
-    ] as const);
+    const results = await loadData({ base, endpoint: import.meta.env.VITE_DATA_ENDPOINT, signal: dataRequest.signal });
     if (disposed) return;
-    const [live, forecast, config, monitoring] = results;
+    const { live, forecast, config, monitoring } = results;
     if (live.status === 'fulfilled' && live.value?.freshness && live.value?.current && Array.isArray(live.value?.sourceStations)) data.live = live.value;
     if (forecast.status === 'fulfilled' && Array.isArray(forecast.value?.hours)) data.forecast = forecast.value;
     if (config.status === 'fulfilled' && typeof config.value?.freshness?.staleAfterMinutes === 'number') data.config = config.value;
@@ -101,7 +91,7 @@ async function refreshData(): Promise<void> {
       && monitoring.value?.gauges && monitoring.value?.floodWarnings;
     if (monitoringValid && monitoring.status === 'fulfilled') data.monitoring = monitoring.value;
     data.monitoringUpdateFailed = !monitoringValid;
-    data.updateFailed = results.some(result => result.status === 'rejected') || !monitoringValid;
+    data.updateFailed = Object.values(results).some(result => result.status === 'rejected') || !monitoringValid;
     renderForecast(data.forecast);
     outlook.setData(data);
   } catch {

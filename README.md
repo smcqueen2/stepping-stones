@@ -110,11 +110,13 @@ The grass also gains a blanket of settled snow, with irregular patches resting o
 
 The weather feature reuses OGL and adds no npm package. Compared with lighting alone, it adds about 2.6 KB compressed JavaScript and 0.25 KB CSS. tsParticles' [snow preset](https://particles.js.org/demos/recipes/snow) was considered; the existing renderer lets this illustration keep its single draw pass and existing pause/resume lifecycle.
 
-The single-scene implementation, page navigation, condition-report preview, water-reading overlay, night-sky decoration and local monitoring/warning integration add no npm package. Main JavaScript is about 15.43 KB gzip, lazy animation 12.0 KB and initial CSS 5.25 KB. Snow and high-water images are decoded on demand and reused as renderer textures; the moon uses its own small on-demand image element.
+The single-scene implementation, page navigation, condition-report preview, water-reading overlay, night-sky decoration, local monitoring/warning integration and optional data-service client add no frontend npm package. Main JavaScript is about 15.94 KB gzip, lazy animation 12.0 KB and initial CSS 5.25 KB. Snow and high-water images are decoded on demand and reused as renderer textures; the moon uses its own small on-demand image element.
 
 ## Data pipeline
 
 Runtime is frontend-only, with live JSON generated server-side in GitHub Actions. The workflow requests a 15-minute schedule; actual scheduled starts can be delayed:
+
+An optional **Cloudflare Workers** data refresher is prepared under `workers/data-refresh/`, using the same calculations on a quarter-hour Cron and a single saved KV snapshot. The site stays on GitHub Pages. It is not activated by default: account/KV/secret setup, deployment and explicit repository variables are required. See [Worker setup, local checks, cutover and rollback](docs/cloudflare-worker.md). Wrangler is isolated in the Worker package and is not a frontend dependency. Existing model calibration, source roles and reporting-backend hold remain unchanged.
 
 - Preferred displayed river: `4099` (`Ewenny at Keepers Lodge`, parameter `64`, m)
 - Separate downstream tidal river: `4115` (`Ogmore at Penybont`, parameter `112`, m)

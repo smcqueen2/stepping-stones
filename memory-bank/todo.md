@@ -1,9 +1,12 @@
 # Future tasks
 
-Recorded from user feedback on 2026-10-22. Updated 2026-11-06.
+Recorded from user feedback on 2026-10-22. Updated 2026-11-08.
+
+- [x] Prepare a Cloudflare Workers environmental-data job every 15 minutes, requested 8 November. Shared builders, isolated Worker/KV/Cron package, optional Pages client/cutover, failure handling and setup guide are ready. All 156 tests, TypeScript, both frontend builds, Worker bundling and actual local scheduled refresh pass. Owner subsequently requested commit/push alongside the History back-to-top tweak; no account setup or Worker deployment performed. Assumed Cloudflare from the owner's "cloud front" wording; optional service confirmation pending.
+- [ ] Owner account setup and deliberate Worker deployment: sign in, create KV namespace, replace placeholder ID and verify scheduled snapshots. Measure hosted CPU against the free Cron allowance before switching the site. Follow `docs/cloudflare-worker.md`; keep existing Pages schedule until verified, then configure the two documented repository variables.
 
 - [x] Integrate local NRW Keepers Lodge/Penybont readings and official warning states using the accepted staged plan. Local displays improve now; existing model inputs are retained. See `docs/nrw-monitoring.md` for evidence, warning behaviour and validation.
-- [ ] Owner setup: obtain a free NRW Live Flood Warnings & Alerts subscription key, add repository Actions secret `NRW_API_KEY`, rerun Pages and perform the authenticated v3 smoke test. Until then official warning status is explicitly unavailable. Owner confirms no key yet.
+- [ ] Owner setup: obtain a free NRW Live Flood Warnings & Alerts subscription key, add repository Actions secret `NRW_API_KEY`, rerun Pages and perform the authenticated v3 smoke test. If using the prepared Worker, add its separate `NRW_API_KEY` secret and verify there too. Until then official warning status is explicitly unavailable. Owner confirms no key yet.
 - [ ] Establish timestamped crossing observations and validate station-specific relationships before changing the model to use Keepers Lodge/Penybont. No arbitrary numerical thresholds or datum transfer; report backend preparation remains on hold.
 
 - [x] Add visible dots at all five observation-slider positions. CSS-only track markers retain native drag/keyboard/44px input behaviour; five existing reporting/UI checks, production build and desktop/320px browser review pass. Owner explicitly authorised commit/push.

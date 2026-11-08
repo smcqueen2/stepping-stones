@@ -18,6 +18,8 @@ concurrency:
 
 jobs:
   build:
+    # Opt-in cutover only: unset keeps today's scheduled Pages generation.
+    if: github.event_name != 'schedule' || vars.DATA_REFRESH_PROVIDER != 'cloudflare' || vars.DATA_ENDPOINT == ''
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -45,6 +47,8 @@ jobs:
         run: npm run generate:data
 
       - name: Build
+        env:
+          VITE_DATA_ENDPOINT: ${{ vars.DATA_ENDPOINT }}
         run: npm run build
 
       - name: Setup Pages

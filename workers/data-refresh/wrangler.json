@@ -1,0 +1,11 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "stepping-stones-data",
+  "main": "src/index.mjs",
+  "compatibility_date": "2026-11-01",
+  "workers_dev": true,
+  "triggers": { "crons": ["*/15 * * * *"] },
+  "kv_namespaces": [{ "binding": "SNAPSHOTS", "id": "00000000000000000000000000000000" }],
+  "vars": { "ALLOWED_ORIGINS": "https://smcqueen2.github.io" },
+  "observability": { "enabled": true }
+}
