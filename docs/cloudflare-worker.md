@@ -22,6 +22,8 @@ The deployment lists all the account's KV namespaces, reuses the classic namespa
 
 The public namespace ID is passed to an ignored adjacent `wrangler.ci.json`; source configuration stays unchanged and credentials never enter that file. Deployments are serialised and skip superseded main revisions before provisioning. If a different infrastructure framework is adopted later, replace the production owner instead of allowing two tools to change the same Worker.
 
+After first setup, record its namespace ID as `CLOUDFLARE_KV_NAMESPACE_ID` to pin subsequent deployments to that storage. This also stops a later run from silently creating empty replacement storage if the original namespace is deleted or becomes inaccessible.
+
 **Code deployment and data refresh are separate:** a deployment tool publishes resource/code changes; the deployed Worker's Cron refreshes environmental data every fifteen minutes. The website stays on its existing Pages data route until a real hosted data/CPU/warning-state check and explicit cutover. Runtime `NRW_API_KEY` remains a separate Cloudflare secret and reporting collection stays on hold.
 
 ## Files and commands
@@ -130,5 +132,13 @@ KV changes can take around sixty seconds or more to become visible in other loca
 Sources checked 8-9 November 2026: [GitHub Actions deployment/authentication](https://developers.cloudflare.com/workers/ci-cd/external-cicd/github-actions/), [Wrangler environment variables](https://developers.cloudflare.com/workers/wrangler/system-environment-variables/), [KV setup](https://developers.cloudflare.com/kv/get-started/), [workers.dev](https://developers.cloudflare.com/workers/configuration/routing/workers-dev/), [Cron Triggers](https://developers.cloudflare.com/workers/configuration/cron-triggers/), [Workers limits](https://developers.cloudflare.com/workers/platform/limits/), [KV limits](https://developers.cloudflare.com/kv/platform/limits/), [KV consistency](https://developers.cloudflare.com/kv/concepts/how-kv-works/), [Worker secrets](https://developers.cloudflare.com/workers/configuration/secrets/).
 
 ## Validation checkpoint
+
+### Hosted setup, 9 November 2026
+
+- Setup commit `d540a77f1e22842f5b78762205a949a25ba22b75` was pushed and remote main independently verified. GitHub validation passed all 180 tests, TypeScript and the Worker bundle; the Pages deployment also succeeded.
+- [First deployment run](https://github.com/smcqueen2/stepping-stones/actions/runs/42713894761), attempt 2, succeeded. The first attempt created KV and uploaded the Worker, then received transient Cloudflare code 10007 while resolving the newly uploaded Worker. Rerunning only the failed job reused the same namespace and completed without source/dependency changes.
+- Classic KV namespace: `66c5c54e1ce244e9a61dfc213102630a`, now pinned by the repository variable. `CLOUDFLARE_WORKER_DEPLOY_ENABLED=true` enables future relevant main-push deployment. Neither setting contains a credential.
+- Worker address: `https://stepping-stones-data.mcqueen-4.workers.dev/data/snapshot.json`; version `0c93558b-f37f-454a-b90d-2ae4ec47dbf2`. Quarter-hour Cron accepted. Public-route propagation, actual scheduled output and Free CPU suitability are still being checked; successful upload alone is not proof of a working data service.
+- `DATA_ENDPOINT` and `DATA_REFRESH_PROVIDER` are unset. Pages stays on its existing generated data/schedule. No R2 request, subscription change or NRW key is included. Owner confirmation of the Workers Free account plan is pending.
 
 Wrangler 4.158.0 bundles the Worker locally. Its actual local workerd runtime was exercised: empty storage returned 503, a simulated Cron event fetched real public provider data, and the endpoint then returned both local gauges, unchanged model stations, coastal timing and 24 forecast hours. CORS was verified for the Pages origin. Official warnings correctly remained unavailable without a key. Unit coverage includes independent pipeline failure, preserving timestamps/config/warnings, storage failure, secret exclusion, read-only routes/CORS, optional frontend source selection and avoiding stale static fallback. Cloudflare deployment, hosted CPU use and authenticated NRW access still await account setup.
