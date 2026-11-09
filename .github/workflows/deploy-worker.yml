@@ -130,32 +130,9 @@ jobs:
         if: steps.revision.outputs.current == 'true'
         run: npm run worker:deploy:ci
 
-      - name: Verify published address and schedule
+      - name: Verify published address, schedule and saved data
         if: steps.revision.outputs.current == 'true'
-        shell: bash
-        run: |
-          node --input-type=module <<'JS'
-          const base = `https://api.cloudflare.com/client/v4/accounts/${process.env.CLOUDFLARE_ACCOUNT_ID}/workers`;
-          async function get(path) {
-            const response = await fetch(base + path, { redirect: 'error', signal: AbortSignal.timeout(20000),
-              headers: { Authorization: `Bearer ${process.env.CLOUDFLARE_API_TOKEN}` } });
-            const data = await response.json();
-            if (!response.ok || data.success !== true) throw new Error(`Worker configuration check failed: HTTP ${response.status}`);
-            return data.result;
-          }
-          const [account, worker, schedules] = await Promise.all([
-            get('/subdomain'), get('/workers/stepping-stones-data'), get('/scripts/stepping-stones-data/schedules'),
-          ]);
-          if (worker.subdomain?.enabled !== true || !/^[a-z0-9-]+$/.test(account.subdomain)) {
-            throw new Error('The public workers.dev route is not enabled.');
-          }
-          if (!Array.isArray(schedules) || schedules.length !== 1 || schedules[0].cron !== '*/15 * * * *') {
-            throw new Error('The expected quarter-hour schedule could not be verified.');
-          }
-          console.log(`Verified address: https://stepping-stones-data.${account.subdomain}.workers.dev/data/snapshot.json`);
-          console.log(`Verified Cron: ${schedules[0].cron}`);
-          console.log('Public routing/Cron propagation and actual saved data still require an HTTP smoke check.');
-          JS
+        run: node workers/data-refresh/scripts/check-hosted-config.mjs
 
       - name: Record proof of concept setup
         if: steps.revision.outputs.current == 'true'

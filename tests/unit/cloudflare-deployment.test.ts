@@ -1,8 +1,29 @@
 import { deploymentConfig } from '../../workers/data-refresh/scripts/prepare-ci-config.mjs';
+import { deploymentDetails } from '../../workers/data-refresh/scripts/check-hosted-config.mjs';
 import template from '../../workers/data-refresh/wrangler.json';
 
 const accountId = 'a'.repeat(32);
 const namespaceId = 'b'.repeat(32);
+
+it('reads the official nested schedules API result and enabled public address', () => {
+  expect(deploymentDetails({ subdomain: 'example' }, { subdomain: { enabled: true } },
+    { schedules: [{ cron: '*/15 * * * *', created_on: '2026-11-09T22:42:00Z' }] })).toEqual({
+      endpoint: 'https://stepping-stones-data.example.workers.dev/data/snapshot.json', cron: '*/15 * * * *',
+    });
+});
+
+it('does not verify absent, conflicting, or malformed schedules', () => {
+  for (const result of [undefined, [], { schedules: [] }, { schedules: [{ cron: '* * * * *' }] },
+    { schedules: [{ cron: '*/15 * * * *' }, { cron: '* * * * *' }] }]) {
+    expect(() => deploymentDetails({ subdomain: 'example' }, { subdomain: { enabled: true } }, result)).toThrow('schedule');
+  }
+});
+
+it('does not verify a disabled route or malformed hostname', () => {
+  const schedules = { schedules: [{ cron: '*/15 * * * *' }] };
+  expect(() => deploymentDetails({ subdomain: 'example' }, { subdomain: { enabled: false } }, schedules)).toThrow('route');
+  expect(() => deploymentDetails({ subdomain: 'bad/host' }, { subdomain: { enabled: true } }, schedules)).toThrow('route');
+});
 
 it('binds the selected account and namespace while preserving the reviewed runtime configuration and relative paths', () => {
   const original = structuredClone(template);
