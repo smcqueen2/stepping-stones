@@ -1,6 +1,6 @@
 # TypeScript infrastructure options for the data Worker
 
-Research checkpoint: 9 November 2026. The owner steered away from Terraform/HCP-style setup and asked for an AWS CDK/CloudFormation-like experience: define resources in code and deploy the complete stack through a pipeline. No replacement framework has been selected or implemented yet, and no cloud resources have been created. The earlier Wrangler-only workflow remains a local, uncommitted draft.
+Historical research checkpoint: 9 November 2026. The owner steered away from Terraform/HCP-style setup and asked for an AWS CDK/CloudFormation-like experience: define resources in code and deploy the complete stack through a pipeline. The research below predates the proof-of-concept decision; no CDK-style framework was installed. Current Worker setup/deployment status is in [the operational guide](cloudflare-worker.md).
 
 ## Deferred CDK-style direction: SST
 
