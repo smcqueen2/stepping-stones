@@ -40,7 +40,7 @@ jobs:
         shell: bash
         run: |
           set +e
-          timeout 180s npx --no-install wrangler tail --config wrangler.ci.json --format json --sampling-rate 1
+          timeout 180s npx --no-install wrangler tail --config wrangler.ci.json --format json
           result=$?
           if [ "$result" -ne 0 ] && [ "$result" -ne 124 ]; then exit "$result"; fi
       - name: Inspect saved snapshot after observation
