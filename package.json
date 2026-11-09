@@ -13,7 +13,9 @@
     "worker:install": "npm --prefix workers/data-refresh ci",
     "worker:dev": "npm --prefix workers/data-refresh run dev",
     "worker:check": "npm --prefix workers/data-refresh run check",
+    "worker:check:ci": "npm --prefix workers/data-refresh run check:ci",
     "worker:deploy": "npm --prefix workers/data-refresh run deploy",
+    "worker:deploy:ci": "npm --prefix workers/data-refresh run deploy:ci",
     "calibrate:observations": "node scripts/calibrate-observations.mjs",
     "build:with-data": "npm run generate:data && npm run build"
   },

@@ -1,0 +1,144 @@
+name: Check and Deploy Data Worker
+
+on:
+  pull_request:
+    branches: ['main']
+    paths:
+      - '.github/workflows/deploy-worker.yml'
+      - 'workers/data-refresh/**'
+      - 'scripts/**'
+      - 'public/data/config.json'
+      - 'tests/**'
+      - 'package.json'
+      - 'package-lock.json'
+      - 'tsconfig.json'
+      - 'vitest.config.ts'
+  push:
+    branches: ['main']
+    paths:
+      - '.github/workflows/deploy-worker.yml'
+      - 'workers/data-refresh/**'
+      - 'scripts/**'
+      - 'public/data/config.json'
+      - 'tests/**'
+      - 'package.json'
+      - 'package-lock.json'
+      - 'tsconfig.json'
+      - 'vitest.config.ts'
+  workflow_dispatch:
+    inputs:
+      deploy:
+        description: 'Deploy to Cloudflare after checks pass (main branch only)'
+        type: boolean
+        default: false
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    name: Test and bundle
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+          cache-dependency-path: |
+            package-lock.json
+            workers/data-refresh/package-lock.json
+
+      - name: Install test dependencies
+        run: npm ci
+
+      - name: Install pinned Worker tooling
+        run: npm run worker:install
+
+      - name: Test shared data and website behaviour
+        run: npm test -- --maxWorkers=2
+
+      - name: Check TypeScript
+        run: npx --no-install tsc --noEmit
+
+      - name: Bundle Worker without deploying
+        run: npm run worker:check
+
+  deploy:
+    name: Deploy production Worker
+    needs: validate
+    if: >-
+      github.ref == 'refs/heads/main'
+      && ((github.event_name == 'push' && vars.CLOUDFLARE_WORKER_DEPLOY_ENABLED == 'true')
+          || (github.event_name == 'workflow_dispatch' && inputs.deploy))
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    concurrency:
+      group: cloudflare-data-worker-production
+      cancel-in-progress: false
+    env:
+      CLOUDFLARE_ACCOUNT_ID: ${{ vars.CLOUDFLARE_ACCOUNT_ID }}
+      CLOUDFLARE_KV_NAMESPACE_ID: ${{ vars.CLOUDFLARE_KV_NAMESPACE_ID }}
+      CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+      WRANGLER_SEND_METRICS: 'false'
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+          cache-dependency-path: workers/data-refresh/package-lock.json
+
+      - name: Check deployment credentials are configured
+        shell: bash
+        run: |
+          if [ -z "$CLOUDFLARE_API_TOKEN" ]; then
+            echo '::error::Add the repository Actions secret CLOUDFLARE_API_TOKEN before enabling deployment.'
+            exit 1
+          fi
+
+      - name: Install pinned Worker tooling
+        run: npm run worker:install
+
+      - name: Check this is the current main revision
+        id: revision
+        shell: bash
+        run: |
+          current_head="$(git ls-remote origin refs/heads/main | cut -f1)"
+          if [ -z "$current_head" ]; then
+            echo '::error::Could not verify the current main revision.'
+            exit 1
+          fi
+          if [ "$current_head" != "$GITHUB_SHA" ]; then
+            echo 'A newer main revision exists; skipping this superseded deployment.'
+            exit 0
+          fi
+          echo 'current=true' >> "$GITHUB_OUTPUT"
+
+      - name: Create or reuse classic snapshot storage
+        if: steps.revision.outputs.current == 'true'
+        run: node workers/data-refresh/scripts/provision-kv.mjs
+
+      - name: Deploy quarter-hour Worker
+        if: steps.revision.outputs.current == 'true'
+        run: npm run worker:deploy:ci
+
+      - name: Record proof of concept setup
+        if: steps.revision.outputs.current == 'true'
+        shell: bash
+        run: |
+          {
+            echo '### Cloudflare data proof of concept'
+            echo '- Worker: stepping-stones-data'
+            echo '- Schedule: every 15 minutes (UTC)'
+            echo "- Classic KV namespace: $CLOUDFLARE_KV_NAMESPACE_ID"
+            echo '- Website data source: unchanged; verify hosted snapshots before switching.'
+            echo '- No R2, SST state backend or paid-plan upgrade is provisioned.'
+          } >> "$GITHUB_STEP_SUMMARY"

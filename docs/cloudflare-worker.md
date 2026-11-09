@@ -1,6 +1,6 @@
 # Cloudflare Workers: 15-minute data refresh
 
-Prepared 8 November 2026. This targets **Cloudflare Workers**, following the earlier hosting discussion. It prepares the river/tide/warning data service while the website remains on GitHub Pages. Account resources and deployment are still owner setup steps.
+Prepared 8 November 2026; proof-of-concept setup selected 9 November. This targets **Cloudflare Workers Free + classic Workers KV**, deployed through GitHub Actions with pinned Wrangler. The owner prioritised reducing billing risk and authorised this route. R2/SST deployment state is not used. GitHub secret-name metadata and the account-ID variable have been verified; the private secret value has not been accessed. Hosted results will be recorded after deployment. The website stays on GitHub Pages.
 
 ## What it will do
 
@@ -12,6 +12,18 @@ The configured expression is `*/15 * * * *`. This is 96 scheduled attempts per d
 
 **Nothing switches automatically:** with no frontend endpoint configured, the site continues using its current Pages JSON and Actions schedule. This is a data refresher only; community-observation storage/submission remains on hold.
 
+## GitHub Actions setup
+
+This proof of concept uses the Wrangler pipeline rather than a framework needing remote deployment state. [The CDK-style research](cloudflare-iac-options.md) is retained for a future decision. The owner reports R2 is enabled, but this pipeline creates no bucket, makes no R2 requests and never changes billing/subscriptions or upgrades a plan. Ensure the account remains on **Workers Free**; enabled R2 is a separate product.
+
+The **Check and Deploy Data Worker** workflow validates relevant PR/main/manual runs with tests, TypeScript and bundling. Configure repository secret `CLOUDFLARE_API_TOKEN` and variable `CLOUDFLARE_ACCOUNT_ID`. Start with a main-branch manual run and tick `deploy`; unticked is check-only. Automatic deployments on relevant main pushes additionally require `CLOUDFLARE_WORKER_DEPLOY_ENABLED=true`. PR checks never receive Cloudflare credentials; GitHub workflow permissions remain read-only.
+
+The deployment lists all the account's KV namespaces, reuses the classic namespace named `stepping-stones-data-snapshots`, or creates it if absent. An optional `CLOUDFLARE_KV_NAMESPACE_ID` variable selects a specific existing namespace. A missing explicit ID, duplicate name, non-classic mode, failed listing or malformed response stops setup rather than creating replacement storage. Creation is never blindly retried after a timeout; a new run lists first. Nothing deletes storage.
+
+The public namespace ID is passed to an ignored adjacent `wrangler.ci.json`; source configuration stays unchanged and credentials never enter that file. Deployments are serialised and skip superseded main revisions before provisioning. If a different infrastructure framework is adopted later, replace the production owner instead of allowing two tools to change the same Worker.
+
+**Code deployment and data refresh are separate:** a deployment tool publishes resource/code changes; the deployed Worker's Cron refreshes environmental data every fifteen minutes. The website stays on its existing Pages data route until a real hosted data/CPU/warning-state check and explicit cutover. Runtime `NRW_API_KEY` remains a separate Cloudflare secret and reporting collection stays on hold.
+
 ## Files and commands
 
 - `workers/data-refresh/`: isolated Worker package, pinned Wrangler development tool and lockfile. These dependencies do not enter the website bundle or root production install.
@@ -19,6 +31,9 @@ The configured expression is `*/15 * * * *`. This is 96 scheduled attempts per d
 - `workers/data-refresh/src/index.mjs`: scheduled/HTTP entry points; `service.mjs` holds storage and request handling.
 - `scripts/lib/model-data.mjs` / `monitoring-data.mjs`: runtime-independent builders shared by the Worker and existing Node/Actions scripts. The Worker uses native APIs without Node filesystem compatibility.
 - `src/lib/data-source.ts`: optional coherent Worker snapshot loading, with the existing four-file route as the default.
+- `.github/workflows/deploy-worker.yml`: validation plus opt-in production deployment.
+- `workers/data-refresh/scripts/prepare-ci-config.mjs`: validates public deployment IDs and writes an ignored CI config; tokens stay in the process environment.
+- `workers/data-refresh/scripts/provision-kv.mjs`: creates/reuses only the classic snapshot KV namespace through the official API.
 
 From the repository root:
 
@@ -46,7 +61,7 @@ For a local frontend preview, copy the examples to ignored local files:
 
 Restart the local Vite/Worker processes after changing their environment files. Leave the endpoint unset for the existing static data route. Never use a `VITE_` variable for a subscription key or Cloudflare token.
 
-## Account setup and deployment, when ready
+## Alternative: account setup and manual deployment from this PC
 
 These commands create account resources or deploy software; they have **not** been run during preparation.
 
@@ -71,6 +86,8 @@ These commands create account resources or deploy software; they have **not** be
 
    The existing GitHub Actions secret is separate; it is not automatically copied to Cloudflare. No NRW key was available during preparation. Gauges/model/tide timings work without it; official warning status stays explicitly unavailable until a valid key is configured and the authenticated response is smoke-tested.
 6. Verify recent `refreshedAt`, source observation times, all expected stations, 24 forecast hours and warning availability/state. A successful HTTP response alone does not mean every source is fresh.
+
+The manual `worker:deploy` command still requires a real namespace in `wrangler.json`. The existing Wrangler-only CI fallback takes the account/namespace IDs from GitHub variables; a selected CDK-style replacement would provision/link those resources from code. Both use the same source Worker and Cron; choose the appropriate command for the configuration you have set up.
 
 The default allowed browser origin is `https://smcqueen2.github.io`. Origins contain no `/stepping-stones` path. If hosting changes, update `ALLOWED_ORIGINS` to the exact approved origins. CORS limits browser access; this is public environmental data, not a private authenticated API.
 
@@ -110,7 +127,7 @@ Cloudflare's published free allowances currently include 100,000 Worker requests
 
 KV changes can take around sixty seconds or more to become visible in other locations. This adapter requests a 30-second KV read cache TTL; global propagation can still add delay. Cron delivery and free quotas are not guarantees of a timely safety alert.
 
-Sources checked 8 November 2026: [Cron Triggers](https://developers.cloudflare.com/workers/configuration/cron-triggers/), [Workers limits](https://developers.cloudflare.com/workers/platform/limits/), [KV limits](https://developers.cloudflare.com/kv/platform/limits/), [KV consistency](https://developers.cloudflare.com/kv/concepts/how-kv-works/), [Worker secrets](https://developers.cloudflare.com/workers/configuration/secrets/).
+Sources checked 8-9 November 2026: [GitHub Actions deployment/authentication](https://developers.cloudflare.com/workers/ci-cd/external-cicd/github-actions/), [Wrangler environment variables](https://developers.cloudflare.com/workers/wrangler/system-environment-variables/), [KV setup](https://developers.cloudflare.com/kv/get-started/), [workers.dev](https://developers.cloudflare.com/workers/configuration/routing/workers-dev/), [Cron Triggers](https://developers.cloudflare.com/workers/configuration/cron-triggers/), [Workers limits](https://developers.cloudflare.com/workers/platform/limits/), [KV limits](https://developers.cloudflare.com/kv/platform/limits/), [KV consistency](https://developers.cloudflare.com/kv/concepts/how-kv-works/), [Worker secrets](https://developers.cloudflare.com/workers/configuration/secrets/).
 
 ## Validation checkpoint
 

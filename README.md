@@ -118,7 +118,9 @@ The single-scene implementation, page navigation, condition-report preview, wate
 
 Runtime is frontend-only, with live JSON generated server-side in GitHub Actions. The workflow requests a 15-minute schedule; actual scheduled starts can be delayed:
 
-An optional **Cloudflare Workers** data refresher is prepared under `workers/data-refresh/`, using the same calculations on a quarter-hour Cron and a single saved KV snapshot. The site stays on GitHub Pages. It is not activated by default: account/KV/secret setup, deployment and explicit repository variables are required. See [Worker setup, local checks, cutover and rollback](docs/cloudflare-worker.md). Wrangler is isolated in the Worker package and is not a frontend dependency. Existing model calibration, source roles and reporting-backend hold remain unchanged.
+The **Cloudflare Workers Free + classic KV proof of concept** under `workers/data-refresh/` uses the same calculations on a quarter-hour Cron and one saved snapshot. The site stays on GitHub Pages. **Check and Deploy Data Worker** validates pull requests and supports a checked manual deployment; relevant main pushes deploy automatically when `CLOUDFLARE_WORKER_DEPLOY_ENABLED=true`. The pipeline uses a private token and account-ID variable, creates/reuses its named KV namespace, and needs no R2 deployment state. Check-only manual runs are the default; deployment and website cutover are separate. See [Worker CI/CD setup, local checks, cutover and rollback](docs/cloudflare-worker.md). Wrangler is isolated from the frontend bundle. Existing calibration, source roles and the reporting-backend hold remain unchanged.
+
+[CDK-style TypeScript infrastructure research](docs/cloudflare-iac-options.md) is retained for later. The owner chose the simpler Wrangler route for this proof of concept to reduce billing risk. SST and its R2 state backend are not part of this setup.
 
 - Preferred displayed river: `4099` (`Ewenny at Keepers Lodge`, parameter `64`, m)
 - Separate downstream tidal river: `4115` (`Ogmore at Penybont`, parameter `112`, m)
