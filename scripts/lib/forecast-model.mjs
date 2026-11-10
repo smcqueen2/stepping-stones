@@ -130,7 +130,7 @@ export function riskScore(components, weights) {
 }
 
 // Fixed, immutable formatting configuration belongs to isolate setup, not each scheduled refresh.
-const summaryFormatter = new Intl.DateTimeFormat('en-GB', {
+const summaryFormatter = /* @__PURE__ */ new Intl.DateTimeFormat('en-GB', {
   day: '2-digit',
   month: 'short',
   hour: '2-digit',
