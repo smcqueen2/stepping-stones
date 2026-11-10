@@ -16,11 +16,18 @@ export async function fetchLocalGauge(spec, fetchJson, now = new Date()) {
     const parameter = station?.parameters?.find(item => item.id === spec.parameterId
       && item.locationId === spec.stationId && item.typeText?.english === 'River Level' && item.unit === 'm');
     if (station?.id !== spec.stationId || station.status !== 1 || !parameter) throw new Error('Gauge metadata unavailable');
-    const from = new Date(now.getTime() - 48 * 3600000).toISOString();
-    const response = await fetchJson(`${base}/graph/getdata?parameterId=${spec.parameterId}&from=${encodeURIComponent(from)}&to=${encodeURIComponent(now.toISOString())}`);
-    const series = gaugeSeries(response).filter(point => Date.parse(point.time) <= now.getTime());
-    // Duplicate timestamps are ambiguous; keep one actual reading at each instant.
-    const unique = [...new Map(series.map(point => [Date.parse(point.time), point])).values()];
+    const loadReadings = async hours => {
+      const from = new Date(now.getTime() - hours * 3600000).toISOString();
+      const response = await fetchJson(`${base}/graph/getdata?parameterId=${spec.parameterId}&from=${encodeURIComponent(from)}&to=${encodeURIComponent(now.toISOString())}`);
+      const series = gaugeSeries(response).filter(point => Date.parse(point.time) <= now.getTime());
+      // Duplicate timestamps are ambiguous; keep one actual reading at each instant.
+      return [...new Map(series.map(point => [Date.parse(point.time), point])).values()];
+    };
+    // The graph needs 12 hours; the unchanged trend needs the latest 32 unique readings.
+    // Sparse, failed or missing short responses still use the original 48-hour range.
+    let unique;
+    try { unique = await loadReadings(12); } catch { unique = []; }
+    if (unique.length < 32) unique = await loadReadings(48);
     const latest = unique.at(-1);
     if (!latest) throw new Error('No usable gauge readings');
     const history = recentLevels(unique, [], now.toISOString());

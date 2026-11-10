@@ -1,7 +1,9 @@
 /** Keep the next 24 hours, not the provider's first 24 rows from midnight. */
 export function futureRainWindow(rows, now, count = 24) {
-  const future = rows.filter(row => Date.parse(row.timestamp) >= now.getTime())
-    .sort((a, b) => Date.parse(a.timestamp) - Date.parse(b.timestamp)).slice(0, count);
+  const start = now.getTime();
+  const future = rows.map(row => ({ row, time: Date.parse(row.timestamp) }))
+    .filter(point => point.time >= start).sort((a, b) => a.time - b.time)
+    .slice(0, count).map(point => point.row);
   // Missing forecast hours are an error; a dry forecast is not an observation.
   if (future.length < count) throw new Error('Insufficient future rainfall hours');
   return future;
