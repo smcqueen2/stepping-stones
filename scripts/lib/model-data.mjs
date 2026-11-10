@@ -4,7 +4,7 @@ import {
   detectExtrema,
   linearTrendPerHour,
   normalizeToRange,
-  projectTideLevel,
+  createTideProjector,
   riskScore,
   summarizeForecast,
 } from './forecast-model.mjs';
@@ -207,15 +207,11 @@ export async function buildModelData({ config, now = new Date(), fetcher = fetch
     console.warn('Coastal tide timings unavailable; retaining river/gauge forecast.', error);
   }
 
+  const projectTide = createTideProjector(tideExtrema, tideLatest.value, (tideMax - tideMin) / 2 || 0.5);
   const forecastHours = hourlyWindow.map((hour, index, all) => {
     const target = hour.timestamp;
 
-    const projectedTide = projectTideLevel(
-      target,
-      tideExtrema,
-      tideLatest.value,
-      (tideMax - tideMin) / 2 || 0.5,
-    );
+    const projectedTide = projectTide(target);
 
     const cumulativeRain = all
       .slice(Math.max(0, index - 5), index + 1)

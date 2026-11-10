@@ -9,6 +9,19 @@ const iso = (minutes: number) => new Date(now + minutes * 60000).toISOString();
 const point = (minutes: number, value: number): LevelPoint => ({ time: iso(minutes), value });
 
 describe('observed level history', () => {
+  it('sorts mixed timestamp formats by their actual instant and retains stable duplicates and bucket choices', () => {
+    const series = gaugeSeries({ data: [
+      { x: '2026-11-07T12:00:00+01:00', y: '.3' },
+      { x: '2026-11-07T10:59:00Z', y: '-.1' },
+      { x: '2026-11-07T11:00:00Z', y: 0 },
+      { x: '2026-11-07T11:01:00Z', y: '.4' },
+    ] });
+    expect(series.map((p: LevelPoint) => p.value)).toEqual([-.1, .3, 0, .4]);
+    expect(series.every((p: LevelPoint) => Object.keys(p).sort().join(',') === 'time,value')).toBe(true);
+    expect(recentLevels(series, [], iso(0)).river).toEqual([
+      { time: '2026-11-07T10:59:00Z', value: -.1 }, { time: '2026-11-07T11:01:00Z', value: .4 },
+    ]);
+  });
   it('retains genuine zero/negative readings but never converts missing values into zero', () => {
     const data = [null, '', ' ', undefined, 'bad', Infinity, 0, '-2.5', .4].map((y, i) => ({ x: iso(-i), y }));
     expect(gaugeSeries({ data })).toEqual([point(-8, .4), point(-7, -2.5), point(-6, 0)]);

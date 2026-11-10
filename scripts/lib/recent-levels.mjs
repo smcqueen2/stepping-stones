@@ -1,9 +1,13 @@
 export function gaugeSeries(response) {
-  return (Array.isArray(response?.data) ? response.data : [])
-    .filter(point => (typeof point?.y === 'number' || typeof point?.y === 'string' && point.y.trim() !== '')
-      && Number.isFinite(Number(point.y)) && Number.isFinite(Date.parse(point.x)))
-    .map(point => ({ time: point.x, value: Number(point.y) }))
-    .sort((a, b) => Date.parse(a.time) - Date.parse(b.time));
+  const points = [];
+  for (const point of Array.isArray(response?.data) ? response.data : []) {
+    if (!(typeof point?.y === 'number' || typeof point?.y === 'string' && point.y.trim() !== '')) continue;
+    const value = Number(point.y);
+    const epoch = Date.parse(point.x);
+    if (Number.isFinite(value) && Number.isFinite(epoch)) points.push({ time: point.x, value, epoch });
+  }
+  // Parse each provider timestamp once, rather than twice per sort comparison.
+  return points.sort((a, b) => a.epoch - b.epoch).map(({ time, value }) => ({ time, value }));
 }
 
 export function recentLevels(river, tide, generatedAt) {
@@ -15,10 +19,10 @@ export function recentLevels(river, tide, generatedAt) {
     for (const point of points) {
       const time = Date.parse(point.time);
       if (Number.isFinite(time) && Number.isFinite(point.value) && time >= from && time <= to) {
-        buckets.set(Math.floor(time / 600000), { time: point.time, value: point.value });
+        buckets.set(Math.floor(time / 600000), { time: point.time, value: point.value, epoch: time });
       }
     }
-    return [...buckets.values()].sort((a, b) => Date.parse(a.time) - Date.parse(b.time));
+    return [...buckets.values()].sort((a, b) => a.epoch - b.epoch).map(({ time, value }) => ({ time, value }));
   };
   return { from: new Date(from).toISOString(), to: new Date(to).toISOString(), river: sample(river), tide: sample(tide) };
 }

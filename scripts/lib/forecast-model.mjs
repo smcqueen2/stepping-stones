@@ -94,9 +94,10 @@ export function semidiurnalIntervalHours(extrema) {
   return intervals.length ? median(intervals) : DEFAULT_SEMIDIURNAL_HOURS;
 }
 
-export function projectTideLevel(targetTimeIso, extrema, fallbackMean, fallbackAmplitude) {
+/** Prepare unchanged tidal parameters once for a batch of forecast hours. */
+export function createTideProjector(extrema, fallbackMean, fallbackAmplitude) {
   if (!extrema.length) {
-    return fallbackMean;
+    return () => fallbackMean;
   }
 
   const sortedExtrema = [...extrema].sort((a, b) => Date.parse(a.time) - Date.parse(b.time));
@@ -108,11 +109,18 @@ export function projectTideLevel(targetTimeIso, extrema, fallbackMean, fallbackA
   const ampFromExtrema = (Math.max(...extremaValues) - Math.min(...extremaValues)) / 2;
   const amplitude = ampFromExtrema > 0 ? ampFromExtrema : fallbackAmplitude;
 
-  const dtHours = (Date.parse(targetTimeIso) - Date.parse(reference.time)) / 3600000;
-  const cosine = Math.cos((2 * Math.PI * dtHours) / intervalHours);
-  const phase = reference.type === 'high' ? cosine : -cosine;
+  const referenceTime = Date.parse(reference.time);
+  return targetTimeIso => {
+    const dtHours = (Date.parse(targetTimeIso) - referenceTime) / 3600000;
+    const cosine = Math.cos((2 * Math.PI * dtHours) / intervalHours);
+    const phase = reference.type === 'high' ? cosine : -cosine;
 
-  return mean + amplitude * phase;
+    return mean + amplitude * phase;
+  };
+}
+
+export function projectTideLevel(targetTimeIso, extrema, fallbackMean, fallbackAmplitude) {
+  return createTideProjector(extrema, fallbackMean, fallbackAmplitude)(targetTimeIso);
 }
 
 export function riskScore(components, weights) {
@@ -121,6 +129,7 @@ export function riskScore(components, weights) {
   );
 }
 
+let summaryFormatter;
 export function summarizeForecast(hours) {
   if (!hours.length) {
     return {
@@ -136,13 +145,14 @@ export function summarizeForecast(hours) {
   const likelyPassableHours = hours.filter((h) => h.state === 'Likely Passable').length;
 
   const highest = [...hours].sort((a, b) => b.riskScore - a.riskScore)[0];
-  const timestamp = new Date(highest.timestamp).toLocaleString('en-GB', {
+  summaryFormatter ??= new Intl.DateTimeFormat('en-GB', {
     day: '2-digit',
     month: 'short',
     hour: '2-digit',
     minute: '2-digit',
     timeZone: 'Europe/London',
   });
+  const timestamp = summaryFormatter.format(new Date(highest.timestamp));
 
   return {
     highestRiskWindow: `${timestamp} (${highest.state})`,

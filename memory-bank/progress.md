@@ -1,5 +1,12 @@
 # Progress
 
+### Worker CPU tuning - 2026-11-10
+
+- Resumed the Free-tier headroom work. The hosted service still returned current quarter-hour data (14:00 UTC snapshot, both local gauges available). Website cutover remains pending an explicit owner decision; NRW key is still absent. Existing private context, generated preview snapshots and tide-source research are preserved.
+- Captured 12 public-provider responses (39,623 bytes) and archived the unchanged server library outside Git in ../worker-cpu-review. Local profiling found repeated timestamp parsing/sorting, repeated tide preparation across 24 hours and repeated Intl formatter construction. Server helpers now parse sort timestamps once, prepare one tide projector per forecast and reuse the UK formatter. No source/station/calibration/expiry or output schema change.
+- Replayed the same captured responses through original and optimised libraries with a fixed clock: complete model/monitoring objects and serialized JSON match exactly. The earlier pre-refactor capture comparison also still passes. Local Node median over 200 replays improved from 4.4596 ms to 2.9212 ms (~34.5%); p95 5.4623 to 3.9135 ms. These local timings are not hosted CPU measurements.
+- All 190 tests / 24 files and the website build pass, including independent tide-model comparisons, zero/empty fallbacks, DST text, mixed timestamps, duplicate order and exact bucket selection. Hosted scheduled CPU comparison is pending deployment through the existing pipeline.
+
 ### Cloudflare Free + KV proof of concept - 2026-11-09
 
 - Owner authorised proceeding after comparing storage/billing alternatives. Active route is Workers Free + classic KV + GitHub Actions/Wrangler; SST/R2 state is deferred. Owner reports enabling R2, but this pipeline does not use it. GitHub API metadata confirms CLOUDFLARE_API_TOKEN exists and CLOUDFLARE_ACCOUNT_ID is configured; the secret value was never accessed. No GitHub write credential is needed in the running Worker.

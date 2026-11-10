@@ -138,6 +138,12 @@ Sources checked 8-9 November 2026: [GitHub Actions deployment/authentication](ht
 
 ## Validation checkpoint
 
+### CPU tuning, 10 November 2026
+
+The service was still producing recent quarter-hour data when work resumed. To reduce the first observed 12 ms CPU cost, server helpers now parse sorting timestamps once, prepare tidal parameters once for all forecast hours and reuse the UK summary formatter. Calculations, source selection, station-specific units, thresholds, observation timestamps, warnings and response structure are preserved.
+
+A fixed-clock replay of 12 captured public responses (39,623 bytes) matches the original complete model/monitoring objects and JSON exactly. The earlier legacy-model capture comparison also passes. On this PC, 200 local Node replays improved median processing from 4.4596 to 2.9212 ms (~34.5%) and p95 from 5.4623 to 3.9135 ms. This identifies useful CPU savings but is not proof of Cloudflare Free-tier headroom; hosted Cron timings must be recorded separately after deployment. Review scripts, captured inputs and the original library are outside Git in `../worker-cpu-review/`. Tests cover independent model equivalence, fallback maths, DST text and observed-series timestamp ordering/bucket retention.
+
 ### Hosted setup, 9 November 2026
 
 - Setup commit `d540a77f1e22842f5b78762205a949a25ba22b75` was pushed and remote main independently verified. GitHub validation passed all 180 tests, TypeScript and the Worker bundle; the Pages deployment also succeeded.
