@@ -44,3 +44,18 @@ export function pickPreferredTideStation(candidates, staleAfterMinutes, nowIso =
     reason: 'All tide candidates stale; freshest available station selected',
   };
 }
+
+/** A fresh higher-priority station cannot be displaced by a lower-priority candidate. */
+export async function loadPreferredTideStation(specs, loadCandidate, staleAfterMinutes, nowIso) {
+  const candidates = [];
+  for (const spec of [...specs].sort((a, b) => a.priority - b.priority)) {
+    let candidate;
+    try { candidate = await loadCandidate(spec); } catch { continue; }
+    if (!candidate?.latestTime) continue;
+    candidates.push(candidate);
+    const selected = pickPreferredTideStation(candidates, staleAfterMinutes, nowIso);
+    if (!selected.stale) return selected;
+  }
+  // If none is fresh, all candidates were checked and the original freshest-stale rule applies.
+  return pickPreferredTideStation(candidates, staleAfterMinutes, nowIso);
+}

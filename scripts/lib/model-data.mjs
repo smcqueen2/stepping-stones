@@ -8,7 +8,7 @@ import {
   riskScore,
   summarizeForecast,
 } from './forecast-model.mjs';
-import { pickPreferredTideStation } from './station-selection.mjs';
+import { loadPreferredTideStation } from './station-selection.mjs';
 import { futureRainWindow, projectRiverReading } from './forecast-window.mjs';
 import { coastalTideTiming } from './tide-timing.mjs';
 import { gaugeSeries, recentLevels } from './recent-levels.mjs';
@@ -107,17 +107,16 @@ export async function buildModelData({ config, now = new Date(), fetcher = fetch
   );
   const riverParameter = latestParameter(riverStation, STATIONS.river.expectedType);
 
-  const tideCandidates = [];
-  for (const candidate of STATIONS.tideCandidates) {
+  const selectedTide = await loadPreferredTideStation(STATIONS.tideCandidates, async candidate => {
     try {
       const station = await fetchJson(
         `${NRW_BASE}/Station/GetData/${candidate.id}?includeStationParameters=true`,
       );
       const parameter = latestParameter(station, candidate.expectedType);
 
-      if (!parameter) continue;
+      if (!parameter) return undefined;
 
-      tideCandidates.push({
+      return {
         priority: candidate.priority,
         stationId: station.id,
         stationTitle: station.title?.english ?? `Station ${station.id}`,
@@ -125,17 +124,11 @@ export async function buildModelData({ config, now = new Date(), fetcher = fetch
         latestTime: parameter.latestTime,
         latestValue: Number(parameter.latestValue),
         unit: parameter.unit,
-      });
+      };
     } catch (error) {
       console.warn(`Unable to load tide candidate ${candidate.id}, skipping.`, error);
     }
-  }
-
-  const selectedTide = pickPreferredTideStation(
-    tideCandidates,
-    config.freshness.staleAfterMinutes,
-    iso(now),
-  );
+  }, config.freshness.staleAfterMinutes, iso(now));
 
   const tideStationMeta = selectedTide.station;
 

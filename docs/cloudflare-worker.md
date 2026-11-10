@@ -144,6 +144,8 @@ The service was still producing recent quarter-hour data when work resumed. To r
 
 A fixed-clock replay of 12 captured public responses (39,623 bytes) matches the original complete model/monitoring objects and JSON exactly. The earlier legacy-model capture comparison also passes. On this PC, 200 local Node replays improved median processing from 4.4596 to 2.9212 ms (~34.5%) and p95 from 5.4623 to 3.9135 ms. This identifies useful CPU savings but is not proof of Cloudflare Free-tier headroom; hosted Cron timings must be recorded separately after deployment. Review scripts, captured inputs and the original library are outside Git in `../worker-cpu-review/`. Tests cover independent model equivalence, fallback maths, DST text and observed-series timestamp ordering/bucket retention.
 
+The first hosted comparison (14:15 UTC, Inspect run `42831857171`) completed successfully but used 16 ms CPU / 1,294 ms wall time. Further tuning moved the fixed formatter to isolate setup and stopped fetching unused fallback tide-station metadata once the existing priority/freshness rules select a fresh source. The usual primary-fresh path now needs two fewer provider requests; unavailable/stale fallback behaviour and all-stale freshest selection are covered by tests. All 194 tests, TypeScript and Worker bundling pass. A second hosted comparison remains necessary; no website data-source cutover has been made.
+
 ### Hosted setup, 9 November 2026
 
 - Setup commit `d540a77f1e22842f5b78762205a949a25ba22b75` was pushed and remote main independently verified. GitHub validation passed all 180 tests, TypeScript and the Worker bundle; the Pages deployment also succeeded.
