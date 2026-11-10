@@ -3,8 +3,9 @@ export function gaugeSeries(response) {
   for (const point of Array.isArray(response?.data) ? response.data : []) {
     if (!(typeof point?.y === 'number' || typeof point?.y === 'string' && point.y.trim() !== '')) continue;
     const value = Number(point.y);
+    if (!Number.isFinite(value)) continue;
     const epoch = Date.parse(point.x);
-    if (Number.isFinite(value) && Number.isFinite(epoch)) points.push({ time: point.x, value, epoch });
+    if (Number.isFinite(epoch)) points.push({ time: point.x, value, epoch });
   }
   // Parse each provider timestamp once, rather than twice per sort comparison.
   return points.sort((a, b) => a.epoch - b.epoch).map(({ time, value }) => ({ time, value }));

@@ -29,7 +29,8 @@ it('preserves the existing empty, zero-median and single-extremum fallback behav
 
 it('retains UK summary text across the daylight-saving change and consecutive uses', () => {
   for (const [timestamp, label] of [['2026-10-25T00:30:00Z', '25 Oct, 01:30'],
-    ['2026-10-25T01:30:00Z', '25 Oct, 01:30'], ['2026-11-10T23:00:00Z', '10 Nov, 23:00']]) {
+    ['2026-10-25T01:30:00Z', '25 Oct, 01:30'], ['2026-11-10T23:00:00Z', '10 Nov, 23:00'],
+    ['not-a-date', 'Invalid Date']]) {
     const hours = [{ timestamp, riskScore: .8, state: 'Likely Unpassable' as const,
       projectedTideLevelMAOD: 1, projectedRiverLevelM: .4, rainfallMm: 0, precipitationProbabilityPct: 0,
       riskComponents: { tide: .8, river: .4, rain: 0 } }];

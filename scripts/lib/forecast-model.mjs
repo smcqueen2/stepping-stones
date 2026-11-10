@@ -129,7 +129,14 @@ export function riskScore(components, weights) {
   );
 }
 
-let summaryFormatter;
+// Fixed, immutable formatting configuration belongs to isolate setup, not each scheduled refresh.
+const summaryFormatter = new Intl.DateTimeFormat('en-GB', {
+  day: '2-digit',
+  month: 'short',
+  hour: '2-digit',
+  minute: '2-digit',
+  timeZone: 'Europe/London',
+});
 export function summarizeForecast(hours) {
   if (!hours.length) {
     return {
@@ -145,14 +152,8 @@ export function summarizeForecast(hours) {
   const likelyPassableHours = hours.filter((h) => h.state === 'Likely Passable').length;
 
   const highest = [...hours].sort((a, b) => b.riskScore - a.riskScore)[0];
-  summaryFormatter ??= new Intl.DateTimeFormat('en-GB', {
-    day: '2-digit',
-    month: 'short',
-    hour: '2-digit',
-    minute: '2-digit',
-    timeZone: 'Europe/London',
-  });
-  const timestamp = summaryFormatter.format(new Date(highest.timestamp));
+  const date = new Date(highest.timestamp);
+  const timestamp = Number.isNaN(date.getTime()) ? 'Invalid Date' : summaryFormatter.format(date);
 
   return {
     highestRiskWindow: `${timestamp} (${highest.state})`,
