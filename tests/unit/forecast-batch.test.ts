@@ -1,5 +1,19 @@
 import { createTideProjector, summarizeForecast } from '../../scripts/lib/forecast-model.mjs';
 import { projectTideLevel } from '../../src/lib/model';
+afterEach(() => { vi.unstubAllGlobals(); vi.restoreAllMocks(); });
+
+it('uses native London timezone parts and the existing English label without constructing Intl', () => {
+  const inZone = vi.fn().mockReturnValue({ day: 1, month: 9, hour: 2, minute: 3 });
+  const instant = vi.fn().mockReturnValue({ toZonedDateTimeISO: inZone });
+  vi.stubGlobal('Temporal', { Instant: { fromEpochMilliseconds: instant } });
+  const formatter = vi.spyOn(Intl, 'DateTimeFormat').mockImplementation(() => { throw new Error('Unexpected locale formatter'); });
+  const timestamp = '2026-09-01T01:03:00Z';
+  expect(summarizeForecast([{ timestamp, riskScore: .8, state: 'Likely Unpassable' }]).highestRiskWindow)
+    .toBe('01 Sept, 02:03 (Likely Unpassable)');
+  expect(instant).toHaveBeenCalledWith(Date.parse(timestamp));
+  expect(inZone).toHaveBeenCalledWith('Europe/London');
+  expect(formatter).not.toHaveBeenCalled();
+});
 
 it('matches the independent tide model across a full forecast without mutating the observations', () => {
   const extrema = [
