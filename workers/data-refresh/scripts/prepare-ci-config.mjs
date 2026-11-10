@@ -23,14 +23,16 @@ export function deploymentConfig(template, { accountId, namespaceId } = {}) {
 
 if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {
   try {
-    const original = new URL('../wrangler.json', import.meta.url);
-    const target = new URL('../wrangler.ci.json', import.meta.url);
-    const template = JSON.parse(await readFile(original, 'utf8'));
-    const config = deploymentConfig(template, { accountId: process.env.CLOUDFLARE_ACCOUNT_ID,
-      namespaceId: process.env.CLOUDFLARE_KV_NAMESPACE_ID });
-    // Adjacent to the original so main/schema and any future relative paths keep their meaning.
-    await writeFile(target, `${JSON.stringify(config, null, 2)}\n`);
-    console.log('Prepared ignored CI configuration; source configuration unchanged.');
+    const configs = [];
+    for (const stem of ['wrangler', 'wrangler.monitoring']) {
+      const template = JSON.parse(await readFile(new URL(`../${stem}.json`, import.meta.url), 'utf8'));
+      const config = deploymentConfig(template, { accountId: process.env.CLOUDFLARE_ACCOUNT_ID,
+        namespaceId: process.env.CLOUDFLARE_KV_NAMESPACE_ID });
+      configs.push({ target: new URL(`../${stem}.ci.json`, import.meta.url), config });
+    }
+    // Validate both before writing. Adjacent files preserve relative entrypoint paths.
+    for (const { target, config } of configs) await writeFile(target, `${JSON.stringify(config, null, 2)}\n`);
+    console.log('Prepared ignored CI configurations; source configurations unchanged.');
   } catch (error) {
     console.error(error.message);
     process.exitCode = 1;

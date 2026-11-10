@@ -40,10 +40,19 @@ jobs:
         shell: bash
         run: |
           set +e
-          timeout 180s npx --no-install wrangler tail --config wrangler.ci.json --format json | node scripts/summarize-tail.mjs
-          results=("${PIPESTATUS[@]}")
-          if [ "${results[1]}" -ne 0 ]; then exit "${results[1]}"; fi
-          if [ "${results[0]}" -ne 0 ] && [ "${results[0]}" -ne 124 ]; then exit "${results[0]}"; fi
+          observe() {
+            timeout 180s npx --no-install wrangler tail "$1" --config wrangler.ci.json --format json | node scripts/summarize-tail.mjs
+            results=("${PIPESTATUS[@]}")
+            if [ "${results[1]}" -ne 0 ]; then return "${results[1]}"; fi
+            if [ "${results[0]}" -ne 0 ] && [ "${results[0]}" -ne 124 ]; then return "${results[0]}"; fi
+            return 0
+          }
+          observe stepping-stones-data & model_pid=$!
+          observe stepping-stones-monitoring & monitoring_pid=$!
+          wait "$model_pid"; model_result=$?
+          wait "$monitoring_pid"; monitoring_result=$?
+          if [ "$model_result" -ne 0 ]; then exit "$model_result"; fi
+          exit "$monitoring_result"
       - name: Inspect saved snapshot after observation
         if: inputs.watch
         run: node workers/data-refresh/scripts/check-hosted-config.mjs

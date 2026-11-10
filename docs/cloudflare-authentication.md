@@ -20,7 +20,7 @@ The pipeline passes these to the provisioning helper and Wrangler. It never retr
 
 ## Runtime and optional NRW credentials
 
-The running Worker uses its `SNAPSHOTS` KV binding, not the deployment token. `NRW_API_KEY` is a separate optional runtime secret for official warnings. Until that free NRW key exists and is smoke-tested, warning status remains explicitly unavailable; a Cloudflare key does not provide NRW access. Reporting collection remains on hold.
+The running Workers use their shared `SNAPSHOTS` KV binding, not the deployment token. `NRW_API_KEY` is a separate optional runtime secret on **stepping-stones-monitoring** for official warnings. CI checks existing secret names before moving the model deployment; it never reads secret values. Until that free NRW key exists and is smoke-tested, warning status remains explicitly unavailable; a Cloudflare key does not provide NRW access. Reporting collection remains on hold.
 
 See [the deployment, verification and rollback guide](cloudflare-worker.md). Keep **Workers Free** selected. This pipeline never upgrades subscriptions; it does not automatically confirm the account's billing plan.
 

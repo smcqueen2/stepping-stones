@@ -12,6 +12,7 @@
     "generate:data": "node scripts/generate-all-data.mjs",
     "worker:install": "npm --prefix workers/data-refresh ci",
     "worker:dev": "npm --prefix workers/data-refresh run dev",
+    "worker:dev:monitoring": "npm --prefix workers/data-refresh run dev:monitoring",
     "worker:check": "npm --prefix workers/data-refresh run check",
     "worker:check:ci": "npm --prefix workers/data-refresh run check:ci",
     "worker:deploy": "npm --prefix workers/data-refresh run deploy",

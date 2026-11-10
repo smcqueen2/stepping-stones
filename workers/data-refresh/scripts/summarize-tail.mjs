@@ -10,11 +10,14 @@ export function scheduledSummary(trace) {
   const result = { cron: '*/15 * * * *', cpuTimeMs: metric(trace.cpuTime), wallTimeMs: metric(trace.wallTime),
     outcome: outcomes.includes(trace.outcome) ? trace.outcome : 'unknown',
     exceptionCount: Array.isArray(trace.exceptions) ? trace.exceptions.length : undefined };
+  if (['stepping-stones-data', 'stepping-stones-monitoring'].includes(trace.scriptName)) result.worker = trace.scriptName;
   for (const log of trace.logs ?? []) {
     for (const message of log.message ?? []) {
       if (typeof message !== 'string') continue;
       const match = /^Data refresh: model (fulfilled|rejected), monitoring (fulfilled|rejected)\.$/.exec(message);
       if (match) return { ...result, model: match[1], monitoring: match[2] };
+      const single = /^Data refresh: (model|monitoring) (fulfilled|rejected)\.$/.exec(message);
+      if (single) return { ...result, [single[1]]: single[2] };
     }
   }
   return result;

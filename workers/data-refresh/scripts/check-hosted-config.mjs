@@ -29,24 +29,39 @@ if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.me
       if (!response.ok || data.success !== true) throw new Error(`Worker configuration check failed: HTTP ${response.status}`);
       return data.result;
     }
-    const [subdomain, worker, schedules, settings] = await Promise.all([
+    const [subdomain, worker, schedules, settings, monitoringWorker, monitoringSchedules, monitoringSettings] = await Promise.all([
       get('/workers/subdomain'), get('/workers/workers/stepping-stones-data'),
       get('/workers/scripts/stepping-stones-data/schedules'), get('/workers/scripts/stepping-stones-data/settings'),
+      get('/workers/workers/stepping-stones-monitoring'), get('/workers/scripts/stepping-stones-monitoring/schedules'),
+      get('/workers/scripts/stepping-stones-monitoring/settings'),
     ]);
     console.log(JSON.stringify(deploymentDetails(subdomain, worker, schedules)));
-    console.log(JSON.stringify({ usageModel: settings.usage_model, configuredLimits: settings.limits }));
-    const stored = await request(`/storage/kv/namespaces/${namespace}/values/latest%3Av1`);
-    if (stored.status === 404) console.log('No saved snapshot yet; wait for the first successful Cron refresh.');
-    else {
+    if (monitoringWorker.subdomain?.enabled === true || monitoringWorker.subdomain?.previews_enabled === true
+      || !Array.isArray(monitoringSchedules.schedules) || monitoringSchedules.schedules.length !== 1
+      || monitoringSchedules.schedules[0]?.cron !== '*/15 * * * *') {
+      throw new Error('The private monitoring schedule/route could not be verified.');
+    }
+    console.log(JSON.stringify({ workers: [
+      { name: 'stepping-stones-data', usageModel: settings.usage_model, configuredLimits: settings.limits },
+      { name: 'stepping-stones-monitoring', usageModel: monitoringSettings.usage_model, configuredLimits: monitoringSettings.limits },
+    ] }));
+    async function record(key) {
+      const stored = await request(`/storage/kv/namespaces/${namespace}/values/${encodeURIComponent(key)}`);
+      if (stored.status === 404) return undefined;
       if (!stored.ok) throw new Error(`Saved snapshot check failed: HTTP ${stored.status}`);
       const snapshot = await stored.json();
       if (snapshot?.schemaVersion !== 1 || !Number.isFinite(Date.parse(snapshot.refreshedAt))) {
         throw new Error('Saved snapshot schema/timestamp could not be verified.');
       }
-      console.log(JSON.stringify({ savedSnapshotAt: snapshot.refreshedAt, modelGeneratedAt: snapshot.live?.generatedAt,
-        forecastHours: snapshot.forecast?.hours?.length, monitoringGeneratedAt: snapshot.monitoring?.generatedAt,
-        warningStatus: snapshot.monitoring?.floodWarnings?.status }));
+      return snapshot;
     }
+    const [model, monitoring] = await Promise.all([record('latest:v1'), record('monitoring:v1')]);
+    const monitoringData = monitoring?.monitoring ?? model?.monitoring;
+    if (!model && !monitoring) console.log('No saved snapshots yet; wait for the first successful Cron refreshes.');
+    else console.log(JSON.stringify({ modelSavedAt: model?.refreshedAt, monitoringSavedAt: monitoring?.refreshedAt,
+      monitoringRecord: monitoring ? 'separate' : 'legacy', modelGeneratedAt: model?.live?.generatedAt,
+      forecastHours: model?.forecast?.hours?.length, monitoringGeneratedAt: monitoringData?.generatedAt,
+      warningStatus: monitoringData?.floodWarnings?.status }));
     console.log('Public routing propagation and source freshness still require an HTTP smoke check; usage model alone does not confirm a Free subscription.');
   } catch (error) { console.error(error.message); process.exitCode = 1; }
 }

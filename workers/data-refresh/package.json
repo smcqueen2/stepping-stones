@@ -6,10 +6,11 @@
   "engines": { "node": ">=22.0.0" },
   "scripts": {
     "dev": "wrangler dev --ip 127.0.0.1 --port 8787 --test-scheduled",
-    "check": "wrangler deploy --dry-run --outdir dist",
-    "check:ci": "node scripts/prepare-ci-config.mjs && wrangler deploy --config wrangler.ci.json --dry-run --outdir dist/ci",
-    "deploy": "node scripts/check-deploy-config.mjs && wrangler deploy",
-    "deploy:ci": "node scripts/prepare-ci-config.mjs && wrangler deploy --config wrangler.ci.json",
+    "dev:monitoring": "wrangler dev --config wrangler.monitoring.json --ip 127.0.0.1 --port 8789 --inspector-port 9231 --test-scheduled",
+    "check": "wrangler deploy --dry-run --outdir dist && wrangler deploy --config wrangler.monitoring.json --dry-run --outdir dist/monitoring",
+    "check:ci": "node scripts/prepare-ci-config.mjs && wrangler deploy --config wrangler.ci.json --dry-run --outdir dist/ci && wrangler deploy --config wrangler.monitoring.ci.json --dry-run --outdir dist/ci-monitoring",
+    "deploy": "node scripts/check-deploy-config.mjs && wrangler deploy --config wrangler.monitoring.json && wrangler deploy",
+    "deploy:ci": "node scripts/prepare-ci-config.mjs && wrangler deploy --config wrangler.monitoring.ci.json && node scripts/check-secret-placement.mjs && wrangler deploy --config wrangler.ci.json",
     "logs": "wrangler tail"
   },
   "devDependencies": { "wrangler": "4.158.0" }

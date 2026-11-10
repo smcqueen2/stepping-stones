@@ -1,9 +1,29 @@
 import { deploymentConfig } from '../../workers/data-refresh/scripts/prepare-ci-config.mjs';
 import { deploymentDetails } from '../../workers/data-refresh/scripts/check-hosted-config.mjs';
+import { checkWarningSecretPlacement } from '../../workers/data-refresh/scripts/check-secret-placement.mjs';
 import template from '../../workers/data-refresh/wrangler.json';
+import monitoringTemplate from '../../workers/data-refresh/wrangler.monitoring.json';
 
 const accountId = 'a'.repeat(32);
 const namespaceId = 'b'.repeat(32);
+
+it('binds the monitoring job to the same namespace without publishing an HTTP endpoint', () => {
+  const model = deploymentConfig(template, { accountId, namespaceId });
+  const monitoring = deploymentConfig(monitoringTemplate, { accountId, namespaceId });
+  expect(monitoring.kv_namespaces).toEqual(model.kv_namespaces);
+  expect(monitoring.name).toBe('stepping-stones-monitoring');
+  expect(monitoring.main).toBe('src/monitoring.mjs');
+  expect(monitoring.triggers).toEqual(model.triggers);
+  expect(monitoring.workers_dev).toBe(false); expect(monitoring.preview_urls).toBe(false);
+});
+
+it('prevents moving an existing warning integration without its destination secret', () => {
+  const binding = { name: 'NRW_API_KEY', type: 'secret_text' };
+  expect(() => checkWarningSecretPlacement({ bindings: [binding] }, { bindings: [] })).toThrow('NRW_API_KEY');
+  expect(() => checkWarningSecretPlacement({ bindings: [binding] }, { bindings: [binding] })).not.toThrow();
+  expect(() => checkWarningSecretPlacement({ bindings: [] }, { bindings: [] })).not.toThrow();
+  expect(() => checkWarningSecretPlacement({}, { bindings: [] })).toThrow('could not be verified');
+});
 
 it('reads the official nested schedules API result and enabled public address', () => {
   expect(deploymentDetails({ subdomain: 'example' }, { subdomain: { enabled: true } },

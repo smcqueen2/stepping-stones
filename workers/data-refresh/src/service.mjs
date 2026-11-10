@@ -3,39 +3,54 @@ import { buildModelData } from '../../../scripts/lib/model-data.mjs';
 import { buildMonitoringData } from '../../../scripts/lib/monitoring-data.mjs';
 
 export const snapshotKey = 'latest:v1';
+export const monitoringKey = 'monitoring:v1';
 
-async function readSnapshot(env) {
-  const snapshot = await env.SNAPSHOTS.get(snapshotKey, { type: 'json', cacheTtl: 30 });
+async function readRecord(env, key) {
+  const snapshot = await env.SNAPSHOTS.get(key, { type: 'json', cacheTtl: 30 });
   if (snapshot !== null && (snapshot?.schemaVersion !== 1 || !Number.isFinite(Date.parse(snapshot.refreshedAt)))) {
     throw new Error('Stored snapshot could not be verified');
   }
+  if (snapshot && key === monitoringKey && (!snapshot.monitoring?.gauges || !snapshot.monitoring?.floodWarnings
+    || snapshot.monitoring.schemaVersion !== 1)) throw new Error('Stored monitoring could not be verified');
   return snapshot;
 }
 
-/** One public-data KV write per run. Preserve each section's actual timestamps on partial failure. */
-export async function refreshSnapshot(env, { now = new Date(), model = buildModelData, monitoring = buildMonitoringData } = {}) {
-  const previous = await readSnapshot(env);
-  const results = await Promise.allSettled([
-    Promise.resolve().then(() => model({ config, now })),
-    Promise.resolve().then(() => monitoring({ key: env.NRW_API_KEY, previous: previous?.monitoring?.floodWarnings, now })),
-  ]);
-  const modelResult = results[0];
-  const monitoringResult = results[1];
-  if (modelResult.status === 'rejected' && monitoringResult.status === 'rejected') {
-    // Do not overwrite a known warning or advance any clock when neither pipeline succeeded.
-    throw new Error('No data pipeline could refresh');
-  }
+/** One model write per run; an unsuccessful calculation never advances its saved clock. */
+export async function refreshModelSnapshot(env, { now = new Date(), model = buildModelData } = {}) {
+  const previous = await readRecord(env, snapshotKey);
+  const result = await model({ config, now });
   const snapshot = {
     schemaVersion: 1,
     refreshedAt: now.toISOString(),
-    config: modelResult.status === 'fulfilled' ? config : previous?.config ?? config,
-    live: modelResult.status === 'fulfilled' ? modelResult.value.live : previous?.live,
-    forecast: modelResult.status === 'fulfilled' ? modelResult.value.forecast : previous?.forecast,
-    monitoring: monitoringResult.status === 'fulfilled' ? monitoringResult.value : previous?.monitoring,
+    config, live: result.live, forecast: result.forecast,
+    // Preserve the legacy warning cache during migration; its own timestamps never change here.
+    monitoring: previous?.monitoring,
   };
   await env.SNAPSHOTS.put(snapshotKey, JSON.stringify(snapshot));
-  console.log(`Data refresh: model ${modelResult.status}, monitoring ${monitoringResult.status}.`);
+  console.log('Data refresh: model fulfilled.');
   return snapshot;
+}
+
+/** Independent monitoring job, including the last-known warning cache across a legacy migration. */
+export async function refreshMonitoringSnapshot(env, { now = new Date(), monitoring = buildMonitoringData } = {}) {
+  const previous = await readRecord(env, monitoringKey);
+  const legacy = previous ? undefined : await readRecord(env, snapshotKey);
+  const result = await monitoring({ key: env.NRW_API_KEY,
+    previous: (previous?.monitoring ?? legacy?.monitoring)?.floodWarnings, now });
+  const snapshot = { schemaVersion: 1, refreshedAt: now.toISOString(), monitoring: result };
+  await env.SNAPSHOTS.put(monitoringKey, JSON.stringify(snapshot));
+  console.log('Data refresh: monitoring fulfilled.');
+  return snapshot;
+}
+
+async function readSnapshot(env) {
+  const [model, monitoring] = await Promise.all([readRecord(env, snapshotKey), readRecord(env, monitoringKey)]);
+  if (!model && !monitoring) return null;
+  const newest = monitoring && (!model || Date.parse(monitoring.refreshedAt) >= Date.parse(model.refreshedAt)) ? monitoring : model;
+  return { schemaVersion: 1,
+    refreshedAt: newest.refreshedAt,
+    config: model?.config ?? config, live: model?.live, forecast: model?.forecast,
+    monitoring: monitoring?.monitoring ?? model?.monitoring };
 }
 
 function headersFor(request, env) {

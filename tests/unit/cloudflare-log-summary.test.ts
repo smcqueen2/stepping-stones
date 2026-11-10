@@ -23,3 +23,12 @@ it('retains a failed Cron outcome without publishing its raw exception or invali
     outcome: 'exceededCpu', exceptionCount: 1 });
   expect(JSON.stringify(result)).not.toContain('fixture-private');
 });
+
+it('identifies each scheduled Worker using known names and single-pipeline messages only', () => {
+  for (const [worker, pipeline] of [['stepping-stones-data', 'model'], ['stepping-stones-monitoring', 'monitoring']]) {
+    const result = scheduledSummary({ scriptName: worker, event: { cron: '*/15 * * * *' }, outcome: 'ok',
+      logs: [{ message: [`Data refresh: ${pipeline} fulfilled.`] }] });
+    expect(result).toMatchObject({ worker, [pipeline]: 'fulfilled' });
+  }
+  expect(JSON.stringify(scheduledSummary({ scriptName: 'fixture-private', event: { cron: '*/15 * * * *' } }))).not.toContain('fixture-private');
+});

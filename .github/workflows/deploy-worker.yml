@@ -126,7 +126,7 @@ jobs:
         if: steps.revision.outputs.current == 'true'
         run: node workers/data-refresh/scripts/provision-kv.mjs
 
-      - name: Deploy quarter-hour Worker
+      - name: Deploy independent quarter-hour Workers
         if: steps.revision.outputs.current == 'true'
         run: npm run worker:deploy:ci
 
@@ -140,7 +140,7 @@ jobs:
         run: |
           {
             echo '### Cloudflare data proof of concept'
-            echo '- Worker: stepping-stones-data'
+            echo '- Workers: stepping-stones-data and stepping-stones-monitoring'
             echo '- Schedule: every 15 minutes (UTC)'
             echo "- Classic KV namespace: $CLOUDFLARE_KV_NAMESPACE_ID"
             echo '- Website data source: unchanged; verify hosted snapshots before switching.'

@@ -4,11 +4,11 @@ Prepared 8 November 2026; proof-of-concept setup selected 9 November. This targe
 
 ## What it will do
 
-1. At minutes **00, 15, 30 and 45 UTC**, a Cron Trigger runs the existing data calculations.
-2. The Worker saves one public JSON snapshot in Workers KV, including the last known warning information.
-3. The website reads that saved snapshot. Visits never trigger extra NRW/Open-Meteo requests.
+1. At minutes **00, 15, 30 and 45 UTC**, two independent Cron handlers run: `stepping-stones-data` calculates the model/forecast, and private `stepping-stones-monitoring` reads local gauges and official warnings.
+2. Each job saves one record in the same classic KV namespace: `latest:v1` for the model and `monitoring:v1` for monitoring and the warning cache.
+3. The unchanged public `/data/snapshot.json` endpoint combines the records into the existing response format, retaining independent section/source clocks. Visits never trigger NRW/Open-Meteo requests.
 
-The configured expression is `*/15 * * * *`. This is 96 scheduled attempts per day, not a promise that data is always exactly fifteen minutes old. Source reporting, Cron execution and cache propagation add delay. All existing source timestamps and expiry rules remain in effect.
+The configured expression is `*/15 * * * *`. This is 96 scheduled attempts per job per day (192 total), not a promise that data is always exactly fifteen minutes old. Source reporting, Cron execution and cache propagation add delay. All existing source timestamps and expiry rules remain in effect.
 
 **Nothing switches automatically:** with no frontend endpoint configured, the site continues using its current Pages JSON and Actions schedule. This is a data refresher only; community-observation storage/submission remains on hold.
 
@@ -20,7 +20,7 @@ The **Check and Deploy Data Worker** workflow validates relevant PR/main/manual 
 
 The deployment lists all the account's KV namespaces, reuses the classic namespace named `stepping-stones-data-snapshots`, or creates it if absent. An optional `CLOUDFLARE_KV_NAMESPACE_ID` variable selects a specific existing namespace. A missing explicit ID, duplicate name, non-classic mode, failed listing or malformed response stops setup rather than creating replacement storage. Creation is never blindly retried after a timeout; a new run lists first. Nothing deletes storage.
 
-The public namespace ID is passed to an ignored adjacent `wrangler.ci.json`; source configuration stays unchanged and credentials never enter that file. Deployments are serialised and skip superseded main revisions before provisioning. If a different infrastructure framework is adopted later, replace the production owner instead of allowing two tools to change the same Worker.
+The public namespace ID is passed to ignored adjacent `wrangler.ci.json` and `wrangler.monitoring.ci.json` files; source configurations stay unchanged and credentials never enter those files. Deployment publishes monitoring first, checks warning-secret placement using binding names only, then publishes the model/public endpoint. Deployments are serialised and skip superseded main revisions before provisioning. If a different infrastructure framework is adopted later, replace the production owner instead of allowing two tools to change the same Worker.
 
 After first setup, record its namespace ID as `CLOUDFLARE_KV_NAMESPACE_ID` to pin subsequent deployments to that storage. This also stops a later run from silently creating empty replacement storage if the original namespace is deleted or becomes inaccessible.
 
@@ -28,7 +28,15 @@ After first setup, record its namespace ID as `CLOUDFLARE_KV_NAMESPACE_ID` to pi
 
 ### Inspect without redeploying
 
-Run **Inspect Data Worker** manually on main to check the public route/schedule configuration and saved snapshot timestamps. Optional `watch` observes runtime logs for three minutes, then checks the saved record again. Start shortly before a quarter-hour boundary to capture a refresh; it will not invoke a refresh or redeploy anything. Only scheduled-execution metrics, exception counts and recognised pipeline states reach GitHub logs; raw HTTP request/visitor metadata and arbitrary console messages are discarded by `summarize-tail.mjs`. A failed observed Cron makes the diagnostic fail, while no observed Cron is labelled explicitly. The workflow uses the existing token only within its main-only diagnostic job. A successful diagnostic job with no snapshot is not a successful data refresh. Worker usage-model metadata alone does not verify the account subscription is Free.
+Run **Inspect Data Worker** manually on main to check the public route/schedule configuration and saved snapshot timestamps. Optional `watch` observes both jobs in parallel for three minutes, then checks both saved records again. Start shortly before a quarter-hour boundary to capture a refresh; it will not invoke a refresh or redeploy anything. Only scheduled-execution metrics, exception counts and recognised pipeline states reach GitHub logs; raw HTTP request/visitor metadata and arbitrary console messages are discarded by `summarize-tail.mjs`. A failed observed Cron makes the diagnostic fail, while no observed Cron is labelled explicitly. The workflow uses the existing token only within its main-only diagnostic job. A successful diagnostic job with no snapshot is not a successful data refresh. Worker usage-model metadata alone does not verify the account subscription is Free.
+
+## Two-job layout and migration
+
+The combined job still used 13 ms CPU at 14:30 UTC, so the model and monitoring builders now run in separate Workers with the same quarter-hour schedule. The monitoring Worker has no workers.dev or preview HTTP route. Both use the existing classic KV namespace; no R2 or extra paid product is introduced. Two Cron Triggers fit the published Free allowance of five per account, subject to other account usage. Shared KV free quotas still apply.
+
+The public endpoint keeps its schema and URL. A model failure leaves that record's clocks unchanged while new monitoring/warnings can publish; monitoring failure keeps its prior warning cache while the model updates. Missing/corrupt/unreadable storage is never interpreted as no warning. The monolithic legacy record remains a conservative migration fallback.
+
+`NRW_API_KEY` now belongs on **stepping-stones-monitoring**. CI refuses to replace a model Worker that already has this secret unless the destination Worker also has it. It checks names only; secret values cannot be copied through the API. The owner still has no key. A later authenticated warning-feed and CPU smoke test remains required.
 
 ## Files and commands
 
@@ -50,9 +58,9 @@ npm run worker:check
 npm run worker:dev
 ```
 
-`worker:check` bundles with `wrangler deploy --dry-run`; it does not publish. `worker:dev` runs on **127.0.0.1:8787**, with local KV and scheduled-handler testing, without requiring an account. Stop it with Ctrl+C.
+`worker:check` bundles with `wrangler deploy --dry-run`; it does not publish. `worker:dev` runs the model/public endpoint on **127.0.0.1:8787**, with local KV and scheduled-handler testing, without requiring an account. Stop it with Ctrl+C.
 
-In a second terminal, invoke the LOCAL scheduled test:
+Start `npm run worker:dev:monitoring` in another terminal on **127.0.0.1:8789**; both use local KV persistence in the same Worker package. Invoke each LOCAL scheduled test (8787 for model, 8789 for monitoring):
 
 ```powershell
 Invoke-WebRequest 'http://127.0.0.1:8787/__scheduled?cron=%2A%2F15%20%2A%20%2A%20%2A%20%2A'
@@ -81,14 +89,14 @@ These commands create account resources or deploy software; they have **not** be
    npx wrangler kv namespace create STEPPING_STONES_SNAPSHOTS
    ```
 
-   Complete sign-in privately in the browser. Copy the returned namespace ID into the `SNAPSHOTS` entry in `wrangler.json`, replacing the all-zero placeholder. Keep the binding name `SNAPSHOTS`. The namespace ID is configuration, not the NRW secret.
+   Complete sign-in privately in the browser. Copy the returned namespace ID into the `SNAPSHOTS` entries in both `wrangler.json` and `wrangler.monitoring.json`, replacing the all-zero placeholder. Keep the binding name `SNAPSHOTS`. The namespace ID is configuration, not the NRW secret.
 
 3. From the repository root, run `npm run worker:deploy`. Its preflight refuses the placeholder namespace. This activates the configured Cron schedule. The local bundling check deliberately works with the placeholder.
 4. Record the reported HTTPS Worker URL. Wait for a scheduled refresh and check **`https://YOUR-WORKER.workers.dev/data/snapshot.json`**. A new or changed Cron can take up to fifteen minutes to propagate before normal scheduling begins. Inspect Cron logs if the snapshot remains unavailable.
 5. When an NRW subscription key is available, enter it privately in the Worker folder:
 
    ```powershell
-   npx wrangler secret put NRW_API_KEY
+   npx wrangler secret put NRW_API_KEY --config wrangler.monitoring.json
    ```
 
    The existing GitHub Actions secret is separate; it is not automatically copied to Cloudflare. No NRW key was available during preparation. Gauges/model/tide timings work without it; official warning status stays explicitly unavailable until a valid key is configured and the authenticated response is smoke-tested.
@@ -120,7 +128,7 @@ To roll back: clear both repository variables and run the Pages workflow to rebu
 - The model calculation and calibration are unchanged. An isolated comparison against captured pre-refactor provider responses matched the complete live and 24-hour forecast payloads exactly.
 - Model and monitoring generation run independently. A good warning update can publish while the model is unavailable. If a pipeline fails, its previous payload/config and original timestamps are retained, without being made artificially recent. If both fail, no new snapshot is written.
 - The Worker reads prior storage before refreshing. An unreadable/unrecognised stored snapshot aborts the update instead of overwriting last-known warnings blindly.
-- A single JSON record is saved per update, so a single frontend request receives a coherent set of payloads. This does not make KV a strongly consistent transactional database: different locations may temporarily see different versions.
+- The endpoint reads two independent records in one request; it is not an atomic cross-job snapshot. Each job owns its key. Source/section clocks identify old data, and KV propagation can temporarily expose different versions. The existing combined record remains readable during migration, and its warning cache is copied forward until the monitoring job can use its separate record.
 - HTTP responses are read-only, use `Cache-Control: no-store`, expose explicit public fields, and never serialise environment secrets or internal provider errors. The secret is only sent in the documented NRW request header.
 - The existing independent warning verification expiry, per-gauge freshness, unknown/withdrawn handling and last-known-warning advice continue unchanged. Root `refreshedAt` does not replace any section's observation/check time.
 - Provider calls retain their existing timeouts. Scheduled work uses actual execution time rather than backdating to a delayed scheduled event.
@@ -128,7 +136,7 @@ To roll back: clear both repository variables and run the Pages workflow to rebu
 
 ## Free-tier target and checks before leaving it running
 
-The normal schedule uses approximately **96 KV writes and 96 scheduler KV reads per day**, plus one KV read per visitor snapshot request. No images, reports, per-visitor provider fetches or R2 bucket are involved.
+The normal schedule uses approximately **192 KV writes and approximately 192 scheduler KV reads per day**, plus two KV reads per visitor snapshot request. Initial warning-cache migration can add one read. No images, reports, per-visitor provider fetches or R2 bucket are involved.
 
 Cloudflare's published free allowances currently include 100,000 Worker requests/day and 100,000 KV reads/day, with 1,000 KV writes/day. The free Cron CPU allowance is **10 ms** per invocation; time waiting for network I/O is excluded. Actual CPU under representative provider responses must be checked on Cloudflare after deployment. A successful local run does not prove it fits the hosted CPU limit. If it does not, retain the existing GitHub route while optimising; do not assume a paid upgrade is necessary or approved.
 
