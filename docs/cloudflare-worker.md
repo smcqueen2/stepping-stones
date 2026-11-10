@@ -178,6 +178,14 @@ The monitoring job now requests 12 hours first. It uses that response only when 
 
 A fixed-time live comparison against the original implementation matched both complete gauge payloads exactly. Keepers Lodge history requests fell from 192 rows / 7,566 bytes to 48 / 1,969; Penybont from 191 / 7,524 to 47 / 1,927. Combined history-response bytes fell from 15,090 to 3,896 (~74%). This is a payload reduction, not a claimed CPU reduction; the next real scheduled run must measure CPU. The complete captured model/monitoring replay still matches original objects and serialized JSON. Capture and comparison scripts are outside Git in `../worker-cpu-review/`.
 
+### Reusing parsed times, 10 November 2026 evening
+
+The smaller gauge requests deployed in `004484b`; all 212 tests, TypeScript, Worker deployment `42849797941` and Pages `42849797858` passed. The 16:00 observation (`42849922639`) recorded monitoring at 5 ms CPU, but model CPU at 17 ms, both successful with zero exceptions. The model therefore still needed work; successful execution alone is not proof of Free headroom.
+
+Offline workerd profiling using captured provider responses identified repeated timestamp parsing and weather-date conversions. Builders now share a small string-to-time cache within each calculation. Nothing is cached across Cron runs; public readings retain their original shape, changed timestamps are re-read, and mutable Date objects bypass the cache. Weather rows keep parsed numeric times until the next 24 hours have been selected, then receive the same ISO strings as before. Every provider timestamp is still validated, including past rows, and insufficient future hours still fail outside the dry-weather fallback.
+
+All 216 tests, TypeScript and both Worker bundles pass. Whole model/monitoring objects and serialized captured output still match the original. Separate comparison cases preserve failed-weather-request fallback, invalid past dates, missing-future-hour rejection and normalised calendar dates. A paired 200-run local model benchmark measured median 1.7747 ms before / 1.5690 ms after (~12% lower); p95 was essentially unchanged (3.6602 / 3.6884 ms). These are local measurements, not Cloudflare CPU guarantees. The temporary offline profiler was stopped. The next hosted comparison remains necessary before website cutover.
+
 ### Hosted setup, 9 November 2026
 
 - Setup commit `d540a77f1e22842f5b78762205a949a25ba22b75` was pushed and remote main independently verified. GitHub validation passed all 180 tests, TypeScript and the Worker bundle; the Pages deployment also succeeded.

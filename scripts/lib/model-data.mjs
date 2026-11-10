@@ -9,9 +9,9 @@ import {
   summarizeForecast,
 } from './forecast-model.mjs';
 import { loadPreferredTideStation } from './station-selection.mjs';
-import { futureRainWindow, projectRiverReading } from './forecast-window.mjs';
+import { futureRainWindow, projectRiverReading, rainfallRows } from './forecast-window.mjs';
 import { coastalTideTiming } from './tide-timing.mjs';
-import { gaugeSeries, recentLevels } from './recent-levels.mjs';
+import { createTimestampParser, gaugeSeries, recentLevels } from './recent-levels.mjs';
 
 const NRW_BASE = 'https://rivers-and-seas.naturalresources.wales';
 const OPEN_METEO_BASE = 'https://api.open-meteo.com/v1/forecast';
@@ -88,7 +88,7 @@ function formatReason(state, freshness) {
 
 function buildFallbackRainForecast(startDate) {
   return Array.from({ length: 24 }, (_, hour) => ({
-    timestamp: iso(addHours(startDate, hour)),
+    timestamp: addHours(startDate, hour).getTime(),
     rainfallMm: 0,
     precipitationProbabilityPct: 0,
   }));
@@ -99,6 +99,7 @@ function rainInfluence(rainfallMm, probabilityPct, mmForHighRisk) {
 }
 
 export async function buildModelData({ config, now = new Date(), fetcher = fetch }) {
+  const parseTime = createTimestampParser();
   const fetchJson = url => requestJson(url, fetcher);
   const from48h = addHours(now, -48);
 
@@ -145,8 +146,8 @@ export async function buildModelData({ config, now = new Date(), fetcher = fetch
     ),
   ]);
 
-  const riverSeries = gaugeSeries(riverSeriesResponse);
-  const tideSeries = gaugeSeries(tideSeriesResponse);
+  const riverSeries = gaugeSeries(riverSeriesResponse, parseTime);
+  const tideSeries = gaugeSeries(tideSeriesResponse, parseTime);
 
   if (riverSeries.length < 8 || tideSeries.length < 8) {
     throw new Error('Insufficient river/tide data to generate forecast');
@@ -155,8 +156,8 @@ export async function buildModelData({ config, now = new Date(), fetcher = fetch
   const riverLatest = riverSeries[riverSeries.length - 1];
   const tideLatest = tideSeries[tideSeries.length - 1];
 
-  const riverTrend = linearTrendPerHour(riverSeries.slice(-32));
-  const tideTrend = linearTrendPerHour(tideSeries.slice(-32));
+  const riverTrend = linearTrendPerHour(riverSeries.slice(-32), parseTime);
+  const tideTrend = linearTrendPerHour(tideSeries.slice(-32), parseTime);
 
   const tideExtrema = detectExtrema(tideSeries);
 
@@ -174,21 +175,14 @@ export async function buildModelData({ config, now = new Date(), fetcher = fetch
       `${OPEN_METEO_BASE}?latitude=${RAIN_LOCATION.latitude}&longitude=${RAIN_LOCATION.longitude}&hourly=precipitation_probability,precipitation,rain&forecast_days=2&timezone=UTC`,
     );
 
-    const hourly = rainResponse.hourly;
-
-    rainForecast = hourly.time.map((time, index) => ({
-        timestamp: new Date(`${time}:00Z`).toISOString(),
-        rainfallMm: Number.isFinite(hourly.rain?.[index])
-          ? Number(hourly.rain[index])
-          : Number(hourly.precipitation?.[index] ?? 0),
-        precipitationProbabilityPct: Number(hourly.precipitation_probability?.[index] ?? 0),
-      }));
+    rainForecast = rainfallRows(rainResponse.hourly);
   } catch (error) {
     console.warn('Open-Meteo fetch failed, using dry fallback forecast.', error);
     rainForecast = buildFallbackRainForecast(now);
   }
 
-  const hourlyWindow = futureRainWindow(rainForecast, now);
+  const hourlyWindow = futureRainWindow(rainForecast, now, 24, row => row.timestamp)
+    .map(row => ({ ...row, timestamp: new Date(row.timestamp).toISOString() }));
 
   let tideTiming;
   try {
@@ -281,7 +275,7 @@ export async function buildModelData({ config, now = new Date(), fetcher = fetch
   const live = {
     generatedAt: iso(now),
     tideTiming,
-    recentLevels: recentLevels(riverSeries, tideSeries, iso(now)),
+    recentLevels: recentLevels(riverSeries, tideSeries, iso(now), parseTime),
     sourceStations: [
       {
         role: 'river',

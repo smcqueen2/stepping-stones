@@ -1,5 +1,6 @@
 // @vitest-environment jsdom
-import { gaugeSeries, recentLevels } from '../../scripts/lib/recent-levels.mjs';
+import { createTimestampParser, gaugeSeries, recentLevels } from '../../scripts/lib/recent-levels.mjs';
+import { linearTrendPerHour } from '../../scripts/lib/forecast-model.mjs';
 import { levelLine, renderLevelGraphs } from '../../src/lib/level-graphs';
 import type { LevelPoint, LivePayload } from '../../src/lib/types';
 import { monitoringFixture } from '../fixtures/monitoring';
@@ -9,6 +10,23 @@ const iso = (minutes: number) => new Date(now + minutes * 60000).toISOString();
 const point = (minutes: number, value: number): LevelPoint => ({ time: iso(minutes), value });
 
 describe('observed level history', () => {
+  it('keeps private parsed times out of readings and honours later timestamp changes', () => {
+    const parseTime = createTimestampParser();
+    const series = gaugeSeries({ data: [{ x: iso(-60), y: 0 }, { x: iso(0), y: 1 }] }, parseTime);
+    expect(JSON.stringify(series)).toBe(JSON.stringify([point(-60, 0), point(0, 1)]));
+    expect(linearTrendPerHour(series, parseTime)).toBe(1);
+    series[1].time = iso(60);
+    expect(linearTrendPerHour(series, parseTime)).toBe(.5);
+    expect(recentLevels(series, [], iso(0), parseTime).river).toEqual([point(-60, 0)]);
+  });
+  it('does not cache mutable Date objects supplied as timestamps', () => {
+    const mutable = new Date(iso(0));
+    const parseTime = createTimestampParser();
+    const series = gaugeSeries({ data: [{ x: iso(-60), y: 0 }, { x: mutable, y: 1 }] }, parseTime);
+    expect(linearTrendPerHour(series, parseTime)).toBe(1);
+    mutable.setTime(now + 60 * 60000);
+    expect(linearTrendPerHour(series, parseTime)).toBe(.5);
+  });
   it('sorts mixed timestamp formats by their actual instant and retains stable duplicates and bucket choices', () => {
     const series = gaugeSeries({ data: [
       { x: '2026-11-07T12:00:00+01:00', y: '.3' },

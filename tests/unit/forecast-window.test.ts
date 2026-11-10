@@ -1,6 +1,20 @@
-import { futureRainWindow, projectRiverReading } from '../../scripts/lib/forecast-window.mjs';
+import { futureRainWindow, projectRiverReading, rainfallRows } from '../../scripts/lib/forecast-window.mjs';
+type RainRow = { timestamp: number; rainfallMm: number; precipitationProbabilityPct: number };
 
 describe('future forecast generation', () => {
+  it('validates past provider timestamps too, retaining the invalid-response fallback trigger', () => {
+    expect(() => rainfallRows({ time: ['2026-13-01T18:00', '2026-10-24T18:00'], rain: [0, 1] })).toThrow('Invalid time');
+  });
+  it('reuses numeric weather times without changing rainfall choice, ordering or missing-hour errors', () => {
+    const rows: RainRow[] = rainfallRows({ time: ['2026-10-24T18:00', '2026-10-24T17:00'], rain: [0, null],
+      precipitation: [9, 2], precipitation_probability: [10, 30] });
+    const selected: RainRow[] = futureRainWindow(rows, new Date('2026-10-24T16:40:00Z'), 2, (row: RainRow) => row.timestamp);
+    expect(selected.map(row => ({ ...row, timestamp: new Date(row.timestamp).toISOString() }))).toEqual([
+      { timestamp: '2026-10-24T17:00:00.000Z', rainfallMm: 2, precipitationProbabilityPct: 30 },
+      { timestamp: '2026-10-24T18:00:00.000Z', rainfallMm: 0, precipitationProbabilityPct: 10 },
+    ]);
+    expect(() => futureRainWindow(rows, new Date('2026-10-24T19:00:00Z'), 2, (row: RainRow) => row.timestamp)).toThrow('Insufficient');
+  });
   it('starts after the current time when the provider returns hours from midnight', () => {
     const start = Date.parse('2026-10-24T00:00:00Z');
     const now = new Date('2026-10-24T16:40:00Z');

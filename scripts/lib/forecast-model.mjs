@@ -21,13 +21,13 @@ export function normalizeToRange(value, min, max) {
   return clamp((value - min) / (max - min));
 }
 
-export function linearTrendPerHour(points) {
+export function linearTrendPerHour(points, parseTime = Date.parse) {
   if (!Array.isArray(points) || points.length < 2) {
     return 0;
   }
 
   const samples = points
-    .map((p) => ({ t: Date.parse(p.time) / 3600000, y: p.value }))
+    .map((p) => ({ t: parseTime(p.time) / 3600000, y: p.value }))
     .filter((p) => Number.isFinite(p.t) && Number.isFinite(p.y));
 
   if (samples.length < 2) {

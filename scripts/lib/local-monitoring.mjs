@@ -8,7 +8,7 @@ export const LOCAL_STATIONS = {
 const base = 'https://rivers-and-seas.naturalresources.wales';
 
 /** Reuse the existing NRW JSON transport and series parser; never substitute another station's zero. */
-export async function fetchLocalGauge(spec, fetchJson, now = new Date()) {
+export async function fetchLocalGauge(spec, fetchJson, now = new Date(), parseTime = Date.parse) {
   const identity = { ...spec, unit: 'm', datum: 'unspecified', source: 'NRW',
     sourceUrl: `${base}/Station/${spec.stationId}` };
   try {
@@ -19,9 +19,9 @@ export async function fetchLocalGauge(spec, fetchJson, now = new Date()) {
     const loadReadings = async hours => {
       const from = new Date(now.getTime() - hours * 3600000).toISOString();
       const response = await fetchJson(`${base}/graph/getdata?parameterId=${spec.parameterId}&from=${encodeURIComponent(from)}&to=${encodeURIComponent(now.toISOString())}`);
-      const series = gaugeSeries(response).filter(point => Date.parse(point.time) <= now.getTime());
+      const series = gaugeSeries(response, parseTime).filter(point => parseTime(point.time) <= now.getTime());
       // Duplicate timestamps are ambiguous; keep one actual reading at each instant.
-      return [...new Map(series.map(point => [Date.parse(point.time), point])).values()];
+      return [...new Map(series.map(point => [parseTime(point.time), point])).values()];
     };
     // The graph needs 12 hours; the unchanged trend needs the latest 32 unique readings.
     // Sparse, failed or missing short responses still use the original 48-hour range.
@@ -30,9 +30,9 @@ export async function fetchLocalGauge(spec, fetchJson, now = new Date()) {
     if (unique.length < 32) unique = await loadReadings(48);
     const latest = unique.at(-1);
     if (!latest) throw new Error('No usable gauge readings');
-    const history = recentLevels(unique, [], now.toISOString());
+    const history = recentLevels(unique, [], now.toISOString(), parseTime);
     return { ...identity, status: 'available', observedAt: latest.time, value: latest.value,
-      trendMPerHour: unique.length >= 8 ? Number(linearTrendPerHour(unique.slice(-32)).toFixed(4)) : null,
+      trendMPerHour: unique.length >= 8 ? Number(linearTrendPerHour(unique.slice(-32), parseTime).toFixed(4)) : null,
       history: { from: history.from, to: history.to, points: history.river } };
   } catch {
     return { ...identity, status: 'unavailable' };
