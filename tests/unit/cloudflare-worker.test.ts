@@ -22,7 +22,7 @@ beforeEach(() => { vi.spyOn(console, 'log').mockImplementation(() => {}); });
 afterEach(() => { vi.restoreAllMocks(); vi.unstubAllGlobals(); });
 
 it('writes only the model record, preserving legacy warning timestamps and never serialising credentials', async () => {
-  const old = initial(); const env = environment(old, monitorRecord());
+  const old = initial(); const env = environment(old);
   const model = vi.fn().mockResolvedValue({ live: { generatedAt: now.toISOString() }, forecast: { hours: ['new'] } });
   await refreshModelSnapshot(env, { now, model });
   expect(env.SNAPSHOTS.put).toHaveBeenCalledTimes(1);
@@ -31,8 +31,30 @@ it('writes only the model record, preserving legacy warning timestamps and never
   expect(published.refreshedAt).toBe(now.toISOString());
   expect(published.forecast.hours).toEqual(['new']);
   expect(published.monitoring).toEqual(old.monitoring);
-  expect(env.records.get(monitoringKey)).toEqual(monitorRecord());
+  expect(env.records.get(monitoringKey)).toBeNull();
   expect(JSON.stringify(published)).not.toContain(env.NRW_API_KEY);
+});
+
+it('stops copying the legacy payload after verified migration while retaining separate active warnings', async () => {
+  const previous = monitorRecord();
+  previous.monitoring.floodWarnings = { status: 'available', attemptedAt: earlier, checkedAt: earlier,
+    warnings: [warningFixture(now.getTime())] };
+  const env = environment(initial(), previous);
+  await refreshModelSnapshot(env, { now, model: vi.fn().mockResolvedValue({ live: { generatedAt: now.toISOString() }, forecast: { hours: [] } }) });
+  expect(env.SNAPSHOTS.get.mock.calls.map(call => call[0])).toEqual([monitoringKey]);
+  expect(env.records.get(snapshotKey)).not.toHaveProperty('monitoring');
+  expect(env.records.get(monitoringKey)).toEqual(previous);
+  const result = await (await serveSnapshot(request(), env)).json();
+  expect(result.live.generatedAt).toBe(now.toISOString());
+  expect(result.monitoring.floodWarnings).toEqual(previous.monitoring.floodWarnings);
+});
+
+it('does not discard the legacy warning cache when the migration record is malformed', async () => {
+  const old = initial(); const env = environment(old, { schemaVersion: 1, refreshedAt: earlier, monitoring: {} });
+  const model = vi.fn();
+  await expect(refreshModelSnapshot(env, { now, model })).rejects.toThrow('Stored monitoring could not be verified');
+  expect(model).not.toHaveBeenCalled(); expect(env.SNAPSHOTS.put).not.toHaveBeenCalled();
+  expect(env.records.get(snapshotKey)).toEqual(old);
 });
 
 it('writes only the monitoring record and restores the last warning from its own prior snapshot', async () => {

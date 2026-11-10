@@ -1,8 +1,8 @@
 # Cloudflare Workers: 15-minute data refresh
 
-Prepared 8 November 2026; proof-of-concept setup selected 9 November. This targets **Cloudflare Workers Free + classic Workers KV**, deployed through GitHub Actions with pinned Wrangler. The owner prioritised reducing billing risk and authorised this route. R2/SST deployment state is not used. GitHub secret-name metadata and the account-ID variable have been verified; the private secret value has not been accessed. Hosted results will be recorded after deployment. The website stays on GitHub Pages.
+Prepared 8 November 2026; proof-of-concept setup selected 9 November; two-job deployment verified 10 November. This targets **Cloudflare Workers Free + classic Workers KV**, deployed through GitHub Actions with pinned Wrangler. The owner prioritised reducing billing risk and authorised this route. R2/SST deployment state is not used. GitHub secret-name metadata and the account-ID variable have been verified; the private secret value has not been accessed. Hosted results are recorded below. The website stays on GitHub Pages.
 
-## What it will do
+## What runs
 
 1. At minutes **00, 15, 30 and 45 UTC**, two independent Cron handlers run: `stepping-stones-data` calculates the model/forecast, and private `stepping-stones-monitoring` reads local gauges and official warnings.
 2. Each job saves one record in the same classic KV namespace: `latest:v1` for the model and `monitoring:v1` for monitoring and the warning cache.
@@ -34,7 +34,7 @@ Run **Inspect Data Worker** manually on main to check the public route/schedule 
 
 The combined job still used 13 ms CPU at 14:30 UTC, so the model and monitoring builders now run in separate Workers with the same quarter-hour schedule. The monitoring Worker has no workers.dev or preview HTTP route. Both use the existing classic KV namespace; no R2 or extra paid product is introduced. Two Cron Triggers fit the published Free allowance of five per account, subject to other account usage. Shared KV free quotas still apply.
 
-The public endpoint keeps its schema and URL. A model failure leaves that record's clocks unchanged while new monitoring/warnings can publish; monitoring failure keeps its prior warning cache while the model updates. Missing/corrupt/unreadable storage is never interpreted as no warning. The monolithic legacy record remains a conservative migration fallback.
+The public endpoint keeps its schema and URL. A model failure leaves that record's clocks unchanged while new monitoring/warnings can publish; monitoring failure keeps its prior warning cache while the model updates. Missing/corrupt/unreadable storage is never interpreted as no warning. The monolithic legacy record remains a conservative migration fallback until a valid separate monitoring record exists. After that, the model job reads the smaller monitoring record to verify migration and omits the duplicate legacy monitoring payload from its next model write.
 
 `NRW_API_KEY` now belongs on **stepping-stones-monitoring**. CI refuses to replace a model Worker that already has this secret unless the destination Worker also has it. It checks names only; secret values cannot be copied through the API. The owner still has no key. A later authenticated warning-feed and CPU smoke test remains required.
 
@@ -44,7 +44,7 @@ The public endpoint keeps its schema and URL. A model failure leaves that record
 - `workers/data-refresh/wrangler.json`: quarter-hour Cron, public origin allow-list and placeholder `SNAPSHOTS` KV binding.
 - `workers/data-refresh/src/index.mjs`: scheduled/HTTP entry points; `service.mjs` holds storage and request handling.
 - `scripts/lib/model-data.mjs` / `monitoring-data.mjs`: runtime-independent builders shared by the Worker and existing Node/Actions scripts. The Worker uses native APIs without Node filesystem compatibility.
-- `src/lib/data-source.ts`: optional coherent Worker snapshot loading, with the existing four-file route as the default.
+- `src/lib/data-source.ts`: optional combined Worker response loading, with the existing four-file route as the default.
 - `.github/workflows/deploy-worker.yml`: validation plus opt-in production deployment.
 - `workers/data-refresh/scripts/prepare-ci-config.mjs`: validates public deployment IDs and writes an ignored CI config; tokens stay in the process environment.
 - `workers/data-refresh/scripts/provision-kv.mjs`: creates/reuses only the classic snapshot KV namespace through the official API.
@@ -152,7 +152,11 @@ The service was still producing recent quarter-hour data when work resumed. To r
 
 A fixed-clock replay of 12 captured public responses (39,623 bytes) matches the original complete model/monitoring objects and JSON exactly. The earlier legacy-model capture comparison also passes. On this PC, 200 local Node replays improved median processing from 4.4596 to 2.9212 ms (~34.5%) and p95 from 5.4623 to 3.9135 ms. This identifies useful CPU savings but is not proof of Cloudflare Free-tier headroom; hosted Cron timings must be recorded separately after deployment. Review scripts, captured inputs and the original library are outside Git in `../worker-cpu-review/`. Tests cover independent model equivalence, fallback maths, DST text and observed-series timestamp ordering/bucket retention.
 
-The first hosted comparison (14:15 UTC, Inspect run `42831857171`) completed successfully but used 16 ms CPU / 1,294 ms wall time. Further tuning moved the fixed formatter to isolate setup and stopped fetching unused fallback tide-station metadata once the existing priority/freshness rules select a fresh source. The usual primary-fresh path now needs two fewer provider requests; unavailable/stale fallback behaviour and all-stale freshest selection are covered by tests. All 194 tests, TypeScript and Worker bundling pass. A second hosted comparison remains necessary; no website data-source cutover has been made.
+The first hosted comparison (14:15 UTC, Inspect run `42831857171`) completed successfully but used 16 ms CPU / 1,294 ms wall time. Further tuning moved the fixed formatter to isolate setup and stopped fetching unused fallback tide-station metadata once the existing priority/freshness rules select a fresh source. The usual primary-fresh path now needs two fewer provider requests; unavailable/stale fallback behaviour and all-stale freshest selection are covered by tests. The 14:30 combined run still used 13 ms CPU (3,617 ms wall, zero exceptions; Inspect `42834487974`), so the model and monitoring jobs were separated as described above.
+
+Both Workers deployed successfully in [run 42838681830](https://github.com/smcqueen2/stepping-stones/actions/runs/42838681830), with all 202 tests, TypeScript and both bundles passing. The monitoring bundle omits the model's unused UK formatter setup. Local shared-KV migration checks verified that either job can advance without changing the other section's clock, and the existing frontend loader accepted all four sections.
+
+The first model-only hosted run at 15:00 UTC succeeded with 10 ms CPU / 6,021 ms wall time and zero exceptions ([Inspect 42839488555](https://github.com/smcqueen2/stepping-stones/actions/runs/42839488555)). This is at the documented Free CPU allowance, with little margin; it does not establish comfortable sustained headroom. Its saved model timestamp is `2026-11-10T15:00:06.410Z`. The newly added monitoring schedule had not fired in that window, and the endpoint correctly retained the legacy monitoring timestamp `2026-11-10T14:45:06.261Z`. Both local gauges, 24 forecast hours and unavailable warning status remained accessible. Hosted monitoring and another model measurement remain pending; no website cutover has been made.
 
 ### Hosted setup, 9 November 2026
 

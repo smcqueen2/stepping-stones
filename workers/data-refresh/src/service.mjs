@@ -17,7 +17,9 @@ async function readRecord(env, key) {
 
 /** One model write per run; an unsuccessful calculation never advances its saved clock. */
 export async function refreshModelSnapshot(env, { now = new Date(), model = buildModelData } = {}) {
-  const previous = await readRecord(env, snapshotKey);
+  // Once monitoring has migrated, avoid parsing/rewriting the larger combined record.
+  const monitoring = await readRecord(env, monitoringKey);
+  const previous = monitoring ? undefined : await readRecord(env, snapshotKey);
   const result = await model({ config, now });
   const snapshot = {
     schemaVersion: 1,

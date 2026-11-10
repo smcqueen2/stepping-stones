@@ -46,7 +46,7 @@ export async function loadData({ base, endpoint, signal, fetcher = fetch }: {
     if (snapshot?.schemaVersion !== 1 || !Number.isFinite(refreshed) || refreshed > Date.now() + 10 * 60000) {
       throw new Error('Snapshot could not be verified');
     }
-    // One request reads one coherent KV snapshot; individual data clocks still expire independently.
+    // One request returns the latest saved sections; their data clocks expire independently.
     return { live: part(snapshot.live, valid.live), forecast: part(snapshot.forecast, valid.forecast),
       config: part(snapshot.config, valid.config), monitoring: part(snapshot.monitoring, valid.monitoring) };
   }
