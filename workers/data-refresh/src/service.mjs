@@ -20,7 +20,8 @@ export async function refreshModelSnapshot(env, { now = new Date(), model = buil
   // Once monitoring has migrated, avoid parsing/rewriting the larger combined record.
   const monitoring = await readRecord(env, monitoringKey);
   const previous = monitoring ? undefined : await readRecord(env, snapshotKey);
-  const result = await model({ config, now });
+  // The UI consumes hourly predictions; skip unused locale-formatted summary work on Free.
+  const result = await model({ config, now, includeSummary: false });
   const snapshot = {
     schemaVersion: 1,
     refreshedAt: now.toISOString(),

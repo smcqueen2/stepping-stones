@@ -3,7 +3,6 @@
   "name": "stepping-stones-data",
   "main": "src/index.mjs",
   "compatibility_date": "2026-11-01",
-  "compatibility_flags": ["temporal"],
   "workers_dev": true,
   "triggers": { "crons": ["*/15 * * * *"] },
   "kv_namespaces": [{ "binding": "SNAPSHOTS", "id": "00000000000000000000000000000000" }],

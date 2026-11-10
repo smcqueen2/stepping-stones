@@ -129,18 +129,11 @@ export function riskScore(components, weights) {
   );
 }
 
-const summaryMonths = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sept', 'Oct', 'Nov', 'Dec'];
 let summaryFormatter;
 function summaryTime(date) {
   const epoch = date.getTime();
   if (Number.isNaN(epoch)) return 'Invalid Date';
-  if (globalThis.Temporal?.Instant?.fromEpochMilliseconds) {
-    // Native IANA timezone conversion avoids loading the locale formatter in each cold isolate.
-    const local = globalThis.Temporal.Instant.fromEpochMilliseconds(epoch).toZonedDateTimeISO('Europe/London');
-    const two = value => String(value).padStart(2, '0');
-    return `${two(local.day)} ${summaryMonths[local.month - 1]}, ${two(local.hour)}:${two(local.minute)}`;
-  }
-  // Node 22 / older runtimes retain the original formatter, initialised only if needed.
+  // The compact Worker feed does not use this legacy presentation metadata.
   summaryFormatter ??= new Intl.DateTimeFormat('en-GB', {
     day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit', timeZone: 'Europe/London',
   });

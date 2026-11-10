@@ -113,7 +113,7 @@ export interface ForecastHour {
 export interface ForecastPayload {
   generatedAt: string;
   horizonHours: number;
-  summary: {
+  summary?: {
     highestRiskWindow: string;
     likelyUnpassableHours: number;
     cautionHours: number;

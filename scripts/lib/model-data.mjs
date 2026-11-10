@@ -98,7 +98,7 @@ function rainInfluence(rainfallMm, probabilityPct, mmForHighRisk) {
   return clamp((rainfallMm / mmForHighRisk) * 0.7 + (probabilityPct / 100) * 0.3);
 }
 
-export async function buildModelData({ config, now = new Date(), fetcher = fetch }) {
+export async function buildModelData({ config, now = new Date(), fetcher = fetch, includeSummary = true }) {
   const parseTime = createTimestampParser();
   const fetchJson = url => requestJson(url, fetcher);
   const from48h = addHours(now, -48);
@@ -319,7 +319,7 @@ export async function buildModelData({ config, now = new Date(), fetcher = fetch
   const forecast = {
     generatedAt: iso(now),
     horizonHours: 24,
-    summary: summarizeForecast(forecastHours),
+    ...(includeSummary ? { summary: summarizeForecast(forecastHours) } : {}),
     hours: forecastHours,
   };
 

@@ -25,6 +25,7 @@ it('writes only the model record, preserving legacy warning timestamps and never
   const old = initial(); const env = environment(old);
   const model = vi.fn().mockResolvedValue({ live: { generatedAt: now.toISOString() }, forecast: { hours: ['new'] } });
   await refreshModelSnapshot(env, { now, model });
+  expect(model).toHaveBeenCalledWith({ config, now, includeSummary: false });
   expect(env.SNAPSHOTS.put).toHaveBeenCalledTimes(1);
   expect(env.SNAPSHOTS.put.mock.calls[0][0]).toBe(snapshotKey);
   const published = JSON.parse(env.SNAPSHOTS.put.mock.calls[0][1]);
