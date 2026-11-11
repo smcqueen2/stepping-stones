@@ -2,6 +2,8 @@
 
 Research date: 24 October 2026. Prepared for a single-page, click-through historical timeline. On 6 November the owner requested publishing this work; the researched content and paintings are now integrated into the app's History view. The original design alternatives remain archived alongside this brief.
 
+The [11 November expansion and evidence review](research-expansion-2026-11-11.md) adds early Christian Merthyr Mawr, a dedicated Candleston chapter, the recorded volunteer rifle range, qualified baptism history and a primary-source-checked White Lady entry. It supersedes the earlier White Lady extraction limitation below. The current application is a continuous vertical timeline; the horizontal previews described here remain archived design snapshots.
+
 ## Approach
 
 The research prioritises Cadw's visitor and designation records, the Royal Commission's Coflein records, Heneb's historic environment/landscape records, an official historic guide and a Welsh Government guardianship record. The surrounding-area narrative includes Ewenni Priory, Merthyr Mawr and Candleston, rather than treating the castle as an isolated building. Modern conservation sources are dated to the events they report.

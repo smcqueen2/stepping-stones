@@ -1,0 +1,45 @@
+{
+  "generatedOn": "2026-11-11",
+  "tool": "Built-in image_gen",
+  "type": "AI generated, present-day-inspired illustration; not a verified reconstruction",
+  "delivery": "1024x576 WebP, quality 84; resizing and format conversion only. Generated PNG masters retained in Codex generated-image storage.",
+  "assets": [
+    {
+      "key": "candleston-v1",
+      "prompt": "Use case: illustration-story. Project asset: a wide 16:9 watercolour background for an existing illustrated history of the Ogmore and Merthyr Mawr landscape in Wales. Paint a restrained present-day-inspired architectural study of the ruins of Candleston Castle, a modest medieval fortified manor house rather than a great military fortress. Based on the documented structure: a roofless two-storey rectangular limestone domestic hall range with irregular surviving window openings and a small square solar tower at one end, remnants of attached low wings, and a low curving curtain wall enclosing a roughly D-shaped grassy courtyard. Wooded edge of Merthyr Mawr Warren, with pale sand and marram grass beyond the ruins. Quiet, intimate scale. Main surviving masonry middle/right, open soft grassy foreground at lower left for an HTML text overlay. Loose transparent watercolour washes on textured ivory cold-pressed paper, granulated warm-grey limestone, subdued moss and olive greens, pale blue-grey sky, soft natural summer daylight. A companion to a gentle hand-painted Welsh heritage website. This is an artistic present-day ruin study, NOT a reconstruction of its exact 14th-century appearance. No intact roofs, no grand round towers, no moat, no battlement-filled fantasy skyline, no medieval battle or people, no banners, no vehicles or signs, no text, no labels, no watermark. Landscape aspect ratio 16:9.",
+      "path": "assets/candleston-v1.webp",
+      "masterFile": "exec-1d0dcd07-8b78-4e46-b51e-b2623624a4f3.png",
+      "references": [
+        "Cadw listed building 11230",
+        "Cadw scheduled monument GM095",
+        "Coflein NPRN 93050"
+      ],
+      "limitations": "Generated from textual architectural descriptions, not a measured survey or photograph. Layout, openings, small architectural details and stone markings are interpretive. Do not use as documentary evidence.",
+      "inlinePreview": {
+        "path": "assets/previews/candleston-v1.webp",
+        "width": 512,
+        "height": 288,
+        "quality": 62,
+        "purpose": "Optional compact art for the archived inline design generator; not used by the application."
+      }
+    },
+    {
+      "key": "st-teilo-v1",
+      "prompt": "Use case: illustration-story. Project asset: a wide 16:9 watercolour companion background for an existing history timeline of Merthyr Mawr in Wales. Paint a calm present-day-inspired study of St Teilo's Church and its early Christian stone collection. The church visible must be the modest Victorian 1849-51 building: small grey limestone Early English parish church, steep dark slate gabled nave and lower narrower chancel, simple pointed lancet windows, a small gabled porch, and a slender open bellcote with a little pointed cap at the western gable, NOT a large square tower or a cathedral. In the churchyard, suggest the sheltered collection of weathered memorial pillars and cross-slabs beneath a modest open shelter, with no invented legible inscriptions or names. The collection contains stones of different early medieval periods; do not depict this whole scene as a fifth-century settlement. Soft green churchyard, restrained mature foliage, building and stones in middle/right, quiet uncluttered grass at lower left for the existing HTML overlay. Loose transparent watercolour washes, textured ivory cold-pressed paper, warm grey stone, muted olive/sage greens and pale blue-grey sky, gentle daylight and visible pigment grain. Artistic present-day study, not a photograph or certified reconstruction. No reconstructed early monastery, no monks or named saints, no huge church tower, no modern cars or signage, no text, no lettering, no watermark. Landscape aspect ratio 16:9.",
+      "path": "assets/st-teilo-v1.webp",
+      "masterFile": "exec-b8e4fd7b-08b7-4e6f-b0cd-0ca06c043c64.png",
+      "references": [
+        "Cadw listed building 11242",
+        "Church Heritage Cymru 2956"
+      ],
+      "limitations": "Generated from textual architectural descriptions, not a measured survey or photograph. Layout, openings, small architectural details and stone markings are interpretive. Do not use as documentary evidence.",
+      "inlinePreview": {
+        "path": "assets/previews/st-teilo-v1.webp",
+        "width": 512,
+        "height": 288,
+        "quality": 62,
+        "purpose": "Optional compact art for the archived inline design generator; not used by the application."
+      }
+    }
+  ]
+}

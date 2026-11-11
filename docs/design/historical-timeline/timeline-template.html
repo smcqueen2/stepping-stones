@@ -148,8 +148,8 @@
     element.querySelectorAll('[data-direction]').forEach(button=>button.addEventListener('click',()=>select(state,state.index+Number(button.dataset.direction))));
     element.querySelectorAll('[data-milestone]').forEach(button=>button.addEventListener('click',()=>select(state,Number(button.dataset.milestone))));
     element.querySelector('select').addEventListener('change',event=>select(state,Number(event.target.value)));
-    const legend=content.legend;
-    element.querySelector('.ot-legend-copy').innerHTML=`<span class="ot-legend-label">${escape(legend.label)}</span><h3>${escape(legend.title)}</h3><p>${escape(legend.text)}</p><p class="ot-date-note">${escape(legend.note)}</p><ul class="ot-source-list">${legend.sources.map(key=>`<li><a href="${escape(content.sources[key].url)}" target="_blank" rel="noopener">${escape(content.sources[key].name)}</a></li>`).join('')}</ul>`;
+    const legends=[content.legend,...(content.additionalLegends??[])];
+    element.querySelector('.ot-legend-copy').innerHTML=legends.map(legend=>`<span class="ot-legend-label">${escape(legend.label)}</span><h3>${escape(legend.title)}</h3><p>${escape(legend.text)}</p><p class="ot-date-note">${escape(legend.note)}</p><ul class="ot-source-list">${legend.sources.map(key=>`<li><a href="${escape(content.sources[key].url)}" target="_blank" rel="noopener">${escape(content.sources[key].name)}</a></li>`).join('')}</ul>`).join('');
     states.push(state); render(state);
     if(globalThis.Tweak) {
       const design={captionWidth:390,textSize:14};

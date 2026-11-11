@@ -40,7 +40,7 @@ beforeEach(() => {
 afterEach(() => { dispose(); vi.restoreAllMocks(); vi.unstubAllGlobals(); document.body.innerHTML = ''; });
 
 it('renders all chapters in normal reading order with their artwork, AI labels, notes and sources', () => {
-  expect(articles).toHaveLength(12);
+  expect(articles).toHaveLength(content.milestones.length);
   expect(host.querySelector('.history-track, .history-controls')).toBeNull();
   expect(host.querySelector('select')).toBeNull();
   content.milestones.forEach((milestone, index) => {
@@ -61,18 +61,40 @@ it('renders all chapters in normal reading order with their artwork, AI labels, 
   expect(host.querySelector('.history-legend')!.textContent).toContain('Local folklore · undated');
 });
 
+it('places the new evidence in chronological order and keeps legends out of the dated rail', () => {
+  const ids = content.milestones.map(milestone => milestone.id);
+  expect(new Set(ids).size).toBe(ids.length);
+  const index = (id: string) => { expect(ids).toContain(id); return ids.indexOf(id); };
+  expect(index('landscape')).toBeLessThan(index('early-christian'));
+  expect(index('early-christian')).toBeLessThan(index('foundation'));
+  expect(index('lancaster')).toBeLessThan(index('candleston'));
+  expect(index('candleston')).toBeLessThan(index('revolt'));
+  expect(index('estate')).toBeLessThan(index('rifle-range'));
+  expect(index('rifle-range')).toBeLessThan(index('care'));
+  expect(dates()).toHaveLength(content.milestones.length);
+  const legends = [...host.querySelectorAll('.history-legend')];
+  expect(legends).toHaveLength(2);
+  for (const [i, story] of [content.legend, ...content.additionalLegends].entries()) {
+    expect(legends[i].textContent).toContain(story.title);
+    expect(legends[i].textContent).toContain('Local folklore');
+    expect([...legends[i].querySelectorAll('a')].map(link => link.href))
+      .toEqual(story.sources.map(key => content.sources[key as keyof typeof content.sources].url));
+    expect(dates().some(button => button.textContent?.includes(story.title))).toBe(false);
+  }
+});
+
 it('follows actual scroll position in both directions without changing focus or hiding chapters', () => {
   const focused = document.activeElement;
   expect(active()).toBe(dates()[0]);
   scrollTo(800 * 5 + 40);
   expect(active()).toBe(dates()[5]);
   expect(active()!.querySelector('.history-rail-date')!.textContent).toBe(content.milestones[5].shortDate);
-  expect(Number(host.querySelector<HTMLElement>('.history-timeline')!.style.getPropertyValue('--history-progress'))).toBeGreaterThan(5 / 11);
+  expect(Number(host.querySelector<HTMLElement>('.history-timeline')!.style.getPropertyValue('--history-progress'))).toBeGreaterThan(5 / (articles.length - 1));
   expect(document.activeElement).toBe(focused);
   scrollTo(800);
   expect(active()).toBe(dates()[1]);
-  scrollTo(800 * 11);
-  expect(active()).toBe(dates()[11]);
+  scrollTo(800 * (articles.length - 1));
+  expect(active()).toBe(dates().at(-1));
   expect(host.querySelector<HTMLElement>('.history-timeline')!.style.getPropertyValue('--history-progress')).toBe('1');
 });
 
@@ -96,9 +118,9 @@ it('supports vertical keyboard navigation in the rail without intercepting brows
   buttons[0].dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowDown', bubbles: true }));
   expect(document.activeElement).toBe(buttons[1]);
   buttons[1].dispatchEvent(new KeyboardEvent('keydown', { key: 'End', bubbles: true }));
-  expect(document.activeElement).toBe(buttons[11]);
-  buttons[11].dispatchEvent(new KeyboardEvent('keydown', { key: 'Home', bubbles: true, altKey: true }));
-  expect(document.activeElement).toBe(buttons[11]);
+  expect(document.activeElement).toBe(buttons.at(-1));
+  buttons.at(-1)!.dispatchEvent(new KeyboardEvent('keydown', { key: 'Home', bubbles: true, altKey: true }));
+  expect(document.activeElement).toBe(buttons.at(-1));
   expect(articles.every(article => vi.mocked(article.scrollIntoView).mock.calls.length === 0)).toBe(true);
 });
 

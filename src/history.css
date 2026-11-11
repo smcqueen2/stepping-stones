@@ -20,6 +20,7 @@
 .history-note-copy h2 { font: 400 27px/1.2 Georgia, serif; margin: 12px 0; }
 .history-date-note { color: var(--muted); font-size: 13px; }
 .history-legend { margin-top: 40px; }
+.history-legend + .history-legend { margin-top: 12px; }
 #history-retry { color: var(--ink); background: var(--card); border: 1px solid var(--card-border); border-radius: 3px; padding: 10px 14px; min-height: 44px; font-size: 13px; }
 .history-rail { position: fixed; z-index: 4; top: 50%; right: max(14px, env(safe-area-inset-right)); transform: translateY(-50%); width: 146px; pointer-events: none; }
 .history-rail-heading { color: var(--muted); width: fit-content; font-size: 10px; letter-spacing: 1.5px; text-transform: uppercase; margin: 0 24px 10px auto; padding: 2px 5px; background: #f7f5ede8; }

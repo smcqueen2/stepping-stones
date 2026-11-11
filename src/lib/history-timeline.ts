@@ -8,6 +8,8 @@ const paintings: Record<string, string> = {
   'damaged-castle': new URL('../../docs/design/historical-timeline/reconstruction/ogmore-castle-revolt-aftermath-v1.webp', import.meta.url).href,
   priory: new URL('../../docs/design/historical-timeline/assets/priory.webp', import.meta.url).href,
   'present-castle': new URL('../../docs/design/historical-timeline/assets/present-castle.webp', import.meta.url).href,
+  'candleston-v1': new URL('../../docs/design/historical-timeline/assets/candleston-v1.webp', import.meta.url).href,
+  'st-teilo-v1': new URL('../../docs/design/historical-timeline/assets/st-teilo-v1.webp', import.meta.url).href,
 };
 const sources: Record<string, { name: string; url: string }> = content.sources;
 
@@ -37,7 +39,7 @@ function sourceLinks(keys: string[]) {
 export function mountHistoryTimeline(host: HTMLElement) {
   const page = host.closest<HTMLElement>('[data-page-view]');
   const root = element('section', 'history-timeline');
-  root.setAttribute('aria-label', 'Illustrated history of Ogmore Castle and its valley');
+  root.setAttribute('aria-label', 'Illustrated history of Ogmore, the Ewenny and Merthyr Mawr');
   const chapters = element('div', 'history-chapters');
   const articles = content.milestones.map((milestone, index) => {
     const article = element('article', 'history-chapter');
@@ -99,24 +101,27 @@ export function mountHistoryTimeline(host: HTMLElement) {
   dateList.style.setProperty('--history-period-count', String(dateButtons.length));
   dates.append(dateList);
   rail.append(dates);
-  const legend = element('details', 'history-notes history-legend');
-  legend.append(element('summary', '', 'Beside the history: a local legend'));
-  const legendCopy = element('div', 'history-note-copy');
-  legendCopy.append(
-    element('p', 'history-category', content.legend.label),
-    element('h2', '', content.legend.title),
-    element('p', '', content.legend.text),
-    element('p', 'history-date-note', content.legend.note),
-    sourceLinks(content.legend.sources),
-  );
-  legend.append(legendCopy);
+  const legends = [content.legend, ...content.additionalLegends].map(story => {
+    const legend = element('details', 'history-notes history-legend');
+    legend.append(element('summary', '', `Beside the history: ${story.title}`));
+    const copy = element('div', 'history-note-copy');
+    copy.append(
+      element('p', 'history-category', story.label),
+      element('h2', '', story.title),
+      element('p', '', story.text),
+      element('p', 'history-date-note', story.note),
+      sourceLinks(story.sources),
+    );
+    legend.append(copy);
+    return legend;
+  });
   const backToTop = element('button', 'history-back-to-top');
   backToTop.type = 'button';
   backToTop.hidden = true;
   backToTop.setAttribute('aria-label', 'Back to top of history');
   backToTop.title = 'Back to top';
   backToTop.innerHTML = '<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="m6 12 6-6 6 6M12 6v12"/></svg>';
-  root.append(rail, backToTop, chapters, legend);
+  root.append(rail, backToTop, chapters, ...legends);
   host.replaceChildren(root);
   let current = -1;
   let frame: number | undefined;
