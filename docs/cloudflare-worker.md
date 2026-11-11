@@ -10,7 +10,7 @@ Prepared 8 November 2026; proof-of-concept setup selected 9 November; two-job de
 
 The configured expression is `*/15 * * * *`. This is 96 scheduled attempts per job per day (192 total), not a promise that data is always exactly fifteen minutes old. Source reporting, Cron execution and cache propagation add delay. All existing source timestamps and expiry rules remain in effect.
 
-**Nothing switches automatically:** with no frontend endpoint configured, the site continues using its current Pages JSON and Actions schedule. This is a data refresher only; community-observation storage/submission remains on hold.
+**Production cutover authorised 11 November 2026:** the GitHub Pages frontend uses `https://stepping-stones-data.mcqueen-4.workers.dev/data/snapshot.json`. `DATA_ENDPOINT` selects this public endpoint at build time, and `DATA_REFRESH_PROVIDER=cloudflare` skips scheduled Pages rebuilds after the published frontend has been verified. Push/manual Pages deployments remain available. Community-observation storage/submission remains on hold.
 
 ## GitHub Actions setup
 
@@ -24,7 +24,7 @@ The public namespace ID is passed to ignored adjacent `wrangler.ci.json` and `wr
 
 After first setup, record its namespace ID as `CLOUDFLARE_KV_NAMESPACE_ID` to pin subsequent deployments to that storage. This also stops a later run from silently creating empty replacement storage if the original namespace is deleted or becomes inaccessible.
 
-**Code deployment and data refresh are separate:** a deployment tool publishes resource/code changes; the deployed Worker's Cron refreshes environmental data every fifteen minutes. The website stays on its existing Pages data route until a real hosted data/CPU/warning-state check and explicit cutover. Runtime `NRW_API_KEY` remains a separate Cloudflare secret and reporting collection stays on hold.
+**Code deployment and data refresh are separate:** GitHub Actions publishes website/Worker code changes; the deployed Workers refresh environmental data every fifteen minutes. The website remains hosted on GitHub Pages and reads the combined Cloudflare snapshot. Runtime `NRW_API_KEY` remains a separate Cloudflare secret and reporting collection stays on hold.
 
 ### Inspect without redeploying
 
@@ -36,7 +36,7 @@ The combined job still used 13 ms CPU at 14:30 UTC, so the model and monitoring 
 
 The public endpoint keeps its root response structure and URL. Optional `forecast.summary` presentation metadata is omitted by the Worker; all hourly predictions remain intact, and the current UI does not read that summary. Static GitHub generation retains the full original payload. A model failure leaves that record's clocks unchanged while new monitoring/warnings can publish; monitoring failure keeps its prior warning cache while the model updates. Missing/corrupt/unreadable storage is never interpreted as no warning. The monolithic legacy record remains a conservative migration fallback until a valid separate monitoring record exists. After that, the model job reads the smaller monitoring record to verify migration and omits the duplicate legacy monitoring payload from its next model write.
 
-`NRW_API_KEY` now belongs on **stepping-stones-monitoring**. CI refuses to replace a model Worker that already has this secret unless the destination Worker also has it. It checks names only; secret values cannot be copied through the API. The owner still has no key. A later authenticated warning-feed and CPU smoke test remains required.
+`NRW_API_KEY` belongs on **stepping-stones-monitoring**. CI refuses to replace a model Worker that already has this secret unless the destination Worker also has it. It checks names only; secret values cannot be copied through the API. On 11 November, the owner configured the encrypted secret on monitoring and its 16:30 UTC refresh successfully retrieved official warnings. The separate GitHub Actions secret was also verified through a successful Pages generation.
 
 ## Files and commands
 
@@ -106,7 +106,9 @@ The manual `worker:deploy` command still requires a real namespace in `wrangler.
 
 The default allowed browser origin is `https://smcqueen2.github.io`. Origins contain no `/stepping-stones` path. If hosting changes, update `ALLOWED_ORIGINS` to the exact approved origins. CORS limits browser access; this is public environmental data, not a private authenticated API.
 
-## Connect the website after verifying the Worker
+## Website connection and rollback
+
+The owner explicitly approved production cutover on 11 November after authenticated warning checks. The production endpoint is `https://stepping-stones-data.mcqueen-4.workers.dev/data/snapshot.json`; these settings are public repository variables, not secrets. Local builds without `VITE_DATA_ENDPOINT` continue to use local static data. Set that variable to the production endpoint when a local preview should use the same live feed.
 
 In GitHub repository **Settings → Secrets and variables → Actions → Variables**, set:
 
@@ -118,6 +120,12 @@ In GitHub repository **Settings → Secrets and variables → Actions → Variab
 First set `DATA_ENDPOINT` and run **Build and Deploy Pages** manually. The build passes it to Vite as `VITE_DATA_ENDPOINT`. Build-time validation rejects malformed, credential-bearing, query/fragment-bearing or non-HTTPS remote endpoints before bundling. Confirm the published site's readings and warning states use the new service, including a future forecast selection and failed/stale status.
 
 Then set `DATA_REFRESH_PROVIDER=cloudflare`. Scheduled Pages builds will be skipped while both variables are set; push/manual Pages deployment still works. Until those variables are configured, today's behaviour is retained. Occasional push/manual builds still generate static files for the deployment; these are not a silent browser fallback when a Worker endpoint is selected.
+
+### Authenticated checks before cutover, 11 November 2026
+
+The NRW portal subscription to **Open Data - Live Flood Warnings & Alerts API Data** was Active. The owner saved `NRW_API_KEY` privately in GitHub Actions and as an encrypted production secret on the monitoring Worker. No secret values were retrieved or compared. [Pages refresh 43055689039](https://github.com/smcqueen2/stepping-stones/actions/runs/43055689039) published a verified empty warning list checked at 16:10:50 UTC. [Worker inspection 43058637860](https://github.com/smcqueen2/stepping-stones/actions/runs/43058637860) confirmed the independent monitoring refresh at 16:30:16 UTC also returned `available` with no warnings in the monitored areas. This does not establish that the crossing is safe.
+
+The hosted endpoint returned HTTP 200 with the correct Pages-origin CORS header. The actual frontend adapter accepted all four sections, both local gauges were available with their observation clocks preserved, and all 24 forecast hours were present. The authenticated monitoring job used **5 ms CPU**, while the separate model used **11 ms**, both successful with zero exceptions; the preceding 16:15 run used 4/9 ms respectively. The owner approved cutover with this outstanding model CPU headroom limitation. Continue measuring and optimising rather than claiming every run fits the 10 ms target. No paid upgrade is part of this change. Earlier dated preparation/checkpoints below describe the pre-cutover state.
 
 If the Worker fails, the browser retains its last data, marks the update unverified and ages it using the existing rules. It does **not** quietly replace a newer warning with older Pages data.
 

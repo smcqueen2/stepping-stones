@@ -1,6 +1,6 @@
 # Authentication for the Cloudflare proof of concept
 
-Updated 9 November 2026. The selected route is **Workers Free + classic KV + Wrangler/GitHub Actions**. GitHub metadata confirms the secret name and account-ID variable. The token value has not been requested or accessed. The owner reports enabling R2, but this route does not use it.
+Updated 11 November 2026. The selected route is **Workers Free + classic KV + Wrangler/GitHub Actions**. GitHub metadata confirms the secret name and account-ID variable. The token value has not been requested or accessed. The owner reports enabling R2, but this route does not use it.
 
 ## GitHub configuration
 
@@ -20,7 +20,7 @@ The pipeline passes these to the provisioning helper and Wrangler. It never retr
 
 ## Runtime and optional NRW credentials
 
-The running Workers use their shared `SNAPSHOTS` KV binding, not the deployment token. `NRW_API_KEY` is a separate optional runtime secret on **stepping-stones-monitoring** for official warnings. CI checks existing secret names before moving the model deployment; it never reads secret values. Until that free NRW key exists and is smoke-tested, warning status remains explicitly unavailable; a Cloudflare key does not provide NRW access. Reporting collection remains on hold.
+The running Workers use their shared `SNAPSHOTS` KV binding, not the deployment token. `NRW_API_KEY` is a separate runtime secret on **stepping-stones-monitoring** for official warnings. CI checks existing secret names before moving the model deployment; it never reads secret values. On 11 November, the owner configured an encrypted production secret there and a separate repository Actions secret; authenticated generation succeeded through both routes. A Cloudflare deployment token does not provide NRW access. Failed, missing or stale warning responses still produce explicitly unverified status. Reporting collection remains on hold.
 
 See [the deployment, verification and rollback guide](cloudflare-worker.md). Keep **Workers Free** selected. This pipeline never upgrades subscriptions; it does not automatically confirm the account's billing plan.
 
