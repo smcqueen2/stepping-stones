@@ -1,6 +1,6 @@
 # Authentication for the Cloudflare proof of concept
 
-Updated 11 November 2026. The selected route is **Workers Free + classic KV + Wrangler/GitHub Actions**. GitHub metadata confirms the secret name and account-ID variable. The token value has not been requested or accessed. The owner reports enabling R2, but this route does not use it.
+Updated 11 November 2026. Environmental data uses **Workers Free + classic KV + Wrangler/GitHub Actions**. Community observations add a separate Worker and D1 database; see [the reporting setup guide](community-reports.md). GitHub metadata confirms existing secret names and the account-ID variable. Secret values have not been retrieved. The owner reports enabling R2, but these routes do not use it.
 
 ## GitHub configuration
 
@@ -10,6 +10,13 @@ Updated 11 November 2026. The selected route is **Workers Free + classic KV + Wr
 | `CLOUDFLARE_ACCOUNT_ID` | Repository variable | Select the intended Cloudflare account |
 | `CLOUDFLARE_KV_NAMESPACE_ID` | Optional repository variable | Select existing classic KV storage; omitted means create/reuse the named project namespace |
 | `CLOUDFLARE_WORKER_DEPLOY_ENABLED` | Optional repository variable | `true` enables relevant main-push deployments; checked manual deployments work independently |
+| `TURNSTILE_SITE_KEY` | Repository variable for reports | Public Turnstile site key for `smcqueen2.github.io` |
+| `TURNSTILE_SECRET_KEY` | Repository secret for reports | Server-side bot validation; installed privately on the reports Worker |
+| `CLOUDFLARE_REPORTS_DATABASE_ID` | Optional repository variable | Pin the existing named observation D1 database after first deployment |
+| `CLOUDFLARE_REPORTS_DEPLOY_ENABLED` | Optional repository variable | `true` enables relevant main-push reports deployments |
+| `REPORTS_ENDPOINT` | Repository variable for Pages | Verified public reports URL; empty keeps shared reporting disconnected |
+
+Reports provisioning additionally needs **Account → D1 → Edit** on the deployment API token. No R2 permission, subscription upgrade or frontend credential is required. The original model and monitoring Workers continue to use their existing token permissions. The reports workflow checks for the new settings before provisioning; an unavailable backend never appears as zero reports in the UI.
 | `GITHUB_TOKEN` | Issued automatically by GitHub | Read this repository; no extra GitHub PAT is required |
 
 Create an **account API token** under Cloudflare **Manage account > Account API tokens**. Start with **Edit Cloudflare Workers**, limit it to the intended account and ensure permissions cover creating/deploying Workers and listing/creating classic Workers KV namespaces. Cloudflare's current Worker roles distinguish product-level Admin (new Worker creation) from Editor (existing Workers). That does not require whole-account administrator access. Custom domains, DNS, D1, R2 and billing-management permissions are not required by this proof of concept.

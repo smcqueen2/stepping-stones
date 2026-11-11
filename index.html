@@ -121,7 +121,8 @@
           </div>
           <p id="outlook-art-status" class="outlook-context" role="status"></p>
           <div class="community-reports" aria-label="Community observations">
-            <p id="community-count">Reports in the last hour · coming soon</p>
+            <p id="community-count">Community reports unavailable</p>
+            <p id="community-detail">Recent observations could not be checked.</p>
             <a href="#report" data-open-dialog>Seen the stones? Share conditions <span aria-hidden="true">↗</span></a>
           </div>
         </section>
@@ -285,14 +286,22 @@
           <div class="condition-choice">
             <label for="report-condition">Drag to match the conditions</label>
             <input id="report-condition" name="condition" type="range" min="0" max="4" step="1" value="2" aria-describedby="condition-description" aria-valuetext="Move the slider to choose conditions" disabled />
-            <div class="condition-endpoints" aria-hidden="true"><span>Unpassable<br>Completely submerged</span><span>Passable<br>Stones clear</span></div>
+            <div class="condition-endpoints" aria-hidden="true"><span>Completely<br>submerged</span><span>Stones<br>clear</span></div>
             <p id="condition-label">What does the crossing look like?</p>
             <p id="condition-description">Move the slider to choose.</p>
           </div>
-          <button id="observation-submit" type="submit" class="button-link" disabled>Preview report</button>
-          <p id="observation-status" class="report-status" role="status" aria-live="polite" tabindex="-1">Preview only — reports aren’t being collected yet.</p>
+          <div id="observation-verification" aria-label="Spam protection"></div>
+          <button id="observation-verify-retry" type="button" class="button-link" hidden>Retry verification</button>
+          <button id="observation-submit" type="submit" class="button-link" disabled>Submit observation</button>
+          <p id="observation-status" class="report-status" role="status" aria-live="polite" tabindex="-1">Shared reporting is not connected yet.</p>
         </form>
-        <p class="report-footnote">No account or personal details needed.</p>
+        <details id="community-summary" class="community-summary" hidden>
+          <summary id="community-summary-title">Reports in the past hour</summary>
+          <ul id="community-breakdown" aria-label="Reported conditions"></ul>
+          <p>Unverified observations, not a safety assessment.</p>
+        </details>
+        <p class="report-footnote">No account, name or email needed. A random browser identifier helps limit repeat reports. Reports are removed after about 90 days. Spam protection is provided by Cloudflare Turnstile.</p>
+        <p class="report-footnote">Stay on the bank to observe. Clear stones do not guarantee a safe crossing.</p>
       </dialog>
 
     <footer class="site-footer">

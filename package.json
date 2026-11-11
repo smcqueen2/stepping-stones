@@ -17,6 +17,10 @@
     "worker:check:ci": "npm --prefix workers/data-refresh run check:ci",
     "worker:deploy": "npm --prefix workers/data-refresh run deploy",
     "worker:deploy:ci": "npm --prefix workers/data-refresh run deploy:ci",
+    "reports:dev": "node workers/data-refresh/node_modules/wrangler/bin/wrangler.js dev --config workers/reports/wrangler.local.json --ip 127.0.0.1 --port 8788 --inspector-port 9232",
+    "reports:migrate:local": "node workers/data-refresh/node_modules/wrangler/bin/wrangler.js d1 migrations apply REPORTS --local --config workers/reports/wrangler.local.json",
+    "reports:check": "node workers/data-refresh/node_modules/wrangler/bin/wrangler.js deploy --dry-run --config workers/reports/wrangler.json --outdir workers/reports/dist",
+    "reports:integration": "node workers/reports/scripts/integration.mjs",
     "calibrate:observations": "node scripts/calibrate-observations.mjs",
     "build:with-data": "npm run generate:data && npm run build"
   },

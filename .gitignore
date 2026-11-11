@@ -6,6 +6,7 @@ coverage/
 .wrangler/
 workers/data-refresh/wrangler.ci.json
 workers/data-refresh/wrangler.monitoring.ci.json
+workers/reports/wrangler.ci.json
 .env
 .env.*
 !.env.example

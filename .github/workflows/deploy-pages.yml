@@ -49,6 +49,7 @@ jobs:
       - name: Build
         env:
           VITE_DATA_ENDPOINT: ${{ vars.DATA_ENDPOINT }}
+          VITE_REPORTS_ENDPOINT: ${{ vars.REPORTS_ENDPOINT }}
         run: npm run build
 
       - name: Setup Pages

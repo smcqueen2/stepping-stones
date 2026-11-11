@@ -72,7 +72,7 @@ button:focus-visible, a:focus-visible, summary:focus-visible, input:focus-visibl
 .outlook-card > :is(.nrw-warning, .community-reports, #outlook-art-status) { flex-shrink: 0; }
 .outlook-card > #outlook-art-status:not(:empty) { margin-inline: 20px; }
 .outlook-card:not([data-expanded="true"]) .nrw-warning[data-tone="quiet"] .nrw-warning-footer,
-.outlook-card:not([data-expanded="true"]) .community-reports p { display: none; }
+.outlook-card:not([data-expanded="true"]) #community-detail { display: none; }
 .outlook-eyebrow { margin: 0; font-size: 11px; font-weight: 500; letter-spacing: 1.6px; text-transform: uppercase; color: var(--muted); }
 .outlook-card h1 { font: 400 32px/1.06 Georgia, serif; letter-spacing: -.7px; margin: 13px 0 10px; }
 .outlook-state { font: inherit; }
@@ -202,6 +202,13 @@ button:focus-visible, a:focus-visible, summary:focus-visible, input:focus-visibl
 .report-status { font-size: 13px; margin: 12px 0 0; }
 .report-status:empty { display: none; }
 .report-footnote { font-size: 11px; color: var(--muted); margin: 18px 0 0; }
+#observation-verification { margin-top: 12px; max-width: 100%; }
+#observation-verify-retry { margin-top: 10px; min-height: 44px; }
+.community-summary { border-top: 1px solid var(--card-border); margin-top: 20px; padding-top: 12px; font-size: 12px; }
+.community-summary summary { cursor: pointer; min-height: 36px; display: list-item; }
+.community-summary ul { list-style: none; padding: 0; margin: 8px 0; }
+.community-summary li { display: flex; justify-content: space-between; gap: 12px; padding: 4px 0; }
+.community-summary p { color: var(--muted); }
 @media (min-width: 1001px) and (min-height: 601px) {
   body[data-view="top"] { display: grid; grid-template-rows: auto minmax(0, 1fr) auto; height: 100svh; }
   body[data-view="top"] :is(.site-header, main, .site-footer) { width: 100%; max-width: none; margin: 0; }
