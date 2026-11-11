@@ -216,6 +216,28 @@ button:focus-visible, a:focus-visible, summary:focus-visible, input:focus-visibl
   .water-level-card { position: absolute; right: 24px; bottom: 24px; width: 430px; max-width: 46%; margin: 0; }
   .water-level { max-height: calc(100svh - 180px); }
   .tile-content { min-height: 0; overflow-y: auto; overscroll-behavior: contain; }
+  /* The selected tile becomes a landscape panel while its neighbours remain compact. */
+  .outlook-card[data-expanded="true"] { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); width: 600px; max-width: calc(100% - 502px); max-height: calc(100% - 48px); overflow-y: auto; overscroll-behavior: contain; }
+  .outlook-card[data-expanded="true"] > .tile-summary { grid-column: 1; grid-row: 1; }
+  .outlook-card[data-expanded="true"] > .nrw-warning { grid-column: 1 / -1; grid-row: 2; }
+  .outlook-card[data-expanded="true"] > .tile-content { grid-column: 2; grid-row: 1; padding: 22px; border-left: 1px solid var(--card-border); }
+  .outlook-card[data-expanded="true"] > #outlook-art-status { grid-column: 1 / -1; grid-row: 3; }
+  .outlook-card[data-expanded="true"] > .community-reports { grid-column: 1 / -1; grid-row: 4; }
+  .outlook-card[data-expanded="true"] .outlook-times { margin-top: 0; gap: 8px; }
+  .outlook-card[data-expanded="true"] :is(.outlook-context, .outlook-as-of, .outlook-disclaimer, .outlook-links) { font-size: 12px; }
+  .outlook-card[data-expanded="true"] .outlook-times button { min-height: 40px; font-size: 12px; }
+  .water-level-card:has(.water-level[data-expanded="true"]) { width: 800px; max-width: calc(100% - 392px); }
+  .water-levels:has(#water-level-river[data-expanded="true"]) { grid-template-columns: minmax(0, 1fr) 210px; }
+  .water-levels:has(#water-level-tide[data-expanded="true"]) { grid-template-columns: 210px minmax(0, 1fr); }
+  .water-level[data-expanded="true"] { display: grid; grid-template-columns: minmax(140px, .9fr) minmax(0, 1.6fr); align-items: stretch; }
+  .water-level[data-expanded="true"] .tile-summary { padding: 22px 18px 16px; }
+  .water-level[data-expanded="true"] .tile-content { padding: 22px 18px; border-left: 1px solid var(--card-border); }
+  .water-level[data-expanded="true"] .water-level-value { font-size: 38px; margin-block: 10px; }
+  .water-level[data-expanded="true"] .tide-status { font-size: 28px; margin-block: 10px; }
+  .water-level[data-expanded="true"] :is(.water-level-source, .water-level-trend, .water-level-note, .tide-event) { font-size: 12px; }
+  .water-level[data-expanded="true"] .level-graph svg { height: 110px; }
+  .water-level[data-expanded="true"] :is(.level-graph-times, .level-graph-source) { font-size: 10px; }
+  :is(.outlook-card, .water-level)[data-expanded="true"] { box-shadow: 0 18px 60px #17392b30; }
   .scene-settings { top: 20px; right: 24px; }
 }
 @media (max-width: 700px), (max-height: 600px) {

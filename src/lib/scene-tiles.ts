@@ -3,6 +3,11 @@ export function installSceneTiles() {
   function setExpanded(button: HTMLButtonElement, expanded: boolean) {
     const panel = document.getElementById(button.getAttribute('aria-controls') ?? '');
     if (!panel) return;
+    if (expanded) {
+      document.querySelectorAll<HTMLButtonElement>('[data-tile-toggle][aria-expanded="true"]').forEach(other => {
+        if (other !== button) setExpanded(other, false);
+      });
+    }
     button.setAttribute('aria-expanded', String(expanded));
     panel.hidden = !expanded;
     button.querySelector<HTMLElement>('[data-tile-more]')?.toggleAttribute('hidden', expanded);

@@ -106,14 +106,14 @@ export function renderLevelGraphs(live: LivePayload | undefined, fresh: boolean,
     plot.className = 'level-graph-plot';
     plot.append(svg);
     if (chart.reference) {
-      // HTML labels keep their readable font size when a narrow tile stretches the SVG.
+      // Keep labels aligned with the SVG when the expanded tile increases plot height.
       const highTop = Math.min(48, Math.max(0, chart.reference.highY - 14));
       const lowTop = Math.min(64, Math.max(highTop + 14, chart.reference.lowY + 2));
       for (const kind of ['high', 'low'] as const) {
         const label = document.createElement('span');
         label.className = 'level-graph-reference-label';
         label.setAttribute('aria-hidden', 'true');
-        label.style.top = `${kind === 'high' ? highTop : lowTop}px`;
+        label.style.top = `${(kind === 'high' ? highTop : lowTop) / 76 * 100}%`;
         label.textContent = `Typical ${kind} ${chart.reference[kind].toFixed(3)}m`;
         plot.append(label);
       }

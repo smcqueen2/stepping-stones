@@ -14,19 +14,24 @@ beforeEach(() => {
 });
 afterEach(() => { dispose(); document.body.innerHTML = ''; });
 
-it('starts compact and expands either graph independently through the large header target', () => {
+it('starts compact and moves the expanded view between tiles through the large header target', () => {
   for (const id of ['outlook-details', 'river-details', 'tide-details']) {
     expect(document.getElementById(id)!.hidden).toBe(true);
     expect(toggle(id).getAttribute('aria-expanded')).toBe('false');
   }
   toggle('river-details').querySelector('path')!.dispatchEvent(new MouseEvent('click', { bubbles: true }));
-  toggle('tide-details').click();
   expect(document.getElementById('river-level-graph')!.closest('[hidden]')).toBeNull();
+  toggle('tide-details').click();
+  expect(document.getElementById('river-details')!.hidden).toBe(true);
+  expect(toggle('river-details').getAttribute('aria-expanded')).toBe('false');
   expect(document.getElementById('tide-level-graph')!.closest('[hidden]')).toBeNull();
   expect(document.getElementById('outlook-details')!.hidden).toBe(true);
-  toggle('river-details').click();
-  expect(toggle('river-details').getAttribute('aria-expanded')).toBe('false');
-  expect(document.getElementById('river-details')!.hidden).toBe(true);
+  toggle('outlook-details').click();
+  expect(document.getElementById('tide-details')!.hidden).toBe(true);
+  expect(toggle('tide-details').getAttribute('aria-expanded')).toBe('false');
+  expect(document.getElementById('outlook-details')!.hidden).toBe(false);
+  toggle('outlook-details').click();
+  expect(document.getElementById('outlook-details')!.hidden).toBe(true);
 });
 
 it('keeps warning advice and the quick report link outside the collapsed content across data updates', () => {
