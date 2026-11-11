@@ -60,14 +60,26 @@ button:focus-visible, a:focus-visible, summary:focus-visible, input:focus-visibl
 .hero-art[data-snow-cover="true"] .snow-art.is-ready { opacity: 1; }
 .hero-layer.high-water { opacity: 0; mask-image: url('/images/hero/river-cover-mask.svg'); mask-size: 100% 100%; mask-repeat: no-repeat; transition: opacity 900ms ease; }
 .hero-layer.high-water.is-ready { opacity: var(--river-coverage, .5); }
-.outlook-card { position: absolute; z-index: 2; left: 3.6%; bottom: 5%; width: 282px; max-width: 44%; padding: 22px; background: var(--card); border-radius: 4px; box-shadow: 0 12px 45px #17392b22; }
+.outlook-card { position: absolute; z-index: 2; left: 3.6%; bottom: 5%; display: flex; flex-direction: column; width: 310px; max-width: 44%; background: var(--card); border-radius: 6px; box-shadow: 0 12px 45px #17392b22; }
+.tile-summary { position: relative; flex-shrink: 0; padding: 18px 20px 12px; }
+.tile-toggle { display: flex; align-items: center; justify-content: space-between; gap: 12px; width: 100%; min-height: 32px; margin-top: 12px; padding: 8px 0 0; border: 0; border-top: 1px solid var(--card-border); background: transparent; color: var(--muted); font-size: 11px; text-align: left; }
+/* The compact header is one large button target, with a real heading outside the button. */
+.tile-toggle::after { content: ''; position: absolute; inset: 0; border-radius: 6px; }
+.tile-toggle:hover { color: var(--ink); }
+.tile-toggle svg { flex-shrink: 0; width: 16px; height: 16px; fill: none; stroke: currentColor; stroke-width: 1.5; }
+.tile-toggle[aria-expanded="true"] svg { transform: rotate(180deg); }
+.tile-content { padding: 0 20px 18px; }
+.outlook-card > :is(.nrw-warning, .community-reports, #outlook-art-status) { flex-shrink: 0; }
+.outlook-card > #outlook-art-status:not(:empty) { margin-inline: 20px; }
+.outlook-card:not([data-expanded="true"]) .nrw-warning[data-tone="quiet"] .nrw-warning-footer,
+.outlook-card:not([data-expanded="true"]) .community-reports p { display: none; }
 .outlook-eyebrow { margin: 0; font-size: 11px; font-weight: 500; letter-spacing: 1.6px; text-transform: uppercase; color: var(--muted); }
 .outlook-card h1 { font: 400 32px/1.06 Georgia, serif; letter-spacing: -.7px; margin: 13px 0 10px; }
 .outlook-state { font: inherit; }
 #outlook-description { margin: 10px 0 0; font-size: 14px; line-height: 1.5; }
 .outlook-context, .outlook-as-of { font-size: 11px; color: var(--muted); margin: 8px 0 0; }
 .outlook-context:empty, .outlook-as-of:empty { display: none; }
-.nrw-warning { margin-top: 12px; padding: 9px 0 0 10px; border-top: 1px solid var(--card-border); border-left: 2px solid var(--muted); font-size: 11px; line-height: 1.45; }
+.nrw-warning { margin: 0 20px; padding: 8px 0 0 10px; border-top: 1px solid var(--card-border); border-left: 2px solid var(--muted); font-size: 11px; line-height: 1.45; }
 .nrw-warning strong { font-weight: 600; }
 .nrw-warning p { margin: 5px 0; }
 .nrw-warning-footer { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 0 8px; font-size: 10px; color: var(--muted); }
@@ -85,14 +97,18 @@ button:focus-visible, a:focus-visible, summary:focus-visible, input:focus-visibl
 .outlook-times button[aria-pressed="true"], .scene-button[aria-pressed="true"] { background: var(--ink); color: var(--bg); border-color: var(--ink); }
 .outlook-links { display: flex; gap: 18px; font-size: 11px; margin: 13px 0 0; }
 .outlook-disclaimer { font-size: 11px; color: var(--muted); margin: 13px 0 0; }
-.community-reports { border-top: 1px solid var(--card-border); margin-top: 15px; padding-top: 12px; font-size: 12px; }
+.community-reports { border-top: 1px solid var(--card-border); margin: 10px 20px 12px; padding-top: 6px; font-size: 11px; }
 .community-reports p { color: var(--muted); margin: 0 0 3px; }
-.community-reports a { display: inline-flex; align-items: center; gap: 5px; min-height: 44px; }
+.community-reports a { display: inline-flex; align-items: center; gap: 5px; min-height: 36px; }
 .water-level-card { position: absolute; z-index: 2; right: 3.6%; bottom: 5%; width: 354px; }
-.water-levels { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; margin: 0; }
-.water-level { display: flex; flex-direction: column; min-width: 0; padding: 13px 14px 11px; background: var(--card); border-radius: 4px; box-shadow: 0 10px 35px #17392b18; }
-.water-level dt { font-size: 12px; }
-.water-level dd { margin-left: 0; }
+.water-levels { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); align-items: end; gap: 10px; margin: 0; }
+.water-levels:not(:has([data-expanded="true"])) { align-items: stretch; }
+.water-level { display: flex; flex-direction: column; min-width: 0; background: var(--card); border-radius: 6px; box-shadow: 0 10px 35px #17392b18; }
+.water-level .tile-summary { display: flex; flex: 1 0 auto; flex-direction: column; padding: 16px 16px 12px; }
+.water-level .tile-summary > .water-level-trend { margin-bottom: 12px; }
+.water-level .tile-toggle { margin-top: auto; }
+.water-level .tile-content { padding: 0 16px 16px; }
+.water-level-label { margin: 0; font-size: 12px; font-weight: 500; }
 .water-level-value { display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px; margin-block: 4px; font: 400 29px/1.2 Georgia, serif; font-variant-numeric: tabular-nums; letter-spacing: -.7px; }
 .water-level-unit { font: 400 10px/1.5 ui-sans-serif, system-ui, sans-serif; letter-spacing: 0; color: var(--muted); text-decoration: none; }
 .water-level-trend { margin-block: 4px; font-size: 11px; color: #486f82; }
@@ -101,8 +117,8 @@ button:focus-visible, a:focus-visible, summary:focus-visible, input:focus-visibl
 .tide-event { margin-block: 4px; font-size: 12px; font-variant-numeric: tabular-nums; }
 .tide-low { color: var(--muted); font-size: 11px; }
 .tide-timing[data-available="false"] .tide-status { color: var(--muted); }
-.water-level-note { margin: 8px 0 0; padding: 9px 12px; background: var(--card); border-radius: 4px; font-size: 10px; color: var(--muted); }
-.water-level dd.level-graph { margin: auto 0 0; padding-top: 10px; }
+.water-level-note { margin: 12px 0 0; padding-top: 10px; border-top: 1px solid var(--card-border); font-size: 10px; line-height: 1.6; color: var(--muted); }
+.water-level .level-graph { margin-top: 12px; }
 .level-graph svg { display: block; width: 100%; height: 54px; overflow: visible; }
 .level-graph[data-reference='all-year'] svg { height: 76px; }
 .level-graph-plot { position: relative; }
@@ -186,8 +202,21 @@ button:focus-visible, a:focus-visible, summary:focus-visible, input:focus-visibl
 .report-status { font-size: 13px; margin: 12px 0 0; }
 .report-status:empty { display: none; }
 .report-footnote { font-size: 11px; color: var(--muted); margin: 18px 0 0; }
-@media (min-width: 701px) and (min-height: 601px) {
-  body[data-view="top"] :is(.site-header, main, .site-footer) { width: min(1120px, 100%, calc((100svh - 148px) * 1672 / 941)); }
+@media (min-width: 1001px) and (min-height: 601px) {
+  body[data-view="top"] { display: grid; grid-template-rows: auto minmax(0, 1fr) auto; height: 100svh; }
+  body[data-view="top"] :is(.site-header, main, .site-footer) { width: 100%; max-width: none; margin: 0; }
+  body[data-view="top"] .header-inner { padding: 12px 28px; }
+  body[data-view="top"] main { min-height: 0; padding-inline: 12px; }
+  body[data-view="top"] :is(.hero, .scene-stage, .hero-art) { height: 100%; }
+  body[data-view="top"] .hero-art { aspect-ratio: auto; container-type: size; }
+  /* Cover the viewport with one proportionate composite so every painted/WebGL layer stays aligned. */
+  body[data-view="top"] .hero-scene { inset: auto; left: 50%; top: 10%; width: max(100cqw, calc(100cqh * 1672 / 941)); height: max(100cqh, calc(100cqw * 941 / 1672)); transform: translate(-50%, -10%); }
+  body[data-view="top"] .site-footer { padding: 10px 28px; }
+  .outlook-card { position: absolute; left: 24px; bottom: 24px; width: 320px; max-width: 40%; max-height: calc(100% - 96px); margin: 0; }
+  .water-level-card { position: absolute; right: 24px; bottom: 24px; width: 430px; max-width: 46%; margin: 0; }
+  .water-level { max-height: calc(100svh - 180px); }
+  .tile-content { min-height: 0; overflow-y: auto; overscroll-behavior: contain; }
+  .scene-settings { top: 20px; right: 24px; }
 }
 @media (max-width: 700px), (max-height: 600px) {
   .header-inner { padding: 16px max(20px, env(safe-area-inset-right)) 16px max(20px, env(safe-area-inset-left)); gap: 12px; }
@@ -198,10 +227,11 @@ button:focus-visible, a:focus-visible, summary:focus-visible, input:focus-visibl
   .page-view { padding: 0 max(20px, env(safe-area-inset-right)) 24px max(20px, env(safe-area-inset-left)); }
   .page-heading { margin-bottom: 22px; }
   .page-view .prose { padding: 20px; }
-  .outlook-card { position: relative; left: auto; bottom: auto; width: auto; max-width: none; margin: -16px max(18px, env(safe-area-inset-right)) 0 max(18px, env(safe-area-inset-left)); padding: 18px 20px; }
+  .outlook-card { position: relative; left: auto; bottom: auto; width: auto; max-width: none; margin: -16px max(18px, env(safe-area-inset-right)) 0 max(18px, env(safe-area-inset-left)); }
   .outlook-card h1 { font-size: 29px; margin-top: 9px; }
   .water-level-card { position: relative; right: auto; bottom: auto; width: auto; margin: 12px max(18px, env(safe-area-inset-right)) 0 max(18px, env(safe-area-inset-left)); }
-  .water-level { padding-inline: 12px; }
+  .water-level .tile-summary, .water-level .tile-content { padding-inline: 12px; }
+  .tile-toggle { min-height: 44px; font-size: 12px; }
   .water-level-source, .water-level-note { font-size: 11px; }
   .level-graph-times, .level-graph-source { font-size: 10px; }
   .water-level-value { font-size: 26px; }
@@ -232,6 +262,9 @@ button:focus-visible, a:focus-visible, summary:focus-visible, input:focus-visibl
   #condition-label { font-size: 20px; margin-top: 16px; }
   #observation-submit { margin-top: 14px; }
   .report-footnote { margin-top: 12px; }
+}
+@media (max-width: 500px) {
+  .water-levels:has([data-expanded="true"]) { grid-template-columns: minmax(0, 1fr); }
 }
 @media (max-width: 370px) {
   .header-inner { padding-inline: max(16px, env(safe-area-inset-left)) max(16px, env(safe-area-inset-right)); gap: 8px; }

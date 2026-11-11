@@ -7,6 +7,9 @@ import { installHistoryLoader } from './lib/history-loader';
 import { installCommunityReports } from './lib/community-reports';
 import type { ForecastPayload } from './lib/types';
 import { loadData } from './lib/data-source';
+import { installSceneTiles } from './lib/scene-tiles';
+
+const disposeTiles = installSceneTiles();
 
 const forecastClock = new Intl.DateTimeFormat('en-GB', {
   timeZone: 'Europe/London', weekday: 'short', hour: '2-digit', minute: '2-digit', timeZoneName: 'short',
@@ -147,6 +150,7 @@ import.meta.hot?.dispose(() => {
   window.clearTimeout(requestTimeout);
   document.removeEventListener('visibilitychange', syncData);
   disposeNavigation();
+  disposeTiles();
   disposeHistory();
   disposeReports();
   outlook.dispose();

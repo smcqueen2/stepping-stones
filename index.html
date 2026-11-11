@@ -94,50 +94,75 @@
           </div>
         </details>
         <section id="crossing-outlook" class="outlook-card" aria-label="Crossing outlook" tabindex="-1">
-          <p class="outlook-eyebrow">Crossing outlook · <span id="outlook-horizon">Now</span></p>
-          <h1 id="outlook-title" aria-live="polite" aria-atomic="true"><span id="outlook-state" class="outlook-state state-pending">Loading conditions…</span></h1>
-          <p id="outlook-description">Checking river, tide and rainfall data.</p>
-          <div id="outlook-times" class="outlook-times" role="group" aria-label="Forecast time">
-            <button type="button" data-outlook-minutes="0" aria-pressed="true">Now</button>
-            <button type="button" data-outlook-minutes="60" aria-pressed="false" disabled>+1 hour</button>
-            <button type="button" data-outlook-minutes="180" aria-pressed="false" disabled>+3 hours</button>
+          <div class="tile-summary">
+            <p class="outlook-eyebrow">Crossing outlook · <span id="outlook-horizon">Now</span></p>
+            <h1 id="outlook-title" aria-live="polite" aria-atomic="true"><span id="outlook-state" class="outlook-state state-pending">Loading conditions…</span></h1>
+            <p id="outlook-description">Checking river, tide and rainfall data.</p>
+            <button type="button" class="tile-toggle" data-tile-toggle aria-expanded="false" aria-controls="outlook-details">
+              <span data-tile-more>Forecast &amp; details</span><span data-tile-less hidden>Hide forecast &amp; details</span>
+              <svg viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="m4 10 4-4 4 4" /></svg>
+            </button>
           </div>
-          <p id="outlook-as-of" class="outlook-as-of"></p>
-          <p id="outlook-model-result" class="outlook-context">Estimate uses Bridgend and regional tide readings.</p>
           <div id="nrw-warning" class="nrw-warning" data-tone="unknown" role="status" aria-live="polite" aria-atomic="true">
             <strong id="nrw-warning-title">Checking official NRW warnings…</strong>
             <p id="nrw-warning-detail"></p>
             <div class="nrw-warning-footer"><span id="nrw-warning-checked"></span><a id="nrw-warning-link" href="https://flood-warning.naturalresources.wales/Detail/102FWB402A" target="_blank" rel="noopener noreferrer">Check NRW ↗</a></div>
           </div>
-          <p class="outlook-links"><a href="#live" data-open-dialog>Readings</a><a href="#forecast" data-open-dialog>Full forecast ↗</a></p>
-          <p class="outlook-disclaimer">Illustrated prediction. Always assess on site.</p>
+          <div id="outlook-details" class="tile-content" hidden>
+            <div id="outlook-times" class="outlook-times" role="group" aria-label="Forecast time">
+              <button type="button" data-outlook-minutes="0" aria-pressed="true">Now</button>
+              <button type="button" data-outlook-minutes="60" aria-pressed="false" disabled>+1 hour</button>
+              <button type="button" data-outlook-minutes="180" aria-pressed="false" disabled>+3 hours</button>
+            </div>
+            <p id="outlook-as-of" class="outlook-as-of"></p>
+            <p id="outlook-model-result" class="outlook-context">Estimate uses Bridgend and regional tide readings.</p>
+            <p class="outlook-links"><a href="#live" data-open-dialog>Readings</a><a href="#forecast" data-open-dialog>Full forecast ↗</a></p>
+            <p class="outlook-disclaimer">Illustrated prediction. Always assess on site.</p>
+          </div>
           <p id="outlook-art-status" class="outlook-context" role="status"></p>
           <div class="community-reports" aria-label="Community observations">
             <p id="community-count">Reports in the last hour · coming soon</p>
             <a href="#report" data-open-dialog>Seen the stones? Share conditions <span aria-hidden="true">↗</span></a>
           </div>
         </section>
-        <section class="water-level-card" aria-label="River level and coastal tide times" aria-describedby="water-level-note" data-freshness="loading">
+        <section class="water-level-card" aria-label="River level and coastal tide times" data-freshness="loading">
           <h2 class="sr-only">River &amp; tide</h2>
-          <dl class="water-levels">
-            <div id="water-level-river" class="water-level" data-available="false">
-              <dt>River Ewenny</dt>
-              <dd class="water-level-value"><span id="river-glance-value">—</span><abbr class="water-level-unit" title="Metres at the river gauge">m</abbr></dd>
-              <dd id="river-glance-trend" class="water-level-trend">Awaiting readings</dd>
-              <dd id="river-glance-source" class="water-level-source">Keepers Lodge · River Ewenny</dd>
-              <dd id="water-level-age" class="water-level-source">Checking…</dd>
-              <dd id="river-level-graph" class="level-graph" data-available="false"><p class="level-graph-empty">Loading recent levels…</p></dd>
-            </div>
-            <div id="water-level-tide" class="water-level tide-timing" data-available="false">
-              <dt>Coastal tide · estimated</dt>
-              <dd id="tide-glance-status" class="tide-status">Checking tides…</dd>
-              <dd id="tide-glance-high" class="tide-event">High tide time unavailable</dd>
-              <dd id="tide-glance-countdown" class="water-level-trend"></dd>
-              <dd id="tide-glance-low" class="tide-event tide-low"></dd>
-              <dd id="tide-level-graph" class="level-graph" data-available="false"><p class="level-graph-empty">Loading recent levels…</p></dd>
-            </div>
-          </dl>
-          <p id="water-level-note" class="water-level-note"><a href="https://rivers-and-seas.naturalresources.wales/" target="_blank" rel="noopener noreferrer">NRW gauge history</a> · past 12 hours. Tide times are coastal estimates.<br>River flow also affects the crossing.<br>Coastal estimates · <a href="https://open-meteo.com/" target="_blank" rel="noopener noreferrer">Open-Meteo</a> / <a href="https://doi.org/10.48670/moi-00016" target="_blank" rel="noopener noreferrer">Copernicus Marine</a></p>
+          <div class="water-levels">
+            <section id="water-level-river" class="water-level" data-available="false" aria-labelledby="river-tile-title">
+              <div class="tile-summary">
+                <h3 id="river-tile-title" class="water-level-label">River Ewenny</h3>
+                <p class="water-level-value"><span id="river-glance-value">—</span><abbr class="water-level-unit" title="Metres at the river gauge">m</abbr></p>
+                <p id="river-glance-trend" class="water-level-trend">Awaiting readings</p>
+                <button type="button" class="tile-toggle" data-tile-toggle aria-expanded="false" aria-controls="river-details">
+                  <span data-tile-more>River details</span><span data-tile-less hidden>Hide river details</span>
+                  <svg viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="m4 10 4-4 4 4" /></svg>
+                </button>
+              </div>
+              <div id="river-details" class="tile-content" hidden>
+                <p id="river-glance-source" class="water-level-source">Keepers Lodge · River Ewenny</p>
+                <p id="water-level-age" class="water-level-source">Checking…</p>
+                <div id="river-level-graph" class="level-graph" data-available="false"><p class="level-graph-empty">Loading recent levels…</p></div>
+                <p id="water-level-note" class="water-level-note"><a href="https://rivers-and-seas.naturalresources.wales/" target="_blank" rel="noopener noreferrer">NRW gauge history</a> · past 12 hours. Levels are measured at the gauge, not over the stones.</p>
+              </div>
+            </section>
+            <section id="water-level-tide" class="water-level tide-timing" data-available="false" aria-labelledby="tide-tile-title">
+              <div class="tile-summary">
+                <h3 id="tide-tile-title" class="water-level-label">Coastal tide · estimated</h3>
+                <p id="tide-glance-status" class="tide-status">Checking tides…</p>
+                <p id="tide-glance-high" class="tide-event">High tide time unavailable</p>
+                <p id="tide-glance-countdown" class="water-level-trend"></p>
+                <button type="button" class="tile-toggle" data-tile-toggle aria-expanded="false" aria-controls="tide-details">
+                  <span data-tile-more>Tide details</span><span data-tile-less hidden>Hide tide details</span>
+                  <svg viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="m4 10 4-4 4 4" /></svg>
+                </button>
+              </div>
+              <div id="tide-details" class="tile-content" hidden>
+                <p id="tide-glance-low" class="tide-event tide-low"></p>
+                <div id="tide-level-graph" class="level-graph" data-available="false"><p class="level-graph-empty">Loading recent levels…</p></div>
+                <p class="water-level-note">Tide times are coastal estimates. River flow also affects the crossing.<br><a href="https://open-meteo.com/" target="_blank" rel="noopener noreferrer">Open-Meteo</a> / <a href="https://doi.org/10.48670/moi-00016" target="_blank" rel="noopener noreferrer">Copernicus Marine</a></p>
+              </div>
+            </section>
+          </div>
         </section>
         </div>
       </section>
