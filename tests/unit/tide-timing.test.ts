@@ -14,14 +14,14 @@ function timing(): TideTiming {
 }
 
 describe('coastal tide display', () => {
-  it('shows a rounded high-tide countdown, local high time and previous low while coming in', () => {
+  it('shows a rounded high-tide countdown and the next low while coming in', () => {
     expect(tideSummary(timing(), now)).toEqual({ available: true, status: 'Coming in', high: 'High tide ~04:00',
-      countdown: 'About 4h until high tide', low: 'Last low ~6 Nov · 22:00' });
+      countdown: 'About 4h until high tide', low: 'Next low ~10:30' });
     expect(tideSummary(timing(), now + 37 * 60000).countdown).toBe('About 3h 30m until high tide');
   });
   it('shows the upcoming low and following high while going out', () => {
     expect(tideSummary({ ...timing(), generatedAt: iso(300) }, now + 300 * 60000)).toMatchObject({
-      status: 'Going out', high: 'High tide ~16:30', countdown: 'About 11h 30m until high tide', low: 'Low tide ~10:30' });
+      status: 'Going out', high: 'High tide ~16:30', countdown: 'About 11h 30m until high tide', low: 'Next low ~10:30' });
   });
   it('uses around-high/low wording near turns and rolls to the following high afterward', () => {
     expect(tideSummary(timing(), now + 215 * 60000)).toMatchObject({ status: 'Around high tide', countdown: 'High tide around now' });
@@ -37,7 +37,13 @@ describe('coastal tide display', () => {
     data.validFrom = '2026-10-24T00:00:00Z'; data.validTo = '2026-10-26T23:00:00Z';
     data.events = [{ type: 'low', time: '2026-10-24T20:00:00Z' }, { type: 'high', time: '2026-10-25T02:00:00Z' },
       { type: 'low', time: '2026-10-25T08:30:00Z' }];
-    expect(tideSummary(data, autumn)).toMatchObject({ high: 'High tide ~02:00', low: 'Last low ~24 Oct · 21:00', countdown: 'About 1h 30m until high tide' });
+    expect(tideSummary(data, autumn)).toMatchObject({ high: 'High tide ~02:00', low: 'Next low ~08:30', countdown: 'About 1h 30m until high tide' });
+  });
+  it('rolls the next low forward at a turn and does not substitute a past low for missing future coverage', () => {
+    expect(tideSummary({ ...timing(), generatedAt: iso(630) }, now + 630 * 60000)).toMatchObject({
+      status: 'Around low tide', low: 'Next low ~23:00' });
+    expect(tideSummary({ ...timing(), events: timing().events.slice(0, 2) }, now)).toMatchObject({
+      available: true, high: 'High tide ~04:00', low: 'Next low time unavailable' });
   });
   it('clears times for expired, future, missing, malformed or incomplete forecasts', () => {
     const invalid = [undefined, { ...timing(), generatedAt: iso(-361) }, { ...timing(), generatedAt: iso(11) },

@@ -45,6 +45,7 @@ it('keeps warning advice and the quick report link outside the collapsed content
     expect(document.getElementById('outlook-details')!.hidden).toBe(true);
   }
   expect(document.querySelector('.community-reports a')!.closest('[hidden]')).toBeNull();
+  expect(document.getElementById('tide-glance-low')!.closest('[hidden]')).toBeNull();
   toggle('outlook-details').click();
   renderFloodWarnings(floodWarningSummary(undefined, now));
   expect(document.getElementById('outlook-details')!.hidden).toBe(false);

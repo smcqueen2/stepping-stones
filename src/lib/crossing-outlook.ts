@@ -32,7 +32,7 @@ export function selectOutlook(data: OutlookData, selection: OutlookSelection = 0
   const age = readingAge(live, now);
   const staleAfter = data.config?.freshness.staleAfterMinutes ?? 120;
   if (!Number.isFinite(age)) return unavailable('Data unavailable', 'The reading timestamp could not be verified.');
-  if (live.freshness.stale || age > staleAfter) return unavailable('Data out of date', `Readings are ${age} minutes old. Check conditions on site.`, true);
+  if (live.freshness.stale || age > staleAfter) return unavailable('Data out of date', `The oldest gauge reading is ${age} minutes old. Check conditions on site.`, true);
   let score: number, state: StateLabel, river: number, tide: number, at: number;
   let components: RiskComponents | undefined;
   if (selection === 0) {
@@ -188,8 +188,8 @@ export function installCrossingOutlook() {
     label('live-state', currentAdvice?.state ?? current.state, currentAdvice?.style ?? (current.available ? current.state : undefined));
     text('live-reason', currentAdvice?.detail ?? (current.available ? crossingReason(current.components, data.config?.weights) : current.detail));
     text('live-model-result', `Environmental model: ${current.state}. Local Ewenny and Penybont readings are shown separately while their relationship to the stones is established.`);
-    text('data-freshness', current.available ? `Readings ${current.ageMinutes} minutes old. Sources: ${data.live!.sourceStations.map(station => station.stationTitle).join(', ')}.` : current.detail);
-    text('outlook-freshness', current.available ? `Readings ${current.ageMinutes} min old.` : current.state);
+    text('data-freshness', current.available ? `Oldest gauge reading ${current.ageMinutes} minutes ago. Model sources: ${data.live!.sourceStations.map(station => station.stationTitle).join(', ')}.` : current.detail);
+    text('outlook-freshness', current.available ? `Oldest gauge reading ${current.ageMinutes} min ago.` : current.state);
     if (data.live) {
       const value = data.live.current;
       const trend = (n: number) => !finite(n) ? 'Unavailable' : Math.abs(n) < .005 ? 'Steady' : `${n > 0 ? 'Rising' : 'Falling'} (${n >= 0 ? '+' : ''}${n.toFixed(3)} m/h)`;

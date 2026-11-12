@@ -14,7 +14,7 @@ Production resources and Actions variables:
 | `REPORTS_ENDPOINT` | `https://stepping-stones-reports.mcqueen-4.workers.dev/api/reports` |
 | `CLOUDFLARE_REPORTS_DEPLOY_ENABLED` | `true` |
 
-Turnstile's private secret check passed. A genuine visitor observation will provide the first production write/receipt check; end-to-end writes, duplicate handling and concurrent cooldown checks have been tested in local Workers/D1 without polluting the public count. Representative hosted CPU measurements remain an operational follow-up.
+Turnstile's private secret check passed. The owner submitted a test observation on 12 November; its receipt was confirmed by the owner and it appeared in the public hourly aggregate. The agent did not submit a fictional public report. Duplicate handling and concurrent cooldown checks have also been tested in local Workers/D1. Representative hosted CPU measurements remain an operational follow-up.
 
 Activation checks: all 272 tests in 32 files, TypeScript, build, local Workers/D1 integration and workflow checks passed. Release `d88028a` passed Pages run `43206431174`, reports run `43206431135` and existing data Worker run `43206431462`. The final layout uses Turnstile's compact size so an interactive challenge fits narrow phone popups and viewport rotation; the flexible size has a documented 300px minimum. See [widget sizes](https://developers.cloudflare.com/turnstile/get-started/client-side-rendering/widget-configurations/#widget-sizes). No subscriptions were changed and R2 is not used.
 
@@ -25,6 +25,31 @@ GitHub Pages hosts the existing Vite frontend. A separate `stepping-stones-repor
 The existing main-page modal retains the five-position slider. Its clearest endpoint says **Stones clear**, which describes visible conditions rather than promising a safe crossing. A deliberate choice and a valid Turnstile check are required before submitting. The homepage shows reports in the past hour; the modal has a five-condition breakdown. A strict majority is described as “Most reported”; ties or pluralities are described as mixed. Counts are reports, not verified unique people. An empty hour is displayed only after a successful, recent response. Errors, exhausted quotas, invalid data or responses over two minutes old show unavailable and disable submission until recovery.
 
 ## Data and abuse controls
+
+To inspect stored entries yourself, open Cloudflare **Storage & databases → D1 SQL Database → stepping-stones-observations**. **Explore Data → observations** browses the rows; **Console** accepts SQL. For all stored columns and entries, newest first:
+
+```sql
+SELECT * FROM observations ORDER BY received_at DESC;
+```
+
+For readable condition labels and UTC receipt times:
+
+```sql
+SELECT
+  id,
+  CASE condition
+    WHEN 0 THEN 'Completely submerged'
+    WHEN 1 THEN 'Mostly submerged'
+    WHEN 2 THEN 'Partly submerged'
+    WHEN 3 THEN 'Mostly clear'
+    WHEN 4 THEN 'Stones clear'
+  END AS condition_label,
+  datetime(received_at / 1000, 'unixepoch') AS received_utc
+FROM observations
+ORDER BY received_at DESC;
+```
+
+These are read-only queries. `received_at` stores Unix milliseconds. `reporter_hash` helps apply the browser cooldown; it is not a person's name or a verified identity. Run raw-row queries in the private dashboard rather than publishing them in Actions logs.
 
 Each database row stores a random submission UUID, condition (integer 0–4), **server receipt** time in milliseconds and a SHA-256 hash of a random browser UUID. It does not store names, emails, comments, raw device UUIDs, IP addresses or Turnstile tokens. This is pseudonymous reporting, not a claim of guaranteed anonymity or identity verification. Browser storage saves the random identifier and an outstanding submission for retry; storage-blocked visitors can report for the current page session. Cookies and sign-in are unnecessary.
 

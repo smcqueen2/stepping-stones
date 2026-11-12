@@ -151,6 +151,7 @@
                 <h3 id="tide-tile-title" class="water-level-label">Coastal tide · estimated</h3>
                 <p id="tide-glance-status" class="tide-status">Checking tides…</p>
                 <p id="tide-glance-high" class="tide-event">High tide time unavailable</p>
+                <p id="tide-glance-low" class="tide-event tide-low"></p>
                 <p id="tide-glance-countdown" class="water-level-trend"></p>
                 <button type="button" class="tile-toggle" data-tile-toggle aria-expanded="false" aria-controls="tide-details">
                   <span data-tile-more>Tide details</span><span data-tile-less hidden>Hide tide details</span>
@@ -158,7 +159,6 @@
                 </button>
               </div>
               <div id="tide-details" class="tile-content" hidden>
-                <p id="tide-glance-low" class="tide-event tide-low"></p>
                 <div id="tide-level-graph" class="level-graph" data-available="false"><p class="level-graph-empty">Loading recent levels…</p></div>
                 <p class="water-level-note">Tide times are coastal estimates. River flow also affects the crossing.<br><a href="https://open-meteo.com/" target="_blank" rel="noopener noreferrer">Open-Meteo</a> / <a href="https://doi.org/10.48670/moi-00016" target="_blank" rel="noopener noreferrer">Copernicus Marine</a></p>
               </div>
@@ -300,7 +300,6 @@
           <ul id="community-breakdown" aria-label="Reported conditions"></ul>
           <p>Unverified observations, not a safety assessment.</p>
         </details>
-        <p class="report-footnote">No account, name or email needed. A random browser identifier helps limit repeat reports. Reports are removed after about 90 days. Spam protection is provided by Cloudflare Turnstile.</p>
         <p class="report-footnote">Stay on the bank to observe. Clear stones do not guarantee a safe crossing.</p>
       </dialog>
 

@@ -25,7 +25,7 @@ export function tideSummary(timing: TideTiming | undefined, now: number) {
   const high = events.find(event => event.type === 'high' && event.at >= now - halfHour);
   if (!previous || !next || !high) return unavailable;
   const near = events.find(event => Math.abs(event.at - now) <= halfHour);
-  const low = next.type === 'low' ? next : previous.type === 'low' ? previous : undefined;
+  const low = events.find(event => event.type === 'low' && event.at > now);
   const at = (time: number) => `${day.format(time) === day.format(now) ? '' : `${date.format(time)} · `}${clock.format(time)}`;
   const minutes = Math.max(30, Math.round((high.at - now) / halfHour) * 30);
   const duration = `${Math.floor(minutes / 60) ? `${Math.floor(minutes / 60)}h` : ''}${minutes % 60 ? `${minutes >= 60 ? ' ' : ''}${minutes % 60}m` : ''}`;
@@ -34,6 +34,6 @@ export function tideSummary(timing: TideTiming | undefined, now: number) {
     status: near ? `Around ${near.type} tide` : next.type === 'high' ? 'Coming in' : 'Going out',
     high: `High tide ~${at(high.at)}`,
     countdown: Math.abs(high.at - now) <= halfHour ? 'High tide around now' : `About ${duration} until high tide`,
-    low: low ? `${low.at < now ? 'Last low' : 'Low tide'} ~${at(low.at)}` : '',
+    low: low ? `Next low ~${at(low.at)}` : 'Next low time unavailable',
   };
 }

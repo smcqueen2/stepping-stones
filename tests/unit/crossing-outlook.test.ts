@@ -114,7 +114,7 @@ describe('forecast overlay controls', () => {
       <section class="water-level-card"><p id="water-level-age"></p>
         <div id="water-level-river"><span id="river-glance-value"></span><span id="river-glance-trend"></span><span id="river-glance-source"></span></div>
         <div id="water-level-tide"><span id="tide-glance-status"></span><span id="tide-glance-high"></span><span id="tide-glance-countdown"></span><span id="tide-glance-low"></span></div></section>
-      <span id="tide-value"></span><span id="river-value"></span>
+      <span id="tide-value"></span><span id="river-value"></span><span id="outlook-freshness"></span><span id="data-freshness"></span><span id="footer-updated"></span>
       <button data-outlook-minutes="0"></button><button data-outlook-minutes="60"></button><button data-outlook-minutes="180"></button>
       <dialog><button data-forecast-time="${iso(200)}"></button></dialog>`;
     document.querySelector<HTMLImageElement>('img')!.decode = vi.fn().mockResolvedValue(undefined);
@@ -125,6 +125,20 @@ describe('forecast overlay controls', () => {
   afterEach(() => { controller.dispose(); vi.restoreAllMocks(); vi.useRealTimers(); document.body.innerHTML = ''; });
   const click = (n: number) => document.querySelector<HTMLButtonElement>(`[data-outlook-minutes="${n}"]`)!.click();
   const state = () => document.getElementById('outlook-state')!;
+  it('distinguishes the oldest gauge observation from a recently refreshed snapshot', () => {
+    const data = fixture();
+    data.live!.generatedAt = iso(-1);
+    data.live!.freshness.oldestObservationAt = iso(-95);
+    data.live!.freshness.latestObservationAt = iso(-10);
+    data.live!.freshness.ageMinutes = 94;
+    controller.setData(data);
+    expect(document.getElementById('outlook-freshness')!.textContent).toBe('Oldest gauge reading 95 min ago.');
+    expect(selectOutlook(data, 0, now).available).toBe(true);
+    data.live!.freshness.oldestObservationAt = iso(-125);
+    controller.setData(data);
+    expect(document.getElementById('outlook-freshness')!.textContent).toBe('Data out of date');
+    expect(selectOutlook(data, 0, now)).toMatchObject({ available: false, stale: true });
+  });
   it('keeps the measured river and current coastal tide timings independent of future crossing selection', () => {
     const data = fixture();
     data.live!.sourceStations = [
@@ -237,7 +251,7 @@ describe('forecast overlay controls', () => {
   it('removes a reassuring classification when data expires and cleans up its clock', async () => {
     await vi.advanceTimersByTimeAsync(122 * 60_000);
     expect(state().textContent).toBe('Data out of date');
-    expect(document.getElementById('outlook-description')!.textContent).toContain('Readings are');
+    expect(document.getElementById('outlook-description')!.textContent).toContain('oldest gauge reading');
     expect(state().classList.contains('state-good')).toBe(false);
     expect(document.getElementById('river-glance-value')!.textContent).toBe('—');
     expect(document.getElementById('tide-glance-status')!.textContent).toBe('Coming in');
