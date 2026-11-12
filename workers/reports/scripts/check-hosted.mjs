@@ -1,4 +1,5 @@
 import assert from 'node:assert/strict';
+import { waitForReportsEndpoint } from './endpoint-ready.mjs';
 
 const account = process.env.CLOUDFLARE_ACCOUNT_ID;
 const token = process.env.CLOUDFLARE_API_TOKEN;
@@ -12,7 +13,7 @@ const subdomain = data.result?.subdomain;
 if (!data.success || !/^[a-z0-9-]+$/i.test(subdomain || '')) throw new Error('Could not verify the Workers public subdomain.');
 const endpoint = `https://stepping-stones-reports.${subdomain}.workers.dev/api/reports`;
 // Read-only checks never create a fictional public condition observation.
-const summary = await fetch(endpoint, { headers: { Origin: 'https://smcqueen2.github.io' }, signal: AbortSignal.timeout(20_000) });
+const summary = await waitForReportsEndpoint({ endpoint });
 assert.equal(summary.status, 200, 'Published reports service is not ready.');
 assert.equal(summary.headers.get('Access-Control-Allow-Origin'), 'https://smcqueen2.github.io');
 const value = await summary.json();
