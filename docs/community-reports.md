@@ -1,6 +1,6 @@
 # Community stone observations
 
-Implemented 11 November; Cloudflare resources and frontend configuration activated 12 November 2026. The public API was verified HTTP 200 with a fresh five-condition summary and the correct Pages CORS origin. The Pages build now reads `REPORTS_ENDPOINT`; browser verification of the published form follows its deployment. No fabricated observations are submitted to production.
+Implemented 11 November; Cloudflare resources and the public website activated 12 November 2026. The public API was verified HTTP 200 with a fresh five-condition summary and the correct Pages CORS origin. The published homepage displays the real hourly count, and its report popup obtains a real Turnstile verification token and becomes ready to submit after a deliberate slider choice. No fabricated observations were submitted to production.
 
 The deployment credential was identified through Cloudflare's verification API as the account token `stepping-stones-ci` (metadata ID `926c8521f804f4a2517a133e8ae4fedd`). Its D1 Edit checkbox was not selected. After the owner's explicit approval, only D1 Write/Edit was added to the existing account policy; the encrypted bearer value did not need replacing in GitHub. D1 provisioning then succeeded. The first public health check briefly returned 503 immediately after secret installation; subsequent reads were valid. The deployment now allows up to one minute of bounded read-only retries for route/secret propagation and still fails immediately for access errors.
 
@@ -15,6 +15,8 @@ Production resources and Actions variables:
 | `CLOUDFLARE_REPORTS_DEPLOY_ENABLED` | `true` |
 
 Turnstile's private secret check passed. A genuine visitor observation will provide the first production write/receipt check; end-to-end writes, duplicate handling and concurrent cooldown checks have been tested in local Workers/D1 without polluting the public count. Representative hosted CPU measurements remain an operational follow-up.
+
+Activation checks: all 272 tests in 32 files, TypeScript, build, local Workers/D1 integration and workflow checks passed. Release `d88028a` passed Pages run `43206431174`, reports run `43206431135` and existing data Worker run `43206431462`. The final layout uses Turnstile's compact size so an interactive challenge fits narrow phone popups and viewport rotation; the flexible size has a documented 300px minimum. See [widget sizes](https://developers.cloudflare.com/turnstile/get-started/client-side-rendering/widget-configurations/#widget-sizes). No subscriptions were changed and R2 is not used.
 
 ## Design
 

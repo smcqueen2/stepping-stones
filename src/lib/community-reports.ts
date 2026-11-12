@@ -124,7 +124,8 @@ export function installCommunityReports({ endpoint: configuredEndpoint = import.
       if (widgetId && widgetKey === summary.siteKey) { api.reset(widgetId); return; }
       if (widgetId) api.remove(widgetId);
       widgetKey = summary.siteKey;
-      widgetId = api.render(widget!, { sitekey: summary.siteKey, action: 'stone_observation', size: 'flexible', appearance: 'interaction-only',
+      // Compact also fits the 320px phone dialog if a visible challenge becomes necessary.
+      widgetId = api.render(widget!, { sitekey: summary.siteKey, action: 'stone_observation', size: 'compact', appearance: 'interaction-only',
         callback: (value: string) => {
           if (!disposed) {
             token = value;
