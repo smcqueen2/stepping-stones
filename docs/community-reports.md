@@ -32,6 +32,8 @@ An hourly `17 * * * *` maintenance trigger removes up to 1,000 reports older tha
 
 Initial secret installation briefly leaves a new Worker unavailable; it fails closed until configured. Subsequent deployments preserve its existing secret, then update it from the Actions secret. Migrations are append-only and schema-only: add a new SQL migration for future schema changes rather than editing an applied file. The serial deployment guard avoids concurrent reports migrations, independently of the existing data deployments. This uses the already pinned Wrangler 4.158.0 from `workers/data-refresh`; no second dependency tree is added.
 
+If D1 denies access, check the **Identify deployment token** step. It uses Cloudflare's read-only account/user token-verification API and prints only the token's metadata ID, ownership kind and active status. Match that ID to the dashboard before editing permissions; a similarly named user or account token may not be the one stored in GitHub. The encrypted bearer value is never printed or retrieved back from GitHub.
+
 ## Local development and validation
 
 After `npm ci` and `npm run worker:install`:

@@ -84,6 +84,9 @@ jobs:
           if [ "$current_head" = "$GITHUB_SHA" ]; then
             echo 'current=true' >> "$GITHUB_OUTPUT"
           fi
+      - name: Identify deployment token without exposing its value
+        if: steps.revision.outputs.current == 'true'
+        run: node workers/reports/scripts/check-deploy-token.mjs
       - name: Validate Turnstile secret without submitting a report
         if: steps.revision.outputs.current == 'true'
         run: node workers/reports/scripts/check-turnstile.mjs
