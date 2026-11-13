@@ -1,5 +1,6 @@
 {
   "researchedOn": "2026-11-11",
+  "artworkReviewedOn": "2026-11-13",
   "sources": {
     "castle": {"name":"Cadw · Ogmore Castle","url":"https://cadw.gov.wales/visit/places-to-visit/ogmore-castle"},
     "listing": {"name":"Cadw · castle record 21793","url":"https://cadwpublic-api.azurewebsites.net/reports/listedbuilding/FullReport?id=21793"},
@@ -24,7 +25,34 @@
     "teiloChurch": {"name":"Church in Wales · St Teilo, Merthyr Mawr","url":"https://heritage.churchinwales.org.uk/CHR/ChurchDetails.aspx?id=2956"},
     "oldStar": {"name":"Coflein · Old Star Cottage NPRN 19537","url":"https://coflein.gov.uk/en/sites/19537"},
     "rifleRange": {"name":"Coflein · volunteer rifle range NPRN 420030","url":"https://coflein.gov.uk/en/sites/420030"},
-    "trevelyan": {"name":"Marie Trevelyan · folklore, 1909, pp. 200–201","url":"https://archive.org/details/afl2317.0001.001.umich.edu/page/200/mode/2up"}
+    "trevelyan": {"name":"Marie Trevelyan · folklore, 1909, pp. 200–201","url":"https://archive.org/details/afl2317.0001.001.umich.edu/page/200/mode/2up"},
+    "medievalHeritage": {"name":"Medieval Heritage · plans & historical reconstructions","url":"https://medievalheritage.eu/en/main-page/heritage/wales/ogmore-castle/"},
+    "courthousePhoto": {"name":"Joseph French · courthouse reference photograph","url":"https://commons.wikimedia.org/wiki/File:The_courthouse,_Ogmore_Castle_-_geograph.org.uk_-_8414474.jpg"},
+    "innerWardPhoto": {"name":"Nilfanion · inner-ward reference photograph","url":"https://commons.wikimedia.org/wiki/File:Ogmore_Castle_(4842).jpg"},
+    "ccBySa2": {"name":"CC BY-SA 2.0 · courthouse adaptation licence","url":"https://creativecommons.org/licenses/by-sa/2.0/"},
+    "ccBySa4": {"name":"CC BY-SA 4.0 · inner-ward adaptation licence","url":"https://creativecommons.org/licenses/by-sa/4.0/"}
+  },
+  "artworkNotes": {
+    "early-fort": {
+      "text":"Explore the castle's later development in Medieval Heritage's illustrated guide. It credits a 12th-century keep reconstruction to Chris Jones-Jenkins. Our earth-and-timber painting is a separate AI-generated interpretation of the earlier phase.",
+      "sources":["medievalHeritage"]
+    },
+    "stone-castle": {
+      "text":"For comparison, Medieval Heritage brings together an early-13th-century reconstruction by Chris Jones-Jenkins, a 13th-century reconstruction credited to RCAHMW, and castle plans. These are historical interpretations; our AI-generated river view is a separate illustration, not one of those artists' works.",
+      "sources":["medievalHeritage"]
+    },
+    "entrance-v1": {
+      "text":"AI-generated watercolour based on the entrance photograph supplied by the site owner. This shows the surviving ruins and modern footbridge from the entrance side, not a reconstruction of their appearance in the 1500s–1600s.",
+      "sources":[]
+    },
+    "courthouse-v1": {
+      "text":"AI-generated watercolour adaptation of The courthouse, Ogmore Castle by Joseph French, photographed in 2026. Framing, light and painting style have been changed. The reference and this adaptation are offered under CC BY-SA 2.0. The roofless present-day study does not show the working courthouse in 1803.",
+      "sources":["courthousePhoto","ccBySa2"]
+    },
+    "inner-ward-v1": {
+      "text":"AI-generated watercolour adaptation of Ogmore Castle (4842) by Nilfanion, photographed in 2013 with support from Wikimedia UK. Framing and painting style have been changed, and the bench and marker omitted. The reference and this adaptation are offered under CC BY-SA 4.0. This is a present-day-inspired study, not a record of the 1928 guardianship event.",
+      "sources":["innerWardPhoto","ccBySa4"]
+    }
   },
   "milestones": [
     {
@@ -84,14 +112,14 @@
       "dateNote":"The dated evidence describes castle damage during the revolt. This scene imagines the aftermath; individual damaged walls and roofs are speculative. The crossing's founding year and medieval arrangement are unknown.","sources":["mill","valley","stones"]
     },
     {
-      "id":"change","date":"1500s–1600s","shortDate":"1500s–1600s","category":"Ogmore after its military life","image":"present-castle","artLabel":"AI generated · present-day-inspired castle study",
+      "id":"change","date":"1500s–1600s","shortDate":"1500s–1600s","category":"Ogmore after its military life","image":"entrance-v1","artLabel":"AI generated · entrance-side ruins, present-day study",
       "title":"A stronghold becomes a ruin.",
       "summary":"Ogmore's main castle buildings fall out of use between the 1530s and 1631. Yet the site does not simply disappear from local life: the courthouse continues its work among the changing buildings.",
       "context":"Coflein gives a broad abandonment interval for the main castle, rather than a single day when every room was deserted. The courthouse's longer use shows how administration could continue after the fortress's main buildings had fallen out of use. Candleston's separate history belongs to the fortified-home chapter.",
       "dateNote":"The 1530s–1631 interval concerns Ogmore's main castle buildings, not the end of all activity at the site.","sources":["coflein"]
     },
     {
-      "id":"court","date":"1803","shortDate":"1803","category":"Life after the fortress","image":"present-castle","artLabel":"AI generated · present-day castle painting",
+      "id":"court","date":"1803","shortDate":"1803","category":"Life after the fortress","image":"courthouse-v1","artLabel":"AI generated · courthouse ruins, present-day study",
       "title":"Justice among the ruins.",
       "summary":"Long after the castle's military life has faded, its courthouse remains in use. Coflein records court activity continuing into 1803: a reminder that a ruined fortress could still be part of everyday administration.",
       "context":"The courthouse stood in the outer bailey. Its long administrative life keeps the castle site connected to local affairs even as other buildings decay. The record of continued use into 1803 provides a late glimpse of that enduring role.",
@@ -112,7 +140,7 @@
       "dateNote":"1877 dates the map evidence, not the range's opening. The reviewed records do not securely identify the volunteer unit. The painting is a landscape study, not a reconstruction of the range.","sources":["rifleRange"]
     },
     {
-      "id":"care","date":"1 August 1928","shortDate":"1928","category":"Conservation begins","image":"present-castle","artLabel":"AI generated · present-day-inspired castle study",
+      "id":"care","date":"1 August 1928","shortDate":"1928","category":"Conservation begins","image":"inner-ward-v1","artLabel":"AI generated · inner-ward remains, present-day study",
       "title":"A future for the ruins.",
       "summary":"The castle enters guardianship, securing public access and responsibility for its care. A Welsh Government record confirms the exact date. Today management and maintenance responsibilities rest with Welsh Ministers through Cadw.",
       "context":"The 2023 government response identifies a guardianship agreement beginning on 1 August 1928. The arrangement secures management, maintenance and public access. It continues in perpetuity, with care responsibilities exercised today through Cadw.",

@@ -133,6 +133,8 @@
     state.element.querySelector('[data-direction="1"]').disabled=state.index===milestones.length-1;
     state.element.querySelector('.ot-count').textContent=`${String(state.index+1).padStart(2,'0')} / ${milestones.length}`;
     state.element.querySelector('.ot-context-copy').innerHTML=`<p>${escape(current.context)}</p><p class="ot-date-note">${escape(current.dateNote)}</p><ul class="ot-source-list">${current.sources.map(key=>`<li><a href="${escape(content.sources[key].url)}" target="_blank" rel="noopener">${escape(content.sources[key].name)}</a></li>`).join('')}</ul>`;
+    const artworkNote=content.artworkNotes?.[current.image];
+    if(artworkNote) state.element.querySelector('.ot-context-copy').insertAdjacentHTML('beforeend',`<h4>About the illustration</h4><p>${escape(artworkNote.text)}</p><div class="ot-citations">${sourceLinks(artworkNote.sources)}</div>`);
     if(announce) state.element.querySelector('.ot-announcement').textContent=`Milestone ${state.index+1} of ${milestones.length}. ${current.date}. ${current.title}`;
   }
   function select(state,index) { state.index=Math.max(0,Math.min(milestones.length-1,index)); render(state,true); save(); }

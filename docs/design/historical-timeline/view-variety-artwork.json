@@ -1,0 +1,46 @@
+{
+  "generatedOn": "2026-11-13",
+  "tool": "Built-in image_gen",
+  "type": "AI-generated present-day-inspired architectural studies, not dated reconstructions",
+  "delivery": "1024x576 WebP at quality 84. Archive-only previews at 448x252, quality 58. Resizing and format conversion only; generated PNG masters retained in Codex generated-image storage.",
+  "masterDirectory": "C:/Users/Steve/.codex/generated_images/01a16050-7f8e-70c3-aa0d-c3515dffc865",
+  "limitations": "Photographs guide the surviving structure and viewpoint. Brushwork, masonry details, vegetation and framing remain interpretive. These images do not show the castle at the date of each associated milestone. The river crossing is outside the three new camera views.",
+  "assets": [
+    {
+      "key": "entrance-v1",
+      "masterFile": "exec-1a5f953f-8134-4b4f-994a-d9a0b0b16d84.png",
+      "prompt": "Use case: style-transfer / architectural illustration. Create one wide 16:9 watercolour painting for the existing Ogmore Castle history website. Input image 1 is the owner's modern entrance photograph: use it as the primary architectural and camera-angle reference. Input image 2 is the site's existing river-view watercolour: use ONLY its painting style, palette and paper texture, not its camera position. Paint the entrance-side view of the present-day roofless ruins: the broad surviving rectangular keep wall stands on the LEFT of the low gate arch, the smaller attached stair/garderobe turret is on its left, and the timber pedestrian bridge runs diagonally across the dry grassy ditch towards the arched gateway to the RIGHT of the keep. Preserve the supplied photograph's actual silhouette, masonry openings, uneven broken wall tops, relative positions, slope and bridge perspective. Do not mirror, move the gate to the other side, reconstruct roofs, add towers or show an intact medieval fortress. Broaden the composition naturally to landscape, include soft empty grass in the lower left for an existing HTML caption while keeping the full keep and gate readable. Loose transparent watercolour washes, textured ivory cold-pressed paper, visible pigment granulation, warm grey limestone, soft sage and olive grass, pale blue-grey clouded sky, restrained Welsh daylight. A newly painted present-day-inspired architectural study, not a historic photograph or a claim of its exact appearance in the 1500s. No people, vehicles, signage, text, labels, borders or watermark. Output one finished painting, not a collage.",
+      "chapter": "change",
+      "reference": "Owner-supplied entrance photograph; existing present-castle.webp for watercolour style",
+      "license": "Owner-supplied reference; no new third-party licence asserted.",
+      "path": "assets/entrance-v1.webp",
+      "preview": "assets/previews/entrance-v1.webp"
+    },
+    {
+      "key": "courthouse-v1",
+      "masterFile": "exec-09e1498a-ba4b-4673-8778-abe4a69ec125.png",
+      "prompt": "Use case: style-transfer. Create a wide 16:9 watercolour illustration for the Ogmore Castle history website. Image 1 is a licensed reference photograph, The courthouse, Ogmore Castle by Joseph French (CC BY-SA 2.0): preserve its actual roofless courthouse structure, irregular gable silhouettes, central door and window placement, scale, broad side-on viewpoint and low circular lime-kiln remains at the left. Image 2 supplies only the existing website's loose watercolour medium, ivory paper, soft palette and pigment texture. Depict this modest elongated single-storey rectangular courthouse ruin in the outer bailey, NOT the tall castle keep, as it survives today. Widen the scene to a natural 16:9 landscape with quiet soft grass in the lower-left for an HTML caption; the courthouse remains dominant across the middle and right, its full two gable ends visible, trees and a small glimpse of the Ewenny behind. Match transparent washes, warm limestone greys, olive and sage greens, light blue-grey clouds, visible cold-pressed paper and granulated pigment. This is a present-day architectural companion study for a chapter about the courthouse's long use, not a reconstruction of a hearing in 1803. Keep the building roofless, do not invent an intact court chamber, restored windows, grand towers, judge, people, furniture, vehicles, notices, text or watermark. Produce one finished painting, no panels or lettering.",
+      "chapter": "court",
+      "reference": "The courthouse, Ogmore Castle by Joseph French, 26 September 2026",
+      "source": "https://commons.wikimedia.org/wiki/File:The_courthouse,_Ogmore_Castle_-_geograph.org.uk_-_8414474.jpg",
+      "license": "CC BY-SA 2.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/2.0/",
+      "changes": "AI-generated watercolour adaptation, widened landscape framing and softer lighting/palette. Adaptation offered under CC BY-SA 2.0.",
+      "path": "assets/courthouse-v1.webp",
+      "preview": "assets/previews/courthouse-v1.webp"
+    },
+    {
+      "key": "inner-ward-v1",
+      "masterFile": "exec-8a5810d1-3e6e-4c72-a749-7a05f3074360.png",
+      "prompt": "Use case: style-transfer. Paint one wide 16:9 architectural watercolour companion for the illustrated Ogmore Castle history page. Reference image 1 is Nilfanion's photograph Ogmore Castle (4842), CC BY-SA 4.0: use its ground-level view of the roofless inner-ward remains and preserve the actual masonry outlines, relative wall heights, broken openings and low foundations, with the tallest irregular wall just right of centre and the small tree at far right. Reference image 2 is the approved website painting: match only its loose translucent watercolour medium, pale ivory paper, warm limestone grey, sage/olive grass and muted blue-grey clouded sky. Recompose modestly to a wide landscape with quiet open grassy foreground at the lower left for the existing HTML caption. This must look visibly different from the entrance view: a close, intimate study from inside the ruins, low archaeological room foundations lead towards the weathered standing walls. Do not insert the entrance-side tall keep silhouette or the stepping stones into this camera view; the river crossing is outside the frame. Preserve the photographed ruined structures without restoring doors or floors, adding roofs, towers, battlements or invented large windows. Omit the modern bench and tiny marker so the painting focuses on the surviving stonework. Soft overcast Welsh daylight with slight warm light in the stone, visible cold-pressed paper grain, relaxed brushwork and broken edges. No people, reconstruction activity, vehicles, signage, lettering, labels or watermark. Present-day-inspired illustration, not a photograph from the 1928 guardianship event. Output one finished painting, not a collage.",
+      "chapter": "care",
+      "reference": "Ogmore Castle (4842) by Nilfanion, 13 June 2013; supported by Wikimedia UK",
+      "source": "https://commons.wikimedia.org/wiki/File:Ogmore_Castle_(4842).jpg",
+      "license": "CC BY-SA 4.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0/",
+      "changes": "AI-generated watercolour adaptation, landscape reframing, bench and marker omitted. Adaptation offered under CC BY-SA 4.0.",
+      "path": "assets/inner-ward-v1.webp",
+      "preview": "assets/previews/inner-ward-v1.webp"
+    }
+  ]
+}

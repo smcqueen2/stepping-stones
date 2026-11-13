@@ -54,8 +54,10 @@ it('renders all chapters in normal reading order with their artwork, AI labels, 
     const notes = article.querySelector('.history-note-copy')!;
     expect(notes.textContent).toContain(milestone.context);
     expect(notes.textContent).toContain(milestone.dateNote);
+    const artworkNote = (content.artworkNotes as Record<string, { text: string; sources: string[] }>)[milestone.image];
+    if (artworkNote) expect(notes.querySelector('.history-art-credit')!.textContent).toContain(artworkNote.text);
     const links = [...notes.querySelectorAll('a')];
-    expect(links.map(link => link.href)).toEqual(milestone.sources.map(key => content.sources[key as keyof typeof content.sources].url));
+    expect(links.map(link => link.href)).toEqual([...milestone.sources, ...(artworkNote?.sources ?? [])].map(key => content.sources[key as keyof typeof content.sources].url));
     expect(links.every(link => link.protocol === 'https:' && link.rel.includes('noopener'))).toBe(true);
   });
   expect(host.querySelector('.history-legend')!.textContent).toContain('Local folklore · undated');

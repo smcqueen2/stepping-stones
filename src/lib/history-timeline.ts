@@ -10,8 +10,12 @@ const paintings: Record<string, string> = {
   'present-castle': new URL('../../docs/design/historical-timeline/assets/present-castle.webp', import.meta.url).href,
   'candleston-v1': new URL('../../docs/design/historical-timeline/assets/candleston-v1.webp', import.meta.url).href,
   'st-teilo-v1': new URL('../../docs/design/historical-timeline/assets/st-teilo-v1.webp', import.meta.url).href,
+  'entrance-v1': new URL('../../docs/design/historical-timeline/assets/entrance-v1.webp', import.meta.url).href,
+  'courthouse-v1': new URL('../../docs/design/historical-timeline/assets/courthouse-v1.webp', import.meta.url).href,
+  'inner-ward-v1': new URL('../../docs/design/historical-timeline/assets/inner-ward-v1.webp', import.meta.url).href,
 };
 const sources: Record<string, { name: string; url: string }> = content.sources;
+const artworkNotes: Record<string, { text: string; sources: string[] }> = content.artworkNotes;
 
 function element<K extends keyof HTMLElementTagNameMap>(tag: K, className = '', text?: string) {
   const node = document.createElement(tag);
@@ -75,6 +79,13 @@ export function mountHistoryTimeline(host: HTMLElement) {
       element('p', 'history-date-note', milestone.dateNote),
       sourceLinks(milestone.sources),
     );
+    const artworkNote = artworkNotes[milestone.image];
+    if (artworkNote) {
+      const credit = element('div', 'history-art-credit');
+      credit.append(element('h3', '', 'About the illustration'), element('p', '', artworkNote.text));
+      if (artworkNote.sources.length) credit.append(sourceLinks(artworkNote.sources));
+      noteCopy.append(credit);
+    }
     notes.append(noteCopy);
     article.append(scene, notes);
     chapters.append(article);
