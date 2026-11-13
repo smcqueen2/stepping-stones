@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" fill="none">
+  <title>Ogmore Castle and stepping stones</title>
+  <defs>
+    <clipPath id="tile"><rect width="64" height="64" rx="13"/></clipPath>
+  </defs>
+  <g clip-path="url(#tile)">
+    <path fill="#243a35" d="M0 0h64v64H0z"/>
+    <path fill="#4d8190" d="M0 44c14-8 24-2 36-3 11-1 18-6 28-5v28H0z"/>
+    <path fill="#f8f5ed" d="M26 36V20l4-1v-6l5 2 3-5 4 3 3-6 5 3-1 6 4 2v18z"/>
+    <path fill="#c8c9b6" d="m49 16 4 2v18h-5z"/>
+    <path fill="#243a35" d="M37 23h3v8h-3z"/>
+    <path fill="#f8f5ed" d="m7 53 4-4 8 1 1 5-5 3-7-1zm18-5 4-5 7 1 1 5-5 3-6-1zm17-7 3-4 6 1 1 4-4 3-6-1z"/>
+  </g>
+</svg>
